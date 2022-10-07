@@ -23,7 +23,7 @@ def docker_shell(args):
     try:
         subprocess.check_call(['docker', 'run', '-it', '-v', UZIBUILD_DOCKER_OUTPUT + ':/root/output',
                                                        '-v', CC65_PATH + ':/root/cc65', 'uzibuild'])
-    except CalledProcessError as e:
+    except subprocess.CalledProcessError as e:
         if e.returncode == 130:
             pass
         else:
