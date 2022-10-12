@@ -4,3 +4,9 @@
 [submodule "uzics-nes"]
 	path = uzics-nes
 	url = https://github.com/chettrick/uzics.git
+[submodule "uzi-nes"]
+	path = uzi-nes
+	url = https://github.com/paulie-g/uzi.git
+[submodule "fceux"]
+	path = fceux
+	url = https://github.com/TASEmulators/fceux.git
