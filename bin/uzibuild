@@ -8,6 +8,7 @@ UZIBUILD_ROOT = os.getenv('UZIBUILD_ROOT')
 UZIBUILD_DOCKER_PATH = os.path.join(UZIBUILD_ROOT, 'build-docker')
 UZIBUILD_DOCKER_OUTPUT = os.path.join(UZIBUILD_DOCKER_PATH, 'build-output')
 CC65_PATH = os.path.join(UZIBUILD_ROOT, 'cc65')
+UZICS_PATH = os.path.join(UZIBUILD_ROOT, 'uzics-nes')
 
 def setup_output_dir(out_dir):
     if os.path.exists(out_dir):
@@ -21,8 +22,11 @@ def docker_build(args):
 def docker_shell(args):
     setup_output_dir(UZIBUILD_DOCKER_OUTPUT)
     try:
-        subprocess.check_call(['docker', 'run', '-it', '-v', UZIBUILD_DOCKER_OUTPUT + ':/root/output',
-                                                       '-v', CC65_PATH + ':/root/cc65', 'uzibuild'])
+        subprocess.check_call(['docker', 'run', '-it', '-e', 'TERM=xterm-256color',
+                                                       '-v', UZIBUILD_DOCKER_OUTPUT + ':/root/output',
+                                                       '-v', CC65_PATH + ':/root/cc65',
+                                                       '-v', UZICS_PATH + ':/root/uzics-nes',
+                                                       'uzibuild', 'bash', '-l'])
     except subprocess.CalledProcessError as e:
         if e.returncode == 130:
             pass
