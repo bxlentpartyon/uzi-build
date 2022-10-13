@@ -1,2 +1,2 @@
 export UZIBUILD_ROOT=${PWD}
-export PATH=${PWD}/bin:${PATH}
+export PATH=${PWD}/bin:${PWD}/cc65/bin:${PWD}/fceux/build/src:${PATH}
