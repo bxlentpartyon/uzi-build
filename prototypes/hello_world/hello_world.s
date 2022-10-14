@@ -12,9 +12,6 @@
 	.byte 0				; 13 	TV system (NTSC)
 	.byte 0, 0			; 14-15 Misc ROM, expansion device
 
-.segment "ZEROPAGE"
-	.res 41
-
 .segment "CODE"
 reset:
 	sei
