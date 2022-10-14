@@ -3,8 +3,8 @@ LD := ld65
 
 PLATFORM := nes
 
-TARGETS := hello_world.nes
-LINKER_SCRIPT := hello_world.cfg
+TARGETS := hello_mmc1.nes
+LINKER_SCRIPT := hello_mmc1.cfg
 
 .PRECIOUS: %.s %.o
 
