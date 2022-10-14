@@ -1,8 +1,8 @@
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
-	.byte 1				; 4	PRG-ROM Banks
+	.byte 4				; 4	PRG-ROM Banks
 	.byte 1				; 5	CHR-ROM Banks
-	.byte $00				; 6	Horizontal mirroring, mapper 0
+	.byte $10			; 6	Horizontal mirroring, mapper 1
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
 	.byte 0				; 8	Even more mapper bits
 	.byte 0				; 9	Repeat of PRG/CHR banks
@@ -12,8 +12,17 @@
 	.byte 0				; 13 	TV system (NTSC)
 	.byte 0, 0			; 14-15 Misc ROM, expansion device
 
+.segment "BANK00"
+	.res $3ff0
+
+.segment "BANK01"
+	.res $3ff0
+
+.segment "BANK02"
+	.res $3ff0
+
 .segment "CODE"
-reset:
+.proc reset
 	sei
 	cld
 	ldx #$40
@@ -48,14 +57,29 @@ vblankwait2:
 
 forever:
 	jmp forever
+.endproc
 
-nmi:
+.proc nmi
 	rti
+.endproc
 
-.segment "VECTORS"
-	.word nmi
-	.word reset
-	.word 0
+.macro reset_stub seg
+.segment seg
+.scope
+stub_entry:
+	sei
+	ldx #$ff
+	txs
+	stx $fff2	; reset mmc1
+	jmp reset
+	.addr nmi, stub_entry, 0
+.endscope
+.endmacro
+
+reset_stub "STUB00"
+reset_stub "STUB01"
+reset_stub "STUB02"
+reset_stub "STUB03"
 
 .segment "CHR"
 	.incbin "empty.chr"
