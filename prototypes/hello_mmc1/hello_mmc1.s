@@ -97,9 +97,9 @@ set_palette:
 	sta $2007
 
 put_str:
-	lda #$23
+	lda #$20
 	sta $2006
-	lda #$80
+	lda #$20
 	sta $2006
 	ldx hello_str_len
 put_str_loop:
