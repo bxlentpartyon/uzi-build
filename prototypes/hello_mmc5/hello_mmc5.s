@@ -2,7 +2,7 @@
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
 	.byte 4				; 4	PRG-ROM Banks
 	.byte 1				; 5	CHR-ROM Banks
-	.byte $10			; 6	Horizontal mirroring, mapper 1
+	.byte $50			; 6	Horizontal mirroring, mapper 5
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
 	.byte 0				; 8	Even more mapper bits
 	.byte 0				; 9	Repeat of PRG/CHR banks
@@ -132,7 +132,28 @@ stub_entry:
 	sei
 	ldx #$ff
 	txs
-	stx $8000	; reset mmc1
+
+	ldx #$00
+	stx $5101	; CHR bank mode 00
+	stx $5130	; Set high bits of CHR bank to 00
+	stx $5127	; Select CHR bank 0
+
+	stx $5105	; Set all nametables to 00
+
+	ldx #$01	;
+	stx $5100	; PRG bank mode 01 (2 16K banks)
+
+	ldx #$00	;
+	stx $5113	; PRG-RAM Page 0
+
+	ldx #$82	;
+	stx $5115	; PRG-ROM low bank to 1
+
+	ldx #$06	;
+	stx $5117	; PRG-ROM high bank to 3
+
+	ldx #$03	;
+	stx $5104	; Set ExRAM to read-only
 
 	jmp reset
 	.addr nmi, stub_entry, 0
