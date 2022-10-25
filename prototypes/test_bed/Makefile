@@ -2,7 +2,7 @@ CA := ca65
 CC := cc65
 LD := ld65
 
-CC65_DIR := $(UZIBUILD_ROOT)/cc65/lib/
+CC65_DIR := $(UZIBUILD_ROOT)/cc65/
 
 PLATFORM := nes
 
@@ -20,7 +20,7 @@ clean:
 
 %.o: %.c
 %.s: %.c
-	$(CC) --target $(PLATFORM) $<
+	$(CC) --target $(PLATFORM) -I$(CC65_DIR)/include/ $<
 
 %.o: %.s
 	$(CA) $<
