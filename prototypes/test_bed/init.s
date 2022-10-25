@@ -1,4 +1,5 @@
-.import _exit
+.import zerobss, copydata, initlib, _main
+.import __SRAM_START__, __SRAM_SIZE__
 
 .include "nes.inc"
 .include "zeropage.inc"
@@ -27,6 +28,25 @@
 	.byte $69, $02
 
 .segment "CODE"
+
+.proc reset
+	; This is a stripped down version of what cc65 does in their crt0.s.
+	sei	; Enable interrupts
+	cld	; Clear decimal
+
+	jsr zerobss
+	jsr copydata
+
+        lda #<(__SRAM_START__ + __SRAM_SIZE__)
+        ldx #>(__SRAM_START__ + __SRAM_SIZE__)
+        sta sp
+        stx sp+1
+
+	jsr initlib
+
+	; _main takes no args for now, so don't bother with callmain
+        jmp _main
+.endproc
 
 .proc nmi
 	rti
@@ -62,7 +82,7 @@ stub_entry:
 	ldx #$03	;
 	stx $5104	; Set ExRAM to read-only
 
-	jmp _exit
+	jmp reset
 	.addr nmi, stub_entry, 0
 .endscope
 .endmacro
