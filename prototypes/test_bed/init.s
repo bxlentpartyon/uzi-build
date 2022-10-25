@@ -1,12 +1,9 @@
-.import _main
-.import initlib
-.import __RAM_SIZE__, __RAM_START__
+.import _exit
 
-.export __STARTUP__:absolute=1
-
+.include "nes.inc"
 .include "zeropage.inc"
 
-.segment "HEADER"
+.segment "MMC5_HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
 	.byte 4				; 4	PRG-ROM Banks
 	.byte 1				; 5	CHR-ROM Banks
@@ -29,61 +26,7 @@
 .segment "BANK02"
 	.byte $69, $02
 
-.segment "STARTUP"
-
-.proc reset
-	sei
-	cld
-	ldx #$40
-	stx $4017
-
-	ldx #$ff 	; set stack pointer to 0x01ff
-	txs
-
-	inx		; X = 0
-	stx $2000	; disable vblank NMI
-	stx $2001	; disable rendering
-	stx $4010	; disable DMC IRQ
-
-	bit $2002	; acknowledge stray vblank
-
-vblankwait1:
-	bit $2002
-	bpl vblankwait1
-
-clrmem:
-	lda #$00
-	sta $0000, x
-	sta $0100, x
-	sta $0200, x
-	sta $0300, x
-	sta $0400, x
-	sta $0500, x
-	sta $0600, x
-	sta $0700, x
-	inx
-	bne clrmem
-
-vblankwait2:
-	bit $2002
-	bne vblankwait2
-
-set_palette:
-	lda #$3f
-	sta $2006
-	lda #$01
-	sta $2006
-	lda #$30
-	sta $2007
-
-	lda #<(__RAM_START__ + __RAM_SIZE__)
-	sta sp
-	lda #>(__RAM_START__ + __RAM_SIZE__)
-	sta sp+1
-	jsr initlib				; initialize the cc65 library
-
-	jmp _main
-.endproc
+.segment "CODE"
 
 .proc nmi
 	rti
@@ -93,9 +36,9 @@ set_palette:
 .segment seg
 .scope
 stub_entry:
-	sei
-	ldx #$ff
-	txs
+;	sei
+;	ldx #$ff
+;	txs
 
 	ldx #$00
 	stx $5101	; CHR bank mode 00
@@ -119,7 +62,7 @@ stub_entry:
 	ldx #$03	;
 	stx $5104	; Set ExRAM to read-only
 
-	jmp reset
+	jmp _exit
 	.addr nmi, stub_entry, 0
 .endscope
 .endmacro

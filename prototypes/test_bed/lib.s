@@ -1,6 +1,18 @@
-.export _ppu_on, _reset_cursor, _put_chr
+.export _ppu_setup, _ppu_on, _reset_cursor, _put_chr
 
 .segment "CODE"
+
+_ppu_setup:
+	pha
+	lda #$3f
+	sta $2006
+	lda #$01
+	sta $2006
+	lda #$30
+	sta $2007
+	pla
+	rts
+
 
 _ppu_on:
 	pha
