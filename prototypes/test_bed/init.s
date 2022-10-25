@@ -1,6 +1,10 @@
 .import _main
+.import initlib
+.import __RAM_SIZE__, __RAM_START__
 
 .export __STARTUP__:absolute=1
+
+.include "zeropage.inc"
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
@@ -71,6 +75,12 @@ set_palette:
 	sta $2006
 	lda #$30
 	sta $2007
+
+	lda #<(__RAM_START__ + __RAM_SIZE__)
+	sta sp
+	lda #>(__RAM_START__ + __RAM_SIZE__)
+	sta sp+1
+	jsr initlib				; initialize the cc65 library
 
 	jmp _main
 .endproc
