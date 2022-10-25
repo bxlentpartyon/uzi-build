@@ -26,4 +26,4 @@ clean:
 	$(CA) $<
 
 $(TARGET): $(TARGET_DEPS) $(LINKER_SCRIPT)
-	$(LD) -C $(LINKER_SCRIPT) -o $@ $(TARGET_DEPS) $(PLATFORM).lib
+	$(LD) -m link.map -C $(LINKER_SCRIPT) -o $@ $(TARGET_DEPS) $(PLATFORM).lib
