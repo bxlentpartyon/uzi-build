@@ -1,3 +1,5 @@
+.include "lib.inc"
+
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
 	.byte 4				; 4	PRG-ROM Banks
@@ -22,10 +24,6 @@
 	.byte $69, $02
 
 .segment "CODE"
-
-hello_str_end:	.byte 0
-hello_str:	.byte $2f, $2c, $2c, $25, $28 ; backwards to work with dex
-hello_str_len:	.byte 5
 
 .proc reset
 	sei
@@ -72,26 +70,8 @@ set_palette:
 	lda #$30
 	sta $2007
 
-put_str:
-	lda #$20
-	sta $2006
-	lda #$20
-	sta $2006
-	ldx hello_str_len
-put_str_loop:
-	lda hello_str_end, x
-	sta $2007
-	dex
-	bne put_str_loop
-
-ppu_on:
-	lda #0
-	sta $2005
-	sta $2005
-	ldx #$00
-	stx $2000
-	ldx #$0a
-	stx $2001
+	jsr put_str
+	jsr ppu_on
 
 forever:
 	jmp forever
