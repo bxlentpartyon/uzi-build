@@ -1,4 +1,6 @@
-.include "lib.inc"
+.import _main
+
+.export __STARTUP__:absolute=1
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
@@ -23,7 +25,7 @@
 .segment "BANK02"
 	.byte $69, $02
 
-.segment "CODE"
+.segment "STARTUP"
 
 .proc reset
 	sei
@@ -70,11 +72,7 @@ set_palette:
 	lda #$30
 	sta $2007
 
-	jsr put_str
-	jsr ppu_on
-
-forever:
-	jmp forever
+	jmp _main
 .endproc
 
 .proc nmi

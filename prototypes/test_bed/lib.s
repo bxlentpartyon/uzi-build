@@ -1,8 +1,8 @@
-.export ppu_on, put_str
+.export _ppu_on, _put_str
 
 .segment "CODE"
 
-ppu_on:
+_ppu_on:
 	lda #0
 	sta $2005
 	sta $2005
@@ -16,7 +16,7 @@ hello_str_end:	.byte 0
 hello_str:	.byte $2f, $2c, $2c, $25, $28 ; backwards to work with dex
 hello_str_len:	.byte 5
 
-put_str:
+_put_str:
 	lda #$20
 	sta $2006
 	lda #$20
