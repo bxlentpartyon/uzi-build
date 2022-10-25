@@ -3,8 +3,8 @@ LD := ld65
 
 PLATFORM := nes
 
-TARGETS := hello_mmc5.nes
-LINKER_SCRIPT := hello_mmc5.cfg
+TARGETS := test_bed.nes
+LINKER_SCRIPT := test_bed.cfg
 
 .PRECIOUS: %.s %.o
 
