@@ -56,9 +56,8 @@
 .segment seg
 .scope
 stub_entry:
-;	sei
-;	ldx #$ff
-;	txs
+	ldx #$ff
+	txs		; set up stack pointer
 
 	ldx #$00
 	stx $5101	; CHR bank mode 00
