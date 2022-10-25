@@ -47,30 +47,6 @@ vblankwait1:
 	bit $2002
 	bpl vblankwait1
 
-;setup_mc:
-;	lda #$0f
-;	sta $8000
-;	lsr
-;	sta $8000
-;	lsr
-;	sta $8000
-;	lsr
-;	sta $8000
-;	lsr
-;	sta $8000
-;
-;set_chr_bank:
-;	lda #$00	; set CHR to bank 0
-;	sta $a000
-;	lsr
-;	sta $a000
-;	lsr
-;	sta $a000
-;	lsr
-;	sta $a000
-;	lsr
-;	sta $a000
-;
 clrmem:
 	lda #$00
 	sta $0000, x
