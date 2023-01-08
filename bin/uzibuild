@@ -31,7 +31,7 @@ def docker_shell(args):
 
         mount_args = []
         for mount in mounts.keys():
-            mount_args.extend(['-v', mount + ':' + mounts[mount]])
+            mount_args.extend(['-v', mount + ':' + mounts[mount] + ':Z'])
 
         return mount_args
 
