@@ -12,17 +12,20 @@ LINKER_SCRIPT := test_bed.cfg
 TARGET_DEPS := init.o lib.o libc.o main.o
 
 .PRECIOUS: %.s %.o
+.SUFFIXES:
 
 all: $(TARGET)
 
 clean:
-	rm -f *.o *.nes
+	rm -f *.o *.nes *.s
 
-%.o: %.c
 %.s: %.c
 	$(CC) --target $(PLATFORM) -I$(CC65_DIR)/include/ $<
 
 %.o: %.s
+	$(CA) $<
+
+%.o: %.S
 	$(CA) $<
 
 $(TARGET): $(TARGET_DEPS) $(LINKER_SCRIPT)

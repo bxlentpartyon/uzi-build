@@ -13,7 +13,7 @@ all: $(TARGETS)
 clean:
 	rm -f *.o *.nes
 
-%.o: %.s
+%.o: %.S
 	$(CA) $<
 
 %.nes: %.o $(LINKER_SCRIPT)

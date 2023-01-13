@@ -11,9 +11,9 @@ LINKER_SCRIPT := hello_mmc5.cfg
 all: $(TARGETS)
 
 clean:
-	rm -f *.o *.nes
+	rm -f *.o *.nes *.s
 
-%.o: %.s
+%.o: %.S
 	$(CA) $<
 
 %.nes: %.o $(LINKER_SCRIPT)

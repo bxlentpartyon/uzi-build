@@ -16,7 +16,7 @@ TARGET_DEPS := segs.o
 all: $(TARGET)
 
 clean:
-	rm -f *.o *.nes
+	rm -f *.o *.nes *.s
 
 %.o: %.c
 %.s: %.c
