@@ -1,13 +1,15 @@
 CA := ca65
+CC := cc65
 LD := ld65
 
-PLATFORM := nes
+PLATFORM := uzi
 
 TARGET := uzi.nes
 LINKER_SCRIPT := uzi.cfg
-KERNEL_OBJECTS := head.o
+KERNEL_OBJECTS := head.o kernel.o
 
 .PRECIOUS: %.s %.o
+.SUFFIXES:
 
 all: $(TARGET)
 
@@ -16,14 +18,15 @@ all: $(TARGET)
 	$(CC) --target $(PLATFORM) -I$(CC65_DIR)/include/ -I$(PWD)/include/ -O $<
 
 %.o: %.S
-	$(CA) $<
+	@echo "Building .S $<"
+	$(CA) -o $@ $<
 
 %.o: %.s
 	@echo "Building .s $<"
-	$(CA) $<
+	$(CA) -o $@ $<
 
 $(TARGET): $(KERNEL_OBJECTS) $(LINKER_SCRIPT)
-	$(LD) -C $(LINKER_SCRIPT) -o $@ $<
+	$(LD) -C $(LINKER_SCRIPT) -o $@ $(KERNEL_OBJECTS)
 
 clean:
 	rm -f *.o *.nes *.s

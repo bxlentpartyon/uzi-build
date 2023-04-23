@@ -1,4 +1,7 @@
-	.import _start_kernel
+	.import 	_start_kernel
+	.import		_handle_vblank
+	.export		_print_hello
+	.export		_ppu_reset
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
@@ -29,6 +32,38 @@ hello_str_end:	.byte 0
 hello_str:	.byte $2f, $2c, $2c, $25, $28 ; backwards to work with dex
 hello_str_len:	.byte 5
 
+.proc _print_hello
+
+put_str:
+	lda #$20
+	sta $2006
+	lda #$20
+	sta $2006
+	ldx hello_str_len
+put_str_loop:
+	lda hello_str_end, x
+	sta $2007
+	dex
+	bne put_str_loop
+
+	rts
+
+.endproc
+
+.proc _ppu_reset
+	lda #$20	; reset ppu read address
+	sta $2006
+	lda #$00
+	sta $2006
+
+	sta $2005	; reset scrolling
+	sta $2005
+
+	ldx #$0a	; enable BG rendering
+	stx $2001
+	rts
+.endproc
+
 .proc reset
 	sei
 	cld
@@ -38,8 +73,10 @@ hello_str_len:	.byte 5
 	ldx #$ff 	; set stack pointer to 0x01ff
 	txs
 
+	lda #%10000000
+	sta $2000	; enable vblank NMI
+
 	inx		; X = 0
-	stx $2000	; disable vblank NMI
 	stx $2001	; disable rendering
 	stx $4010	; disable DMC IRQ
 
@@ -74,31 +111,11 @@ set_palette:
 	lda #$30
 	sta $2007
 
-put_str:
-	lda #$20
-	sta $2006
-	lda #$20
-	sta $2006
-	ldx hello_str_len
-put_str_loop:
-	lda hello_str_end, x
-	sta $2007
-	dex
-	bne put_str_loop
-
-ppu_on:
-	lda #0
-	sta $2005
-	sta $2005
-	ldx #$00
-	stx $2000
-	ldx #$0a
-	stx $2001
-
 	jmp _start_kernel
 .endproc
 
 .proc nmi
+	jsr _handle_vblank
 	rti
 .endproc
 
