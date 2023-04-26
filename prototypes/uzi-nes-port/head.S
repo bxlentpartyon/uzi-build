@@ -1,6 +1,11 @@
+	.importzp	sp
 	.import 	_start_kernel
 	.import		_handle_vblank
-	.export		_print_hello
+	.import		_screenbuf_chunk1
+	.import		_screenbuf_chunk2
+	.import		_screenbuf_chunk3
+	.import		_screenbuf_chunk4
+	.export		_dump_screenbuf
 	.export		_ppu_reset
 
 .segment "HEADER"
@@ -11,7 +16,7 @@
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
 	.byte 0				; 8	Even more mapper bits
 	.byte 0				; 9	Repeat of PRG/CHR banks
-	.byte 0				; 10	PRG-RAM/EEPROM size
+	.byte $07				; 10	PRG-RAM/EEPROM size
 	.byte 0				; 11	CHR-RAM size
 	.byte 0				; 12	CPU timing (NTSC)
 	.byte 0				; 13 	TV system (NTSC)
@@ -28,24 +33,47 @@
 
 .segment "CODE"
 
-hello_str_end:	.byte 0
-hello_str:	.byte $2f, $2c, $2c, $25, $28 ; backwards to work with dex
-hello_str_len:	.byte 5
-
-.proc _print_hello
+.proc _dump_screenbuf
 
 put_str:
 	lda #$20
 	sta $2006
 	lda #$20
 	sta $2006
-	ldx hello_str_len
-put_str_loop:
-	lda hello_str_end, x
-	sta $2007
-	dex
-	bne put_str_loop
 
+	ldx #$00
+loop1:
+	lda _screenbuf_chunk1, x
+	sta $2007
+	inx
+	cpx #$f0
+	beq loop1
+
+	ldx #$00
+loop2:
+	lda _screenbuf_chunk2, x
+	sta $2007
+	inx
+	cpx #$f0
+	beq loop2
+
+	ldx #$00
+loop3:
+	lda _screenbuf_chunk3, x
+	sta $2007
+	inx
+	cpx #$f0
+	beq loop3
+
+	ldx #$00
+loop4:
+	lda _screenbuf_chunk4, x
+	sta $2007
+	inx
+	cpx #$f0
+	beq loop4
+
+put_str_out:
 	rts
 
 .endproc
@@ -73,8 +101,8 @@ put_str_loop:
 	ldx #$ff 	; set stack pointer to 0x01ff
 	txs
 
-	lda #%10000000
-	sta $2000	; enable vblank NMI
+	lda #%00000000
+	sta $2000	; disable vblank NMI
 
 	inx		; X = 0
 	stx $2001	; disable rendering
@@ -99,6 +127,78 @@ clrmem:
 	inx
 	bne clrmem
 
+
+	; copy data from bank 3 to ram
+	ldx #$00
+copy_to_ram:
+	lda $8000, x
+	sta $6000, x
+	lda $8100, x
+	sta $6100, x
+	lda $8200, x
+	sta $6200, x
+	lda $8300, x
+	sta $6300, x
+	lda $8400, x
+	sta $6400, x
+	lda $8500, x
+	sta $6500, x
+	lda $8600, x
+	sta $6600, x
+	lda $8700, x
+	sta $6700, x
+	lda $8800, x
+	sta $6800, x
+	lda $8900, x
+	sta $6900, x
+	lda $8a00, x
+	sta $6a00, x
+	lda $8b00, x
+	sta $6b00, x
+	lda $8c00, x
+	sta $6c00, x
+	lda $8d00, x
+	sta $6d00, x
+	lda $8e00, x
+	sta $6e00, x
+	lda $8f00, x
+	sta $6f00, x
+	lda $9000, x
+	sta $7000, x
+	lda $9100, x
+	sta $7100, x
+	lda $9200, x
+	sta $7200, x
+	lda $9300, x
+	sta $7300, x
+	lda $9400, x
+	sta $7400, x
+	lda $9500, x
+	sta $7500, x
+	lda $9600, x
+	sta $7600, x
+	lda $9700, x
+	sta $7700, x
+	lda $9800, x
+	sta $7800, x
+	lda $9900, x
+	sta $7900, x
+	lda $9a00, x
+	sta $7a00, x
+	lda $9b00, x
+	sta $7b00, x
+	lda $9c00, x
+	sta $7c00, x
+	lda $9d00, x
+	sta $7d00, x
+	lda $9e00, x
+	sta $7e00, x
+	lda $9f00, x
+	sta $7f00, x
+	inx
+	beq vblankwait2
+	jmp copy_to_ram
+
 vblankwait2:
 	bit $2002
 	bne vblankwait2
@@ -110,6 +210,16 @@ set_palette:
 	sta $2006
 	lda #$30
 	sta $2007
+
+	lda #$08
+	ldx #$00
+	sta sp
+	stx sp+1
+
+	lda #%10000000
+	sta $2000	; enable vblank NMI
+
+	cli
 
 	jmp _start_kernel
 .endproc
@@ -137,7 +247,12 @@ stub_entry:
 	ldx #$01	;
 	stx $5100	; PRG bank mode 01 (2 16K banks)
 
-	ldx #$00	;
+	ldx #$02
+	stx $5102
+	ldx #$01
+	stx $5103
+
+	ldx #$01	;
 	stx $5113	; PRG-RAM Page 0
 
 	ldx #$82	;

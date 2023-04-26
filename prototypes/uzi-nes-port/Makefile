@@ -26,7 +26,7 @@ all: $(TARGET)
 	$(CA) -o $@ $<
 
 $(TARGET): $(KERNEL_OBJECTS) $(LINKER_SCRIPT)
-	$(LD) -C $(LINKER_SCRIPT) -o $@ $(KERNEL_OBJECTS)
+	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(KERNEL_OBJECTS) uzi.lib
 
 clean:
 	rm -f *.o *.nes *.s
