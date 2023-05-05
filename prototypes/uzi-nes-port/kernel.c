@@ -47,7 +47,7 @@ void dump_screenbuf(void)
 
 	buffer_dump_pos = buffer_dump_pos + 10;
 	ppu_dump_pos = ppu_dump_pos + 10;
-	if (buffer_dump_pos >= buffer_dump_pos + SCREEN_BUF_SIZE) {
+	if (buffer_dump_pos == screenbuf + SCREEN_BUF_SIZE) {
 		buffer_dump_pos = screenbuf;
 		ppu_dump_pos = (char *) 0x2020;
 	}
