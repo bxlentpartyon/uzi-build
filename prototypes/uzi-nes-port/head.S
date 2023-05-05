@@ -5,8 +5,12 @@
 	.import		_screenbuf_chunk2
 	.import		_screenbuf_chunk3
 	.import		_screenbuf_chunk4
-	.export		_dump_screenbuf
+	.export		___dump_screenbuf
 	.export		_ppu_reset
+	.export		_screenbuf
+	.export		_buffer_dump_pos
+	.export		_ppu_dump_pos
+	.export		_ei
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
@@ -31,47 +35,63 @@
 .segment "BANK02"
 	.byte $69, $02
 
+.segment "DATA"
+_screenbuf:
+	.res 960, $01
+
+.segment "ZEROPAGE"
+_buffer_dump_pos:
+	.addr $0000
+_ppu_dump_pos:
+	.addr $0000
+
 .segment "CODE"
 
-.proc _dump_screenbuf
+.proc _ei
+	lda #%10000000
+	sta $2000	; enable vblank NMI
+	rts
+.endproc
+
+.proc ___dump_screenbuf
 
 put_str:
-	lda #$20
+	lda _ppu_dump_pos+1
 	sta $2006
-	lda #$20
+	lda _ppu_dump_pos
 	sta $2006
 
-	ldx #$00
-loop1:
-	lda _screenbuf_chunk1, x
+	ldy #$00
+loop:
+	lda (_buffer_dump_pos), y
 	sta $2007
-	inx
-	cpx #$f0
-	beq loop1
+	iny
+	cpy #$a
+	bne loop
 
-	ldx #$00
-loop2:
-	lda _screenbuf_chunk2, x
-	sta $2007
-	inx
-	cpx #$f0
-	beq loop2
-
-	ldx #$00
-loop3:
-	lda _screenbuf_chunk3, x
-	sta $2007
-	inx
-	cpx #$f0
-	beq loop3
-
-	ldx #$00
-loop4:
-	lda _screenbuf_chunk4, x
-	sta $2007
-	inx
-	cpx #$f0
-	beq loop4
+;	ldy #$00
+;loop2:
+;	lda (_screenbuf_chunk2), y
+;	sta $2007
+;	iny
+;	cpy #$f0
+;	beq loop2
+;
+;	ldy #$00
+;loop3:
+;	lda (_screenbuf_chunk3), y
+;	sta $2007
+;	iny
+;	cpy #$f0
+;	beq loop3
+;
+;	ldy #$00
+;loop4:
+;	lda (_screenbuf_chunk4), y
+;	sta $2007
+;	iny
+;	cpy #$f0
+;	beq loop4
 
 put_str_out:
 	rts
@@ -215,9 +235,6 @@ set_palette:
 	ldx #$00
 	sta sp
 	stx sp+1
-
-	lda #%10000000
-	sta $2000	; enable vblank NMI
 
 	cli
 
