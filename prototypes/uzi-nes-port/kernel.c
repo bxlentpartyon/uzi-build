@@ -2,8 +2,8 @@ extern void __dump_screenbuf(void);
 extern void ppu_reset(void);
 extern void ei(void);
 
-extern int buffer_dump_pos;
-extern int ppu_dump_pos;
+extern char *buffer_dump_pos;
+extern char *ppu_dump_pos;
 extern char *screenbuf;
 
 #pragma zpsym ("buffer_dump_pos")
@@ -27,7 +27,7 @@ void putc(char c)
 
 void start_kernel(void)
 {
-	buffer_dump_pos = &screenbuf;
+	buffer_dump_pos = screenbuf;
 	ppu_dump_pos = (char *) 0x2020;
 
 	putc('H');
@@ -48,8 +48,8 @@ void dump_screenbuf(void)
 	buffer_dump_pos = buffer_dump_pos + 10;
 	ppu_dump_pos = ppu_dump_pos + 10;
 	if (buffer_dump_pos >= buffer_dump_pos + SCREEN_BUF_SIZE) {
-		buffer_dump_pos = &screenbuf;
-		ppu_dump_pos = 0x2020;
+		buffer_dump_pos = screenbuf;
+		ppu_dump_pos = (char *) 0x2020;
 	}
 }
 
