@@ -9,8 +9,7 @@ extern char *screenbuf;
 #pragma zpsym ("buffer_dump_pos")
 #pragma zpsym ("ppu_dump_pos")
 
-#define SCREEN_BUF_SIZE 960
-//char screenbuf[10] = { 'f', 'u', 'c', 'k', 0, 0, 0, 0, 0, 0 };
+#define SCREEN_BUF_SIZE 896
 int cursor_pos = 0;
 
 void putc(char c)
@@ -27,7 +26,7 @@ void putc(char c)
 
 void start_kernel(void)
 {
-	buffer_dump_pos = screenbuf;
+	buffer_dump_pos = (char *) &screenbuf;
 	ppu_dump_pos = (char *) 0x2020;
 
 	putc('H');
@@ -45,10 +44,11 @@ void dump_screenbuf(void)
 {
 	__dump_screenbuf();
 
-	buffer_dump_pos = buffer_dump_pos + 10;
-	ppu_dump_pos = ppu_dump_pos + 10;
-	if (buffer_dump_pos == screenbuf + SCREEN_BUF_SIZE) {
-		buffer_dump_pos = screenbuf;
+	buffer_dump_pos = buffer_dump_pos + 16;
+	ppu_dump_pos = ppu_dump_pos + 16;
+
+	if (buffer_dump_pos == ((char *) &screenbuf) + SCREEN_BUF_SIZE) {
+		buffer_dump_pos = (char *) &screenbuf;
 		ppu_dump_pos = (char *) 0x2020;
 	}
 }

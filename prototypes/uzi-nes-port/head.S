@@ -37,7 +37,7 @@
 
 .segment "DATA"
 _screenbuf:
-	.res 960, $01
+	.res 896, $01
 
 .segment "ZEROPAGE"
 _buffer_dump_pos:
@@ -66,7 +66,7 @@ loop:
 	lda (_buffer_dump_pos), y
 	sta $2007
 	iny
-	cpy #$a
+	cpy #$10
 	bne loop
 
 put_str_out:
