@@ -39,7 +39,7 @@
 
 .segment "DATA"
 _screenbuf:
-	.res 896, $01
+	.res 896, $00
 
 .segment "ZEROPAGE"
 _buffer_dump_pos:
