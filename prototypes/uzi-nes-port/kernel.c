@@ -15,8 +15,7 @@ int cursor_pos = 0;
 void putc(char c)
 {
 	char ptable_c = c - 0x20;
-	screenbuf[cursor_pos] = ptable_c;
-	cursor_pos += 1;
+	screenbuf[cursor_pos++] = ptable_c;
 
 	if (cursor_pos >= SCREEN_BUF_SIZE)
 		cursor_pos = 0;
