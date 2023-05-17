@@ -23,16 +23,23 @@ void putc(char c)
 	return;
 }
 
+void puts(char *s)
+{
+	int pos = 0;
+	char cur_char = *s;
+
+	while (cur_char != 0x00) {
+		putc(cur_char);
+		cur_char = s[++pos];
+	}
+}
+
 void start_kernel(void)
 {
 	buffer_dump_pos = (char *) &screenbuf;
 	ppu_dump_pos = (char *) 0x2020;
 
-	putc('H');
-	putc('E');
-	putc('L');
-	putc('L');
-	putc('O');
+	puts("USA USA USA");
 
 	ei();
 
