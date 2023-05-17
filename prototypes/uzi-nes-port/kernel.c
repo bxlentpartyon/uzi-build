@@ -4,7 +4,7 @@ extern void ei(void);
 
 extern char *buffer_dump_pos;
 extern char *ppu_dump_pos;
-extern char *screenbuf;
+extern char screenbuf[];
 
 #pragma zpsym ("buffer_dump_pos")
 #pragma zpsym ("ppu_dump_pos")
