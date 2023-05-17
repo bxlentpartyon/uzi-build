@@ -51,7 +51,7 @@ _ppu_dump_pos:
 
 .proc _ei
 	lda #%10000000
-	sta $2000	; enable vblank NMI
+	sta PPU_CTRL	; enable vblank NMI
 	rts
 .endproc
 
@@ -82,11 +82,11 @@ put_str_out:
 	lda #$00
 	sta PPU_ADDR
 
-	sta $2005	; reset scrolling
-	sta $2005
+	sta PPU_SCROLL	; reset scrolling
+	sta PPU_SCROLL
 
 	ldx #$0a	; enable BG rendering
-	stx $2001
+	stx PPU_MASK
 	rts
 .endproc
 
@@ -100,16 +100,16 @@ put_str_out:
 	txs
 
 	lda #%00000000
-	sta $2000	; disable vblank NMI
+	sta PPU_CTRL	; disable vblank NMI
 
 	inx		; X = 0
-	stx $2001	; disable rendering
+	stx PPU_MASK	; disable rendering
 	stx $4010	; disable DMC IRQ
 
-	bit $2002	; acknowledge stray vblank
+	bit PPU_STATUS	; acknowledge stray vblank
 
 vblankwait1:
-	bit $2002
+	bit PPU_STATUS
 	bpl vblankwait1
 
 clrmem:
@@ -198,7 +198,7 @@ copy_to_ram:
 	jmp copy_to_ram
 
 vblankwait2:
-	bit $2002
+	bit PPU_STATUS
 	bne vblankwait2
 
 set_palette:
