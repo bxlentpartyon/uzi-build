@@ -66,7 +66,7 @@ loop:
 	lda (_buffer_dump_pos), y
 	sta $2007
 	iny
-	cpy #$10
+	cpy #$80
 	bne loop
 
 put_str_out:
