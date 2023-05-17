@@ -69,30 +69,6 @@ loop:
 	cpy #$a
 	bne loop
 
-;	ldy #$00
-;loop2:
-;	lda (_screenbuf_chunk2), y
-;	sta $2007
-;	iny
-;	cpy #$f0
-;	beq loop2
-;
-;	ldy #$00
-;loop3:
-;	lda (_screenbuf_chunk3), y
-;	sta $2007
-;	iny
-;	cpy #$f0
-;	beq loop3
-;
-;	ldy #$00
-;loop4:
-;	lda (_screenbuf_chunk4), y
-;	sta $2007
-;	iny
-;	cpy #$f0
-;	beq loop4
-
 put_str_out:
 	rts
 
