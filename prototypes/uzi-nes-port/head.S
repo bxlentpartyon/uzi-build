@@ -12,6 +12,8 @@
 	.export		_ppu_dump_pos
 	.export		_ei
 
+	.include	"nes.inc"
+
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
 	.byte 4				; 4	PRG-ROM Banks
@@ -57,14 +59,14 @@ _ppu_dump_pos:
 
 put_str:
 	lda _ppu_dump_pos+1
-	sta $2006
+	sta PPU_ADDR
 	lda _ppu_dump_pos
-	sta $2006
+	sta PPU_ADDR
 
 	ldy #$00
 loop:
 	lda (_buffer_dump_pos), y
-	sta $2007
+	sta PPU_DATA
 	iny
 	cpy #$80
 	bne loop
@@ -76,9 +78,9 @@ put_str_out:
 
 .proc _ppu_reset
 	lda #$20	; reset ppu read address
-	sta $2006
+	sta PPU_ADDR
 	lda #$00
-	sta $2006
+	sta PPU_ADDR
 
 	sta $2005	; reset scrolling
 	sta $2005
@@ -201,11 +203,11 @@ vblankwait2:
 
 set_palette:
 	lda #$3f
-	sta $2006
+	sta PPU_ADDR
 	lda #$01
-	sta $2006
+	sta PPU_ADDR
 	lda #$30
-	sta $2007
+	sta PPU_DATA
 
 	lda #$08
 	ldx #$00

@@ -2,6 +2,8 @@ CA := ca65
 CC := cc65
 LD := ld65
 
+CAFLAGS := --include-dir include/asm
+
 PLATFORM := uzi
 
 TARGET := uzi.nes
@@ -19,7 +21,7 @@ all: $(TARGET)
 
 %.o: %.S
 	@echo "Building .S $<"
-	$(CA) -o $@ $<
+	$(CA) $(CAFLAGS) -o $@ $<
 
 %.o: %.s
 	@echo "Building .s $<"
