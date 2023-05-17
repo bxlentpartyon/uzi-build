@@ -44,8 +44,8 @@ void dump_screenbuf(void)
 {
 	__dump_screenbuf();
 
-	buffer_dump_pos = buffer_dump_pos + 16;
-	ppu_dump_pos = ppu_dump_pos + 16;
+	buffer_dump_pos += 16;
+	ppu_dump_pos += 16;
 
 	if (buffer_dump_pos == ((char *) &screenbuf) + SCREEN_BUF_SIZE) {
 		buffer_dump_pos = (char *) &screenbuf;
