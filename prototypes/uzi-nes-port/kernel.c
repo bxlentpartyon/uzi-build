@@ -12,6 +12,9 @@ extern char screenbuf[];
 #define SCREEN_VIS_ROWS	28
 #define SCREEN_COLS	32
 #define SCREEN_BUF_SIZE SCREEN_VIS_ROWS * SCREEN_COLS
+#define SCREEN_BUF_START	(char *) &screenbuf
+
+#define PPU_FIRST_VIS_ROW	(char *) 0x2020;
 
 int cursor_pos = 0;
 
@@ -38,8 +41,8 @@ void puts(char *s)
 
 void start_kernel(void)
 {
-	buffer_dump_pos = (char *) &screenbuf;
-	ppu_dump_pos = (char *) 0x2020;
+	buffer_dump_pos = SCREEN_BUF_START;
+	ppu_dump_pos = PPU_FIRST_VIS_ROW;
 
 	puts("boot:");
 
@@ -55,9 +58,9 @@ void dump_screenbuf(void)
 	buffer_dump_pos += 128;
 	ppu_dump_pos += 128;
 
-	if (buffer_dump_pos == ((char *) &screenbuf) + SCREEN_BUF_SIZE) {
-		buffer_dump_pos = (char *) &screenbuf;
-		ppu_dump_pos = (char *) 0x2020;
+	if (buffer_dump_pos == SCREEN_BUF_START + SCREEN_BUF_SIZE) {
+		buffer_dump_pos = SCREEN_BUF_START;
+		ppu_dump_pos = PPU_FIRST_VIS_ROW;
 	}
 }
 
