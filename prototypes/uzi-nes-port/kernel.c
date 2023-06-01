@@ -9,9 +9,9 @@ extern char screenbuf[];
 #pragma zpsym ("buffer_dump_pos")
 #pragma zpsym ("ppu_dump_pos")
 
-#define SCREEN_VIS_ROWS	28
-#define SCREEN_COLS	32
-#define SCREEN_BUF_SIZE SCREEN_VIS_ROWS * SCREEN_COLS
+#define SCREEN_VIS_ROWS		28
+#define SCREEN_COLS		32
+#define SCREEN_BUF_SIZE		SCREEN_VIS_ROWS * SCREEN_COLS
 #define SCREEN_BUF_START	(char *) &screenbuf
 
 #define PPU_FIRST_VIS_ROW	(char *) 0x2020;
