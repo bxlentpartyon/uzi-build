@@ -270,4 +270,4 @@ reset_stub "STUB02"
 reset_stub "STUB03"
 
 .segment "CHR"
-	.incbin "tileset.chr"
+	.incbin "font/newfont.chr"

@@ -14,8 +14,7 @@ int cursor_pos = 0;
 
 void putc(char c)
 {
-	char ptable_c = c - 0x20;
-	screenbuf[cursor_pos++] = ptable_c;
+	screenbuf[cursor_pos++] = c;
 
 	if (cursor_pos >= SCREEN_BUF_SIZE)
 		cursor_pos = 0;
@@ -39,7 +38,7 @@ void start_kernel(void)
 	buffer_dump_pos = (char *) &screenbuf;
 	ppu_dump_pos = (char *) 0x2020;
 
-	puts("USA USA USA");
+	puts("boot:");
 
 	ei();
 
