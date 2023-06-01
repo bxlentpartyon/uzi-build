@@ -18,6 +18,12 @@ cd build
 cmake ..
 make -j 4
 
+# Running nestile
+
+Install:
+
+python3-tkinter
+
 # Builing prototype
 
 # Running fceux in userspace (Fedora 37)
