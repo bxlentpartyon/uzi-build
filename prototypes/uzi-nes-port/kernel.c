@@ -9,7 +9,10 @@ extern char screenbuf[];
 #pragma zpsym ("buffer_dump_pos")
 #pragma zpsym ("ppu_dump_pos")
 
-#define SCREEN_BUF_SIZE 896
+#define SCREEN_VIS_ROWS	28
+#define SCREEN_COLS	32
+#define SCREEN_BUF_SIZE SCREEN_VIS_ROWS * SCREEN_COLS
+
 int cursor_pos = 0;
 
 void putc(char c)
