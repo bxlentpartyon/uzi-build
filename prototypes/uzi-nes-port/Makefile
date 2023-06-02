@@ -13,7 +13,11 @@ KERNEL_OBJS := head.o kernel.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS))
 
-ALL_DEPS := $(KERNEL_DEPS)
+PPU_OBJS := ppu.o
+PPU_OBJ_DIR := ppu
+PPU_DEPS := $(patsubst %, $(PPU_OBJ_DIR)/%, $(PPU_OBJS))
+
+ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS)
 ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
 
 .PRECIOUS: %.s %.o
@@ -36,8 +40,8 @@ all: $(TARGET)
 	@echo "Building .s $<"
 	$(CA) -o $@ $<
 
-$(TARGET): $(KERNEL_DEPS) $(LINKER_SCRIPT)
-	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(KERNEL_DEPS) uzi.lib
+$(TARGET): $(ALL_DEPS) $(LINKER_SCRIPT)
+	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(ALL_DEPS) uzi.lib
 
 clean:
 	rm -f $(ALL_DEPS) $(ALL_EXTRA) uzi.nes link.map
