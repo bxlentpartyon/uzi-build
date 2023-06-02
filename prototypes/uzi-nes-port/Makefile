@@ -8,7 +8,10 @@ PLATFORM := uzi
 
 TARGET := uzi.nes
 LINKER_SCRIPT := scripts/linker/uzi.cfg
+
 KERNEL_OBJECTS := head.o kernel.o
+KERNEL_OBJ_DIR := kernel
+KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJECTS))
 
 .PRECIOUS: %.s %.o
 .SUFFIXES:
@@ -30,8 +33,8 @@ all: $(TARGET)
 	@echo "Building .s $<"
 	$(CA) -o $@ $<
 
-$(TARGET): $(KERNEL_OBJECTS) $(LINKER_SCRIPT)
-	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(KERNEL_OBJECTS) uzi.lib
+$(TARGET): $(KERNEL_DEPS) $(LINKER_SCRIPT)
+	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(KERNEL_DEPS) uzi.lib
 
 clean:
 	rm -f *.o *.nes *.s link.map
