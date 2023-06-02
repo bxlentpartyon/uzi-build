@@ -13,6 +13,9 @@ KERNEL_OBJECTS := head.o kernel.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJECTS))
 
+ALL_DEPS := $(KERNEL_DEPS)
+ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
+
 .PRECIOUS: %.s %.o
 .SUFFIXES:
 
@@ -37,5 +40,5 @@ $(TARGET): $(KERNEL_DEPS) $(LINKER_SCRIPT)
 	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(KERNEL_DEPS) uzi.lib
 
 clean:
-	rm -f *.o *.nes *.s link.map
+	rm -f $(ALL_DEPS) $(ALL_EXTRA) uzi.nes link.map
 
