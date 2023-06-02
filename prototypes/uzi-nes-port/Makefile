@@ -7,7 +7,7 @@ CAFLAGS := --include-dir include/asm
 PLATFORM := uzi
 
 TARGET := uzi.nes
-LINKER_SCRIPT := uzi.cfg
+LINKER_SCRIPT := scripts/linker/uzi.cfg
 KERNEL_OBJECTS := head.o kernel.o
 
 .PRECIOUS: %.s %.o
