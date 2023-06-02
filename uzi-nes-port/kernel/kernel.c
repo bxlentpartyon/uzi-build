@@ -1,4 +1,5 @@
 #include <ppu.h>
+#include <process.h>
 
 extern void ei(void);
 
@@ -10,5 +11,5 @@ void start_kernel(void)
 
 	ei();
 
-	while (1);
+	init2();
 }

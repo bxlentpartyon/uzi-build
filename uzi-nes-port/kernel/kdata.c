@@ -1,5 +1,8 @@
+#if 0
 #include <extern.h>
+#endif
 #include <unix.h>
+#if 0
 
 #include <devio.h>
 
@@ -38,11 +41,5 @@ struct filesys fs_tab[1];
 unsigned swapcnt;
 char *swapbase;
 blkno_t swapblk;
-struct blkbuf bufpool[1];
-
-//struct devsw dev_tab[] =  /* The device driver switch table */
-//{
-//    { 0, 0, 0, 0, 0, 0 },      /* tty */
-//    { 0, ok, ok, ok, null_write, nogood },                      /* /dev/null */
-//    { 0, ok, ok, mem_read, mem_write, nogood }              /* /dev/mem */
-//};
+#endif
+struct blkbuf bufpool[NBUFS];

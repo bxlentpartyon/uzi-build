@@ -2,14 +2,16 @@
 UZI (Unix Z80 Implementation) Kernel:  devio.c
 ***************************************************/
 
-
+#if 0
 int ok(), nogood();
 #define DEVIO
 
 #include <string.h>
 
+#endif
 #include <unix.h>
 #include <extern.h>
+#if 0
 
 #include <devio.h>
 #include <machdep.h>
@@ -182,6 +184,7 @@ freebuf()
     return (oldest);
 }
         
+#endif
 
 void bufinit(void)
 {
@@ -193,6 +196,7 @@ void bufinit(void)
     }
 }
 
+#if 0
 
 void bufdump(void)
 {
@@ -400,4 +404,5 @@ fullq(struct s_queue *q)
     ei();
     return (0);
 }
+#endif
 

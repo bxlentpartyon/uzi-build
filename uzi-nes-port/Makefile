@@ -9,7 +9,7 @@ PLATFORM := uzi
 TARGET := uzi.nes
 LINKER_SCRIPT := scripts/linker/uzi.cfg
 
-KERNEL_OBJS := head.o kernel.o
+KERNEL_OBJS := head.o kernel.o process.o kdata.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS))
 
@@ -17,7 +17,11 @@ PPU_OBJS := ppu.o
 PPU_OBJ_DIR := ppu
 PPU_DEPS := $(patsubst %, $(PPU_OBJ_DIR)/%, $(PPU_OBJS))
 
-ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS)
+DRIVER_OBJS := devio.o
+DRIVER_OBJ_DIR := drivers
+DRIVER_DEPS := $(patsubst %, $(DRIVER_OBJ_DIR)/%, $(DRIVER_OBJS))
+
+ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(DRIVER_DEPS)
 ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
 
 .PRECIOUS: %.s %.o

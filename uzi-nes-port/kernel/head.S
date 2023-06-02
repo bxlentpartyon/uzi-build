@@ -31,8 +31,8 @@
 .segment "BANK00"
 	.byte $69, $00
 
-.segment "BANK01"
-	.byte $69, $01
+;.segment "BANK01"
+;	.byte $69, $01
 
 .segment "BANK02"
 	.byte $69, $02

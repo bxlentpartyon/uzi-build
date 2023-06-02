@@ -2,27 +2,38 @@
 UZI (Unix Z80 Implementation) Kernel:  process.c
 ***************************************************/
 
+#if 0
 #include <string.h>
 
 #include <unix.h>
 #include <extern.h>
 
+#endif
+
 #include <devio.h>
+
+#if 0
 #include <extras.h>
 #include <filesys.h>
 #include <machdep.h>
+#endif
 #include <process.h>
+#if 0
 #include <scall.h>
+#endif
 
 void init2(void)
 {
+#if 0
     register char *j;
     static char bootchar;
     static char *arg[2] = { "init", NULL };
     ptptr ptab_alloc();
+#endif
 
     bufinit();
 
+#if 0
     /* Create the context for the first process */
     newproc(udata.u_ptab = initproc = ptab_alloc());
     initproc->p_status = P_RUNNING;
@@ -68,8 +79,9 @@ void init2(void)
 */
     panic("no /init");
 
+#endif
 }
-
+#if 0
 
 /* psleep() puts a process to sleep on the given event.
 If another process is runnable, it swaps out the current one
@@ -594,5 +606,4 @@ void ssig(register ptptr proc, int16 sig)
 done:
     ei();
 }
-
-
+#endif
