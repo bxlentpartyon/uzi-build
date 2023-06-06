@@ -13,6 +13,8 @@ UZI (Unix Z80 Implementation) Kernel:  process.c
 #include <machdep.h>
 #include <scall.h>
 
+void init2(void)
+{
     register char *j;
     static char bootchar;
     static char *arg[2] = { "init", NULL };
