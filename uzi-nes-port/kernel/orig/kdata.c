@@ -9,12 +9,6 @@ struct devsw dev_tab[] =  /* The device driver switch table */
     { 0, ok, ok, mem_read, mem_write, nogood }              /* /dev/mem */
 };
 
-/* Process/userspace stuff */
-
-struct u_data udata;
-ptptr initproc; /* The process table address of the first process. */
-struct p_tab ptab[1];
-
 /* Interrupt/timer stuff */
 
 time_t tod;	/* Time of day */
