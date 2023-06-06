@@ -1,7 +1,3 @@
-/**************************************************
-UZI (Unix Z80 Implementation) Kernel:  machdep.c
-***************************************************/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>

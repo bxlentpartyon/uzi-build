@@ -1,3 +1,7 @@
+/**************************************************
+UZI (Unix Z80 Implementation) Kernel:  machdep.c
+***************************************************/
+
 #include <ppu.h>
 #include <process.h>
 
