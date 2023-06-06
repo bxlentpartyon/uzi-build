@@ -21,6 +21,10 @@ DRIVER_OBJS := devio.o
 DRIVER_OBJ_DIR := drivers
 DRIVER_DEPS := $(patsubst %, $(DRIVER_OBJ_DIR)/%, $(DRIVER_OBJS))
 
+LIB_OBJS := string.o
+LIB_OBJ_DIR := lib
+LIB_DEPS := $(patsubst %, $(LIB_OBJ_DIR)/%, $(LIB_OBJS))
+
 ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(DRIVER_DEPS)
 ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
 
