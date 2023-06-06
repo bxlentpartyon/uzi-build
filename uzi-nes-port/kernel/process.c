@@ -5,5 +5,5 @@
 
 void init2(void)
 {
-    bufinit();
+	bufinit();
 }
