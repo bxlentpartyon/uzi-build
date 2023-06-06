@@ -30,13 +30,13 @@
 	.byte 0, 0			; 14-15 Misc ROM, expansion device
 
 .segment "BANK00"
-	.byte $69, $00
+	.byte $00, $00
 
-;.segment "BANK01"
-;	.byte $69, $01
+.segment "BANK01"
+	.byte $00, $00
 
 .segment "BANK02"
-	.byte $69, $02
+	.byte $00, $00
 
 .segment "DATA"
 _screenbuf:
