@@ -4,3 +4,4 @@
 *.nes
 *.dbg
 link.map
+cscope.out
