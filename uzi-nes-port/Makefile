@@ -9,7 +9,7 @@ PLATFORM := uzi
 TARGET := uzi.nes
 LINKER_SCRIPT := scripts/linker/uzi.cfg
 
-KERNEL_OBJS := head.o kernel.o process.o kdata.o
+KERNEL_OBJS := head.o machdep.o process.o kdata.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS))
 
