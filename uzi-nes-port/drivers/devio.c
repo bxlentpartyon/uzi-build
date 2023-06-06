@@ -7,11 +7,9 @@ UZI (Unix Z80 Implementation) Kernel:  devio.c
 
 void bufinit(void)
 {
-    register bufptr bp;
+	register bufptr bp;
 
-    for (bp=bufpool; bp < bufpool+NBUFS; ++bp)
-    {
-        bp->bf_dev = -1;
-    }
+	for (bp = bufpool; bp < bufpool + NBUFS; ++bp) {
+		bp->bf_dev = -1;
+	}
 }
-
