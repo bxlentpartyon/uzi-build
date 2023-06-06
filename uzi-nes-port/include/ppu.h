@@ -2,7 +2,7 @@
 #define __PPU_H__
 
 void init_ppu(void);
-void puts(char *s);
-void putc(char c);
+void ppu_puts(char *s);
+void ppu_putc(char c);
 
 #endif /* __PPU_H__ */

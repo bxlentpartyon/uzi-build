@@ -11,7 +11,7 @@ void start_kernel(void)
 {
 	init_ppu();
 
-	puts("boot:");
+	ppu_puts("boot:");
 
 	ei();
 

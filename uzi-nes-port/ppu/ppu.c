@@ -19,7 +19,7 @@ extern char screenbuf[];
 
 int cursor_pos = 0;
 
-void putc(char c)
+void ppu_putc(char c)
 {
 	screenbuf[cursor_pos++] = c;
 
@@ -29,13 +29,13 @@ void putc(char c)
 	return;
 }
 
-void puts(char *s)
+void ppu_puts(char *s)
 {
 	int pos = 0;
 	char cur_char = *s;
 
 	while (cur_char != 0x00) {
-		putc(cur_char);
+		ppu_putc(cur_char);
 		cur_char = s[++pos];
 	}
 }
