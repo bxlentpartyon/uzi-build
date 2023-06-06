@@ -13,9 +13,9 @@ extern unsigned int mem_read();
 extern unsigned int mem_write();
 extern unsigned int null_write();
 
-#define NDEVS   3    /* Devices 0..NDEVS-1 are capable of being mounted */
-#define TTYDEV  5    /* Device used by kernel for messages, panics */
-#define SWAPDEV  3   /* Device for swapping. */
-#define NBUFS  4     /* Number of block buffers */
+#define NDEVS	3	/* Devices 0..NDEVS-1 are capable of being mounted */
+#define TTYDEV	5	/* Device used by kernel for messages, panics */
+#define SWAPDEV	3	/* Device for swapping. */
+#define NBUFS	4	/* Number of block buffers */
 
 #endif /* __CONFIG_H__ */
