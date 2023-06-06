@@ -11,6 +11,7 @@
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
 	.export		_ei
+	.export		_di
 
 	.include	"nes.inc"
 
@@ -49,9 +50,17 @@ _ppu_dump_pos:
 
 .segment "CODE"
 
+; enable interrupts
 .proc _ei
 	lda #%10000000
 	sta PPU_CTRL	; enable vblank NMI
+	rts
+.endproc
+
+; disable interrupts
+.proc _di
+	lda #$00
+	sta PPU_CTRL	; disable vblank NMI
 	rts
 .endproc
 

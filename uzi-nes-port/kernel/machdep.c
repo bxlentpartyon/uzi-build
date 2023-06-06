@@ -260,33 +260,6 @@ uint16 tread(uint16 port)
     return ( 10*((n>>4)&0x0f) + (n&0x0f) );
 }
 
-
-/* Disable interrupts */
-void di(void)
-{
-/*
-#asm 8080
-        DI      ;disable interrupts
-#endasm
-*/
-}
-
-/* Enable interrupts if we are not in service routine */
-void ei(void)
-{
-    if (inint)
-        return;
-    ;   /* Empty statement necessary to fool compiler */
-
-/*
-#asm 8080
-        EI      ;disable interrupts
-#endasm
-*/
-}
-
-
-
 /* This shifts an unsigned int right 8 places. */
 
 shift8()
