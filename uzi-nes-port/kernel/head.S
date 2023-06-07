@@ -229,7 +229,20 @@ set_palette:
 .endproc
 
 .proc nmi
+	pha	; save registers
+	tya
+	pha
+	txa
+	pha
+
 	jsr _handle_vblank
+
+	pla	; restore registers
+	tax
+	pla
+	tay
+	pla
+
 	rti
 .endproc
 
