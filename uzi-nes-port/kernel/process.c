@@ -1,6 +1,8 @@
 #include <unix.h>
 #include <extern.h>
 #include <devio.h>
+#include <machdep.h>
+#include <ppu.h>
 #include <process.h>
 #include <string.h>
 
@@ -45,9 +47,14 @@ nogood:
 }
 
 void init2(void)
+
 {
 	bufinit();
 
 	initproc = ptab_alloc();
 	udata.u_ptab = initproc;
+
+	kprintf("boot: %s", "garbage");
+
+	while(1);
 }

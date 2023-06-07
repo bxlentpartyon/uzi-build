@@ -1,6 +1,3 @@
-#ifndef __MACHDEP_H__
-#define __MACHDEP_H__
-
 void di(void);
 void ei(void);
 void idump(void);
@@ -12,7 +9,6 @@ void panic(char *s);
 void stkreset(void);
 void initvec(void);
 void calltrap(void);
-void kprintf(char *fmt,...);
 
 /* time functions */
 void rdtime(time_t *tloc);
@@ -27,5 +23,3 @@ void out(char c, unsigned int *addr);
 /* only referenced inside machdep.h */
 uint16 tread(uint16 port);
 void kputchar(int c);
-
-#endif /* __MACHDEP_H__ */

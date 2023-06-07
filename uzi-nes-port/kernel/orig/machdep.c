@@ -292,25 +292,6 @@ void warning(char *s)
     kprintf("WARNING: %s\n",s);
 }
 
-
-puts(s)
-char *s;
-{
-    while (*s)
-        kputchar(*(s++));
-}
-
-void kputchar(int c)
-{
-    if (c == '\n')
-        _putc('\r');
-    _putc(c);
-    if (c == '\t')
-        puts("\177\177\177\177\177\177\177\177\177\177");
-}
-
-
-
 void idump(void)
 {
     inoptr ip;
@@ -354,56 +335,6 @@ void idump(void)
 
 
 
-/* Short version of printf to save space */
-/* TODO: fix the vararg handling here */
-void kprintf(char *fmt, ...)
-        {
-	va_list ap;
-        register char **arg;
-        register c, base;
-        char s[7]; //, *itob();
-
-
-	va_start(ap, fmt);
-
-	/* wrong - just comment it out for now.
-        arg = (char **)&nargs + nargs;
-        fmt = *arg;
-	*/
-        while (c = *fmt++) {
-                if (c != '%') {
-                        kputchar(c);
-                        continue;
-                        }
-                switch (c = *fmt++) {
-                case 'c':
-                        kputchar(*--arg);
-                        continue;
-                case 'd':
-                        base = -10;
-                        goto prt;
-                case 'o':
-                        base = 8;
-                        goto prt;
-                case 'u':
-                        base = 10;
-                        goto prt;
-                case 'x':
-                        base = 16;
-                prt:
-                        //puts(itob(*--arg, s, base));
-                        continue;
-                case 's':
-                        puts(*--arg);
-                        continue;
-                default:
-                        kputchar(c);
-                        continue;
-                        }
-                }
-
-	va_end(ap);
-        }
 
 
 void out(char c, unsigned int *addr)
