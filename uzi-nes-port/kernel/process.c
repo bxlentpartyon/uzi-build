@@ -39,7 +39,7 @@ nogood:
 	    goto nogood;
     }
 
-    bzero(p,sizeof(struct p_tab));
+    bzero((char *) p, sizeof(struct p_tab));
     p->p_pid = nextpid;
     p->p_status = P_FORKING;
     ei();
