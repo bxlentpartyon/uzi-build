@@ -77,7 +77,7 @@ void kprintf(char *fmt, ...)
                         }
                 }
 
-	//va_end(ap);
+	va_end(ap);
         }
 
 void start_kernel(void)
