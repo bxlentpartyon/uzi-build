@@ -20,38 +20,23 @@ extern char screenbuf[];
 
 int cursor_pos = 0;
 
-/*
- * zero_line does not advance cursor_pos, it just blanks out the entire
- * line after the current cursor_pos
- */
-void zero_line(void)
+void next_line(void)
 {
 	int chars_left, i;
 
 	chars_left = SCREEN_COLS - (cursor_pos % SCREEN_COLS);
 
 	for (i = 0; i < chars_left; i++)
-		screenbuf[cursor_pos + i] = '*';
-}
-
-void next_line(void)
-{
-	zero_line();
-
-	if (cursor_pos / SCREEN_COLS == SCREEN_LAST_ROW_IDX)
-		cursor_pos = 0;
-	else
-		cursor_pos = ((cursor_pos / SCREEN_COLS) + 1) * SCREEN_COLS;
+		screenbuf[cursor_pos++] = '*';
 }
 
 void ppu_putc(char c)
 {
 	if (c == '\r') {
 		next_line();
-		return;
+	} else {
+		screenbuf[cursor_pos++] = c;
 	}
-
-	screenbuf[cursor_pos++] = c;
 
 	if (cursor_pos >= SCREEN_BUF_SIZE)
 		cursor_pos = 0;
