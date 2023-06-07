@@ -218,8 +218,8 @@ set_palette:
 	lda #$30
 	sta PPU_DATA
 
-	lda #$08
-	ldx #$00
+	lda #$00
+	ldx #$08
 	sta sp
 	stx sp+1
 
