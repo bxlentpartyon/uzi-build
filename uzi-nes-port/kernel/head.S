@@ -251,9 +251,9 @@ stub_entry:
 	ldx #$01	;
 	stx $5100	; PRG bank mode 01 (2 16K banks)
 
-	ldx #$02
+	ldx #$02	; Set PRG RAM protect 1
 	stx $5102
-	ldx #$01
+	ldx #$01	; Set PRG RAM protect 2
 	stx $5103
 
 	ldx #$01	;
