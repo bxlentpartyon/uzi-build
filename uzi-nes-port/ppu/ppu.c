@@ -55,6 +55,14 @@ void ppu_puts(char *s)
 	}
 }
 
+void panic(char *s)
+{
+	cursor_pos = 0;
+	ppu_puts("PANIC: ");
+	ppu_puts(s);
+	while(1);
+}
+
 void dump_screenbuf(void)
 {
 	__dump_screenbuf();
