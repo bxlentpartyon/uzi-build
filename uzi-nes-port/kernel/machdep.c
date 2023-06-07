@@ -21,11 +21,15 @@ void puts(char *s)
 
 void kputchar(char c)
 {
-    if (c == '\n')
-        _putc('\r');
-    _putc(c);
-    if (c == '\t')
-        puts("\177\177\177\177\177\177\177\177\177\177");
+	if (c == '\n') {
+		_putc('\r');
+		return;
+	} else if (c == '\t') {
+		puts("\177\177\177\177\177\177\177\177\177\177");
+		return;
+	}
+
+	_putc(c);
 }
 
 /* Short version of printf to save space */

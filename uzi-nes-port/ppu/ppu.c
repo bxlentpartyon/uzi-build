@@ -12,6 +12,7 @@ extern char screenbuf[];
 
 #define SCREEN_VIS_ROWS		28
 #define SCREEN_COLS		32
+#define SCREEN_LAST_ROW_IDX	27
 #define SCREEN_BUF_SIZE		SCREEN_VIS_ROWS * SCREEN_COLS
 #define SCREEN_BUF_START	(char *) &screenbuf
 
@@ -19,8 +20,37 @@ extern char screenbuf[];
 
 int cursor_pos = 0;
 
+/*
+ * zero_line does not advance cursor_pos, it just blanks out the entire
+ * line after the current cursor_pos
+ */
+void zero_line(void)
+{
+	int chars_left, i;
+
+	chars_left = SCREEN_COLS - (cursor_pos % SCREEN_COLS);
+
+	for (i = 0; i < chars_left; i++)
+		screenbuf[cursor_pos + i] = '*';
+}
+
+void next_line(void)
+{
+	zero_line();
+
+	if (cursor_pos / SCREEN_COLS == SCREEN_LAST_ROW_IDX)
+		cursor_pos = 0;
+	else
+		cursor_pos = ((cursor_pos / SCREEN_COLS) + 1) * SCREEN_COLS;
+}
+
 void ppu_putc(char c)
 {
+	if (c == '\r') {
+		next_line();
+		return;
+	}
+
 	screenbuf[cursor_pos++] = c;
 
 	if (cursor_pos >= SCREEN_BUF_SIZE)
