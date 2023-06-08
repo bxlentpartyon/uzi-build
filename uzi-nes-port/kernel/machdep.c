@@ -4,6 +4,7 @@ UZI (Unix Z80 Implementation) Kernel:  machdep.c
 
 #include <ppu.h>
 #include <process.h>
+#include <lib/string.h>
 
 #include <stdarg.h>
 
@@ -37,9 +38,8 @@ void kputchar(char c)
 void kprintf(char *fmt, ...)
         {
 	va_list ap;
-        register char **arg;
         register int c, base;
-        //char s[7]; //, *itob();
+        char s[7];
 
 	va_start(ap, fmt);
 
@@ -50,9 +50,8 @@ void kprintf(char *fmt, ...)
                         }
                 switch (c = *fmt++) {
                 case 'c':
-                        kputchar(*--arg);
+                        kputchar(va_arg(ap, char));
                         continue;
-/* this stuff is broken until I have itob()
                 case 'd':
                         base = -10;
                         goto prt;
@@ -62,12 +61,14 @@ void kprintf(char *fmt, ...)
                 case 'u':
                         base = 10;
                         goto prt;
+/*
                 case 'x':
                         base = 16;
-                prt:
-                        //puts(itob(*--arg, s, base));
-                        continue;
 */
+                prt:
+                        itob(va_arg(ap, int), s, base);
+			puts(s);
+                        continue;
                 case 's':
                         puts(va_arg(ap, char *));
                         continue;

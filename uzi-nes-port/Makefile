@@ -25,7 +25,7 @@ LIB_OBJS := string.o
 LIB_OBJ_DIR := lib
 LIB_DEPS := $(patsubst %, $(LIB_OBJ_DIR)/%, $(LIB_OBJS))
 
-ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(DRIVER_DEPS)
+ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(DRIVER_DEPS) $(LIB_DEPS)
 ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
 
 .PRECIOUS: %.s %.o
