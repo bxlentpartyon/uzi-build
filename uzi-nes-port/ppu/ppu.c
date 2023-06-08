@@ -38,7 +38,7 @@ void ppu_putc(char c)
 		screenbuf[cursor_pos++] = c;
 	}
 
-	if (cursor_pos >= SCREEN_BUF_SIZE)
+	if (cursor_pos == SCREEN_BUF_SIZE)
 		cursor_pos = 0;
 
 	return;
