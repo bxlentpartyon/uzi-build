@@ -1,10 +1,6 @@
 	.importzp	sp
 	.import 	_start_kernel
 	.import		_handle_vblank
-	.import		_screenbuf_chunk1
-	.import		_screenbuf_chunk2
-	.import		_screenbuf_chunk3
-	.import		_screenbuf_chunk4
 	.export		___dump_screenbuf
 	.export		_ppu_reset
 	.export		_screenbuf

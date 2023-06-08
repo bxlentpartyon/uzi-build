@@ -12,7 +12,6 @@ extern char screenbuf[];
 
 #define SCREEN_VIS_ROWS		28
 #define SCREEN_COLS		32
-#define SCREEN_LAST_ROW_IDX	27
 #define SCREEN_BUF_SIZE		SCREEN_VIS_ROWS * SCREEN_COLS
 #define SCREEN_BUF_START	(char *) &screenbuf
 
