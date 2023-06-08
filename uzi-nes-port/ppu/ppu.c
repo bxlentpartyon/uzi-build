@@ -9,6 +9,7 @@ extern char *ppu_dump_pos;
 #pragma zpsym ("ppu_dump_pos")
 
 extern char screenbuf[];
+extern char screenbuf_advance;
 
 #define SCREEN_VIS_ROWS		28
 #define SCREEN_COLS		32
@@ -66,8 +67,8 @@ void dump_screenbuf(void)
 {
 	__dump_screenbuf();
 
-	buffer_dump_pos += 128;
-	ppu_dump_pos += 128;
+	buffer_dump_pos += screenbuf_advance;
+	ppu_dump_pos += screenbuf_advance;
 
 	if (buffer_dump_pos == SCREEN_BUF_START + SCREEN_BUF_SIZE) {
 		buffer_dump_pos = SCREEN_BUF_START;

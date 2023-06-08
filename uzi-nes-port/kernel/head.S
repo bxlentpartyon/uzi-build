@@ -4,6 +4,7 @@
 	.export		___dump_screenbuf
 	.export		_ppu_reset
 	.export		_screenbuf
+	.export		_screenbuf_advance
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
 	.export		_ei
@@ -37,6 +38,8 @@
 .segment "DATA"
 _screenbuf:
 	.res 896, $00
+_screenbuf_advance:
+	.byte $80
 
 .segment "ZEROPAGE"
 _buffer_dump_pos:
@@ -73,7 +76,7 @@ loop:
 	lda (_buffer_dump_pos), y
 	sta PPU_DATA
 	iny
-	cpy #$80
+	cpy _screenbuf_advance
 	bne loop
 
 put_str_out:
