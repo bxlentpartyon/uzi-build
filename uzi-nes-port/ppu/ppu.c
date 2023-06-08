@@ -19,6 +19,7 @@ extern char screenbuf_advance;
 #define PPU_FIRST_VIS_ROW	(char *) 0x2020;
 
 int cursor_pos = 0;
+int in_panic = 0;
 
 void next_line(void)
 {
@@ -55,12 +56,16 @@ void ppu_puts(char *s)
 	}
 }
 
-void panic(char *s)
+void panic(char *msg)
 {
-	cursor_pos = 0;
-	ppu_puts("PANIC: ");
-	ppu_puts(s);
-	while(1);
+	/* prevent recursion from ppu_put* functions */
+	if (!in_panic) {
+		in_panic = 1;
+		cursor_pos = 0;
+		ppu_puts("PANIC: ");
+		ppu_puts(msg);
+		while(1);
+	}
 }
 
 void dump_screenbuf(void)
