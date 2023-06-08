@@ -4,7 +4,7 @@
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>
-#include <string.h>
+#include <lib/string.h>
 
 extern void ei(void);
 extern void di(void);
