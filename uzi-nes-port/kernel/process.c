@@ -55,6 +55,7 @@ void init2(void)
 	udata.u_ptab = initproc;
 
 	kprintf("boot: %d\n", -69);
+	kprintf("boot: %s %x\n", "garbage", 69);
 
 	while(1);
 }
