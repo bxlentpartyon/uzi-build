@@ -1,3 +1,6 @@
+#include <ppu.h>
+#include <lib/string.h>
+
 /* Super slow bzero */
 void bzero(char *p, unsigned int s)
 {
@@ -36,12 +39,15 @@ void itob(int n, char *s, int b)
 {
 	char *cur_pos = s;
 	int cur_digit;
-	int cur_n = (n < 0) ? -n : n;
 	int base = (b < 0) ? -b : b;
+	unsigned int cur_n = (unsigned int) (n < 0 && b == 10) ? -n : n;
 
 	do {
 		cur_digit = cur_n % base;
-		*(cur_pos++) = cur_digit + '0';
+		if (cur_digit > 9)
+			*(cur_pos++) = (cur_digit - 10) + 'a';
+		else
+			*(cur_pos++) = cur_digit + '0';
 		cur_n = cur_n / base;
 	} while (cur_n > 0);
 

@@ -65,10 +65,11 @@ void kprintf(char *fmt, ...)
                 case 'u':
                         base = 10;
                         goto prt;
-/*
                 case 'x':
                         base = 16;
-*/
+			goto prt;
+		case 'b':
+			base = 2;
                 prt:
                         itob(va_arg(ap, int), s, base);
 			puts(s);
