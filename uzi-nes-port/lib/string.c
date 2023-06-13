@@ -40,7 +40,7 @@ void itob(int n, char *s, int b)
 	char *cur_pos = s;
 	int cur_digit;
 	int base = (b < 0) ? -b : b;
-	unsigned int cur_n = (unsigned int) (n < 0 && b == 10) ? -n : n;
+	unsigned int cur_n = (unsigned int) (n < 0 && base == 10) ? -n : n;
 
 	do {
 		cur_digit = cur_n % base;
