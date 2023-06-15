@@ -77,7 +77,7 @@ void kprintf(char *fmt, ...)
                         puts(va_arg(ap, char *));
                         continue;
                 default:
-                        kputchar(c);
+                        panic("bad char");
                         continue;
                         }
                 }
