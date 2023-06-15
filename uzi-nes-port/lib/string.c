@@ -13,10 +13,12 @@ void bzero(char *p, unsigned int s)
 int strlen(char *s)
 {
 	char *curpos = s;
-	int curlen;
+	int curlen = 0;
 
-	while (*curpos++ != '\0')
+	while (*curpos != '\0') {
 		curlen++;
+		curpos++;
+	}
 
 	return curlen;
 }
