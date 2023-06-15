@@ -46,16 +46,25 @@ nogood:
     return (p);
 }
 
-void init2(void)
+void dump_proc(ptptr proc)
+{
+	kprintf("P %d U %d T %x r %x A %d X %d W %x R %d S %x I %x\n",
+		proc->p_pid, proc->p_uid, proc->p_status, proc->p_pptr,
+		proc->p_alarm, proc->p_exitval, proc->p_wait, proc->p_priority,
+		proc->p_pending, proc->p_ignored);
+}
 
+void init2(void)
 {
 	bufinit();
 
 	initproc = ptab_alloc();
 	udata.u_ptab = initproc;
 
-	kprintf("boot: %d\n", -69);
-	kprintf("boot: %s %x\n", "garbage", 69);
+	kprintf("boot:\n");
+
+	dump_proc(initproc);
+
 
 	while(1);
 }
