@@ -18,10 +18,6 @@ void init2(void)
     register char *j;
     static char bootchar;
     static char *arg[2] = { "init", NULL };
-    ptptr ptab_alloc();
-    /* Create the context for the first process */
-    newproc(udata.u_ptab = initproc = ptab_alloc());
-    initproc->p_status = P_RUNNING;
 
     /* User's file table */
     for (j=udata.u_files; j < (udata.u_files+UFTSIZE); ++j)
@@ -325,34 +321,6 @@ int dofork(void)
     p->p_status = P_RUNNING;
     ei();
     return (0);  /* Return to child */
-}
-
-
-/* Newproc fixes up the tables for the child of a fork */
-
-void newproc(ptptr p)
-{
-    register char *j;
-
-    /* Note that ptab_alloc clears most of the entry */
-    di();
-    p->p_swap = (p - ptab) * 65  + 1;  /* Allow 65 blocks per process */
-    p->p_status = P_RUNNING;
-
-    p->p_pptr = udata.u_ptab;
-    p->p_ignored = udata.u_ptab->p_ignored;
-    p->p_uid = udata.u_ptab->p_uid;
-    udata.u_ptab = p;
-    bzero(&udata.u_utime,4*sizeof(time_t)); /* Clear tick counters */
-    ei();
-
-    rdtime(&udata.u_time);
-    i_ref(udata.u_cwd);
-    udata.u_cursig = udata.u_error = 0;
-
-    for (j=udata.u_files; j < (udata.u_files+UFTSIZE); ++j)
-	if (*j >= 0)
-	   ++of_tab[*j].o_refs;
 }
 
 /* This is the clock interrupt routine.   Its job is to
