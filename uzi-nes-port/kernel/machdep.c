@@ -43,8 +43,6 @@ void kprintf(char *fmt, ...)
         register int c, base;
         char s[KPRINTF_BUF_SIZE];
 
-        bzero(s, KPRINTF_BUF_SIZE);
-
 	va_start(ap, fmt);
 
         while (c = *fmt++) {
@@ -71,6 +69,7 @@ void kprintf(char *fmt, ...)
 		case 'b':
 			base = 2;
                 prt:
+			bzero(s, KPRINTF_BUF_SIZE);
                         itob(va_arg(ap, int), s, base);
 			puts(s);
                         continue;
