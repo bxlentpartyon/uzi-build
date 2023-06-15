@@ -28,6 +28,8 @@ LIB_DEPS := $(patsubst %, $(LIB_OBJ_DIR)/%, $(LIB_OBJS))
 ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(DRIVER_DEPS) $(LIB_DEPS)
 ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
 
+FONT :=	font/newfont.chr
+
 .PRECIOUS: %.s %.o
 .SUFFIXES:
 
@@ -48,7 +50,7 @@ all: $(TARGET)
 	@echo "Building .s $<"
 	$(CA) -o $@ $<
 
-$(TARGET): $(ALL_DEPS) $(LINKER_SCRIPT)
+$(TARGET): $(ALL_DEPS) $(LINKER_SCRIPT) $(FONT)
 	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(ALL_DEPS) uzi.lib
 
 clean:
