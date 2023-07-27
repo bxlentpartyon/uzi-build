@@ -6,9 +6,6 @@
 #include <process.h>
 #include <lib/string.h>
 
-extern void ei(void);
-extern void di(void);
-
 /* Newproc fixes up the tables for the child of a fork */
 void newproc(ptptr p)
 {
