@@ -91,5 +91,5 @@ void start_kernel(void)
 
 	ei();
 
-	init2();
+	init2();	/* in process.c */
 }
