@@ -88,6 +88,8 @@ void kprintf(char *fmt, ...)
 
 void start_kernel(void)
 {
+	di();
+
 	init_ppu();
 
 	ei();
