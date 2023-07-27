@@ -92,6 +92,5 @@ void init2(void)
 
 	dump_proc(initproc);
 
-
 	while(1);
 }
