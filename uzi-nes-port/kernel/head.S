@@ -98,6 +98,12 @@ put_str_out:
 	rts
 .endproc
 
+.proc _start_clock
+	lda #%00000000
+	sta APU_FRAME_COUNTER	; enable clock interrupt
+	rts
+.endproc
+
 .proc reset
 	sei
 	cld
@@ -109,6 +115,9 @@ put_str_out:
 
 	lda #%00000000
 	sta PPU_CTRL	; disable vblank NMI
+
+	lda #%01000000
+	sta APU_FRAME_COUNTER	; disable clock interrupt
 
 	inx		; X = 0
 	stx PPU_MASK	; disable rendering
@@ -245,6 +254,22 @@ set_palette:
 	rti
 .endproc
 
+.proc irq
+	pha	; save registers
+	tya
+	pha
+	txa
+	pha
+
+	jsr _handle_irq
+
+	pla	; restore registers
+	tax
+	pla
+	tay
+	pla
+.endproc
+
 .macro reset_stub seg
 .segment seg
 .scope
@@ -281,7 +306,7 @@ stub_entry:
 	stx $5104	; Set ExRAM to read-only
 
 	jmp reset
-	.addr nmi, stub_entry, 0
+	.addr nmi, stub_entry, irq
 .endscope
 .endmacro
 

@@ -86,6 +86,11 @@ void kprintf(char *fmt, ...)
 	va_end(ap);
         }
 
+void handle_irq(void)
+{
+	
+}
+
 void start_kernel(void)
 {
 	di();
