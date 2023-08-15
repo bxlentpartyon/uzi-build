@@ -5,6 +5,7 @@ UZI (Unix Z80 Implementation) Kernel:  machdep.c
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>
+#include <unix.h>
 #include <lib/string.h>
 
 #include <stdarg.h>
@@ -93,6 +94,11 @@ void handle_irq(void)
 {
 	if (apu_status_byte & 0x40)
 		nr_apu_irqs++;
+}
+
+void rdtime(time_t *tloc)
+{
+	return;
 }
 
 void start_kernel(void)
