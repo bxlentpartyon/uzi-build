@@ -286,6 +286,8 @@ set_palette:
 	pla
 	tay
 	pla
+
+	rti
 .endproc
 
 .macro reset_stub seg
