@@ -51,15 +51,21 @@ _ppu_dump_pos:
 
 ; enable interrupts
 .proc _ei
+	cli
+
 	lda #%10000000
 	sta PPU_CTRL	; enable vblank NMI
+
 	rts
 .endproc
 
 ; disable interrupts
 .proc _di
+	sei
+
 	lda #$00
 	sta PPU_CTRL	; disable vblank NMI
+
 	rts
 .endproc
 
