@@ -23,7 +23,6 @@ int16 sec;	/* Tick counter for counting off one second */
 inoptr root;   /* Address of root dir in inode table */
 int16 ROOTDEV;
 struct cinode i_tab[1];    /* In-core inode table */
-struct oft of_tab[1];
 struct filesys fs_tab[1];
 
 /* Driver stuff */

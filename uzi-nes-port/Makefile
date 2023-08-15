@@ -17,6 +17,10 @@ PPU_OBJS := ppu.o
 PPU_OBJ_DIR := ppu
 PPU_DEPS := $(patsubst %, $(PPU_OBJ_DIR)/%, $(PPU_OBJS))
 
+FS_OBJS := filesys.o
+FS_OBJ_DIR := fs
+FS_DEPS := $(patsubst %, $(FS_OBJ_DIR)/%, $(FS_OBJS))
+
 DRIVER_OBJS := devio.o
 DRIVER_OBJ_DIR := drivers
 DRIVER_DEPS := $(patsubst %, $(DRIVER_OBJ_DIR)/%, $(DRIVER_OBJS))
@@ -25,7 +29,7 @@ LIB_OBJS := string.o
 LIB_OBJ_DIR := lib
 LIB_DEPS := $(patsubst %, $(LIB_OBJ_DIR)/%, $(LIB_OBJS))
 
-ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(DRIVER_DEPS) $(LIB_DEPS)
+ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(FS_DEPS) $(DRIVER_DEPS) $(LIB_DEPS)
 ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
 
 FONT :=	font/newfont.chr

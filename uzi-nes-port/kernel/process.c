@@ -1,6 +1,7 @@
 #include <unix.h>
 #include <extern.h>
 #include <devio.h>
+#include <filesys.h>
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>

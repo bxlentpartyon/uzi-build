@@ -672,17 +672,6 @@ int uf_alloc(void)
     return(-1);
 }
 
-
-
-/* I_ref increases the reference count of the given inode table entry. */
-
-void i_ref(inoptr ino)
-{
-    if (++(ino->c_refs) == 2*ITABSIZE)  /* Arbitrary limit. */
-	panic("too many i-refs");
-}
-
-
 /* I_deref decreases the reference count of an inode, and frees it
 from the table if there are no more references to it.  If it also
 has no links, the inode itself and its blocks (if not a device) is freed. */
