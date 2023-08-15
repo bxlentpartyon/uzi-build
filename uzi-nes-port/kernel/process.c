@@ -80,6 +80,8 @@ void dump_proc(ptptr proc)
 
 void init2(void)
 {
+	register char *j;
+
 	bufinit();
 
 	/* Create the context for the first process */
@@ -87,6 +89,10 @@ void init2(void)
 	udata.u_ptab = initproc;
 	newproc(initproc);
 	initproc->p_status = P_RUNNING;
+
+	/* User's file table */
+	for (j=udata.u_files; j < (udata.u_files+UFTSIZE); ++j)
+		*j = -1;
 
 	/* Turn on the clock */
 	start_clock();

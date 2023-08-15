@@ -15,13 +15,8 @@ UZI (Unix Z80 Implementation) Kernel:  process.c
 
 void init2(void)
 {
-    register char *j;
     static char bootchar;
     static char *arg[2] = { "init", NULL };
-
-    /* User's file table */
-    for (j=udata.u_files; j < (udata.u_files+UFTSIZE); ++j)
-	*j = -1;
 
     /* Wait until the clock has interrupted, to set tod
     while (!tod.t_date) ;  /* Loop */
