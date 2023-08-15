@@ -82,10 +82,9 @@ void init2(void)
 {
 	bufinit();
 
+	/* Create the context for the first process */
 	initproc = ptab_alloc();
 	udata.u_ptab = initproc;
-
-	/* Create the context for the first process */
 	newproc(initproc);
 	initproc->p_status = P_RUNNING;
 
