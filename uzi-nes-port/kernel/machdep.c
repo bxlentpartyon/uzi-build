@@ -86,9 +86,13 @@ void kprintf(char *fmt, ...)
 	va_end(ap);
         }
 
+int nr_apu_irqs = 0;
+extern unsigned char apu_status_byte;
+
 void handle_irq(void)
 {
-	
+	if (apu_status_byte & 0x40)
+		nr_apu_irqs++;
 }
 
 void start_kernel(void)
@@ -96,6 +100,9 @@ void start_kernel(void)
 	di();
 
 	init_ppu();
+
+	/* Turn off clock */
+	stop_clock();
 
 	ei();
 

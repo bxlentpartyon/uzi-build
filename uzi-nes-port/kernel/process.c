@@ -88,6 +88,10 @@ void init2(void)
 	newproc(initproc);
 	initproc->p_status = P_RUNNING;
 
+	/* Turn on the clock */
+	start_clock();
+	ei();
+
 	kprintf("boot:\n");
 
 	dump_proc(initproc);

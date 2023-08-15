@@ -21,8 +21,6 @@ void main()
     initvec();
     inint = 0;
     udata.u_insys = 1;
-    /* Turn off clock */
-    out(0,0xf1);
     ei();
 
     init2();   /* in process.c */

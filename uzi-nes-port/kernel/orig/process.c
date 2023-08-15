@@ -23,10 +23,6 @@ void init2(void)
     for (j=udata.u_files; j < (udata.u_files+UFTSIZE); ++j)
 	*j = -1;
 
-    /* Turn on the clock */
-    out(02,0xf1);
-    ei();
-
     /* Wait until the clock has interrupted, to set tod
     while (!tod.t_date) ;  /* Loop */
     /*

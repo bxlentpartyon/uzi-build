@@ -1,6 +1,6 @@
 	.importzp	sp
 	.import 	_start_kernel
-	.import		_handle_vblank
+	.import		_handle_vblank, _handle_irq
 	.export		___dump_screenbuf
 	.export		_ppu_reset
 	.export		_screenbuf
@@ -9,6 +9,8 @@
 	.export		_ppu_dump_pos
 	.export		_ei
 	.export		_di
+	.export		_start_clock, _stop_clock
+	.export		_apu_status_byte
 
 	.include	"nes.inc"
 
@@ -46,6 +48,8 @@ _buffer_dump_pos:
 	.addr $0000
 _ppu_dump_pos:
 	.addr $0000
+_apu_status_byte:
+	.byte $00
 
 .segment "CODE"
 
@@ -110,6 +114,12 @@ put_str_out:
 	rts
 .endproc
 
+.proc _stop_clock
+	lda #%01000000
+	sta APU_FRAME_COUNTER	; disable clock interrupt
+	rts
+.endproc
+
 .proc reset
 	sei
 	cld
@@ -122,8 +132,7 @@ put_str_out:
 	lda #%00000000
 	sta PPU_CTRL	; disable vblank NMI
 
-	lda #%01000000
-	sta APU_FRAME_COUNTER	; disable clock interrupt
+	jsr _stop_clock
 
 	inx		; X = 0
 	stx PPU_MASK	; disable rendering
@@ -266,6 +275,9 @@ set_palette:
 	pha
 	txa
 	pha
+
+	lda APU_STATUS
+	sta _apu_status_byte
 
 	jsr _handle_irq
 
