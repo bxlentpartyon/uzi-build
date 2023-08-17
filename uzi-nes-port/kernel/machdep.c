@@ -92,13 +92,27 @@ extern unsigned char apu_status_byte;
 
 void handle_irq(void)
 {
-	if (apu_status_byte & 0x40)
+	if (apu_status_byte & 0x40) {
 		nr_apu_irqs++;
+		clk_int();
+	} else {
+		panic("spurious IRQ");
+	}
 }
 
 void rdtime(time_t *tloc)
 {
-	return;
+    di();
+    tloc->t_time = tod.t_time;
+    tloc->t_date = tod.t_date;
+    ei();
+}
+
+/* Update global time of day */
+void rdtod(void)
+{
+    tod.t_time = (tread(SECS)>>1) | (tread(MINS)<<5) | (tread(HRS)<<11);
+    tod.t_date = tread(DAY) | (tread(MON)<<5) | (YEAR<<9);
 }
 
 void start_kernel(void)

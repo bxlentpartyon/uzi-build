@@ -228,23 +228,6 @@ sttime()
 }
 
 
-void rdtime(time_t *tloc)
-{
-    di();
-    tloc->t_time = tod.t_time;
-    tloc->t_date = tod.t_date;
-    ei();
-}
-
-
-/* Update global time of day */
-void rdtod(void)
-{
-    tod.t_time = (tread(SECS)>>1) | (tread(MINS)<<5) | (tread(HRS)<<11);
-    tod.t_date = tread(DAY) | (tread(MON)<<5) | (YEAR<<9);
-}
-
-
 /* Read BCD clock register, convert to binary. */
 uint16 tread(uint16 port)
 {
