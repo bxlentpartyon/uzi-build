@@ -314,60 +314,6 @@ int dofork(void)
     return (0);  /* Return to child */
 }
 
-/* This is the clock interrupt routine.   Its job is to
-increment the clock counters, increment the tick count of the
-running process, and either swap it out if it has been in long enough
-and is in user space or mark it to be swapped out if in system space.
-Also it decrements the alarm clock of processes.
-This must have no automatic or register variables */
-
-int clk_int(void)
-{
-    static ptptr p;
-
-    ifnot (in(0xf0))    /* See if clock actually interrupted, and turn it off */
-	return(0);
-
-    /* Increment processes and global tick counters */
-    if (udata.u_ptab->p_status == P_RUNNING)
-	incrtick(udata.u_insys ? &udata.u_stime : &udata.u_utime);
-
-    incrtick(&ticks);
-
-    /* Do once-per-second things */
-
-    if (++sec == TICKSPERSEC)
-    {
-	/* Update global time counters */
-	sec = 0;
-
-	rdtod();  /* Update time-of-day */
-
-	/* Update process alarm clocks */
-	for (p=ptab; p < ptab+PTABSIZE; ++p)
-	{
-	    if (p->p_alarm)
-	        ifnot(--p->p_alarm)
-	            sendsig(p,SIGALRM);
-	}
-    }
-
-
-    /* Check run time of current process */
-    if (++runticks >= MAXTICKS && !udata.u_insys)    /* Time to swap out */
-    {
-	udata.u_insys = 1;
-	inint = 0;
-	udata.u_ptab->p_status = P_READY;
-	swapout();
-	di();
-	udata.u_insys = 0;      /* We have swapped back in */
-    }
-
-    return(1);
-}
-
-
 
 extern int (*disp_tab[])();
 
