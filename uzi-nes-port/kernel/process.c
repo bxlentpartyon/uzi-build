@@ -114,46 +114,46 @@ This must have no automatic or register variables */
 
 int clk_int(void)
 {
-    static ptptr p;
+	static ptptr p;
 
-    ifnot (in(0xf0))    /* See if clock actually interrupted, and turn it off */
-	return(0);
+	ifnot (in(0xf0))    /* See if clock actually interrupted, and turn it off */
+		return(0);
 
-    /* Increment processes and global tick counters */
-    if (udata.u_ptab->p_status == P_RUNNING)
-	incrtick(udata.u_insys ? &udata.u_stime : &udata.u_utime);
+	/* Increment processes and global tick counters */
+	if (udata.u_ptab->p_status == P_RUNNING)
+		incrtick(udata.u_insys ? &udata.u_stime : &udata.u_utime);
 
-    incrtick(&ticks);
+	incrtick(&ticks);
 
-    /* Do once-per-second things */
+	/* Do once-per-second things */
 
-    if (++sec == TICKSPERSEC)
-    {
-	/* Update global time counters */
-	sec = 0;
-
-	rdtod();  /* Update time-of-day */
-
-	/* Update process alarm clocks */
-	for (p=ptab; p < ptab+PTABSIZE; ++p)
+	if (++sec == TICKSPERSEC)
 	{
-	    if (p->p_alarm)
-	        ifnot(--p->p_alarm)
-	            sendsig(p,SIGALRM);
+		/* Update global time counters */
+		sec = 0;
+
+		rdtod();  /* Update time-of-day */
+
+		/* Update process alarm clocks */
+		for (p=ptab; p < ptab+PTABSIZE; ++p)
+		{
+			if (p->p_alarm)
+				ifnot(--p->p_alarm)
+					sendsig(p,SIGALRM);
+		}
 	}
-    }
 
 
-    /* Check run time of current process */
-    if (++runticks >= MAXTICKS && !udata.u_insys)    /* Time to swap out */
-    {
-	udata.u_insys = 1;
-	inint = 0;
-	udata.u_ptab->p_status = P_READY;
-	swapout();
-	di();
-	udata.u_insys = 0;      /* We have swapped back in */
-    }
+	/* Check run time of current process */
+	if (++runticks >= MAXTICKS && !udata.u_insys)    /* Time to swap out */
+	{
+		udata.u_insys = 1;
+		inint = 0;
+		udata.u_ptab->p_status = P_READY;
+		swapout();
+		di();
+		udata.u_insys = 0;      /* We have swapped back in */
+	}
 
-    return(1);
+	return(1);
 }
