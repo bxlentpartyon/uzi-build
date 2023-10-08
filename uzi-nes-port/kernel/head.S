@@ -5,6 +5,7 @@
 	.export		_ppu_reset
 	.export		_screenbuf
 	.export		_screenbuf_advance
+	.export		_printbuf
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
 	.export		_ei
@@ -42,6 +43,8 @@ _screenbuf:
 	.res 896, $00
 _screenbuf_advance:
 	.byte $80
+_printbuf:
+	.res 896, $00
 
 .segment "ZEROPAGE"
 _buffer_dump_pos:

@@ -12,6 +12,7 @@ UZI (Unix Z80 Implementation) Kernel:  machdep.c
 #include <stdarg.h>
 
 extern void ei(void);
+extern char printbuf[];
 
 void kputchar(char c);
 
@@ -19,6 +20,19 @@ void puts(char *s)
 {
 	while (*s)
 		kputchar(*(s++));
+}
+
+void strcpy_idx(char *dest, char *src, int *idx)
+{
+	int copy_idx = 0;
+
+	while(src[copy_idx]) {
+		dest[copy_idx] = src[copy_idx];
+		copy_idx++;
+	}
+
+	*idx = *idx + copy_idx;
+	dest[++copy_idx] = 0;
 }
 
 #define _putc ppu_putc
@@ -39,22 +53,23 @@ void kputchar(char c)
 #define KPRINTF_BUF_SIZE	20
 
 /* Short version of printf to save space */
-void kprintf(char *fmt, ...)
+void vsprintf(char *str, char *fmt, va_list ap)
         {
-	va_list ap;
         register int c, base;
+	int idx = 0;
         char s[KPRINTF_BUF_SIZE];
-
-	va_start(ap, fmt);
+	char ctmp[] = { 0, 0 };
 
         while (c = *fmt++) {
                 if (c != '%') {
-                        kputchar(c);
+			ctmp[0] = c;
+			strcpy_idx(str + idx, &ctmp, &idx);
                         continue;
                         }
                 switch (c = *fmt++) {
                 case 'c':
-                        kputchar(va_arg(ap, char));
+			ctmp[0] = va_arg(ap, char);
+			strcpy_idx(str + idx, &ctmp, &idx);
                         continue;
                 case 'd':
                         base = -10;
@@ -73,19 +88,39 @@ void kprintf(char *fmt, ...)
                 prt:
 			bzero(s, KPRINTF_BUF_SIZE);
                         itob(va_arg(ap, int), s, base);
-			puts(s);
+			strcpy_idx(str + idx, s, &idx);
                         continue;
                 case 's':
-                        puts(va_arg(ap, char *));
+                        strcpy_idx(str + idx, va_arg(ap, char *), &idx);
                         continue;
                 default:
                         panic("bad char");
                         continue;
                         }
                 }
-
-	va_end(ap);
         }
+
+void sprintf(char *str, char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsprintf(str, fmt, ap);
+	va_end(ap);
+}
+
+void kprintf(char *fmt, ...)
+{
+	va_list ap;
+
+	bzero(&printbuf, 896);
+
+	va_start(ap, fmt);
+	vsprintf(&printbuf, fmt, ap);
+	va_end(ap);
+
+	puts(printbuf);
+}
 
 int nr_apu_irqs = 0;
 extern unsigned char apu_status_byte;
