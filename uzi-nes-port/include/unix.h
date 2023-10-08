@@ -18,8 +18,8 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 
 #define ROOTINODE 1  /* Inode # of /  for all mounted filesystems. */
 
-#define TICKSPERSEC 60  /*Ticks per second */
-#define MAXTICKS   60   /* Max ticks before swapping out (time slice) */
+#define TICKSPERSEC 10  /*Ticks per second */
+#define MAXTICKS   10  /* Max ticks before swapping out (time slice) */
 
 #define ARGBLK 0        /* Block number on SWAPDEV for arguments */
 #define PROGBASE ((char *)(0x100))

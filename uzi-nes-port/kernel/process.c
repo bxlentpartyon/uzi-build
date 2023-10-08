@@ -105,6 +105,12 @@ void init2(void)
 	while(1);
 }
 
+/* For now, this is the heart of how we tell time.  It only allows
+ * us to count up to about 2 hours, but that's good enough to get
+ * things moving. */
+uint16 clk_int_count;
+uint16 tick_count;
+
 /* This is the clock interrupt routine.   Its job is to
 increment the clock counters, increment the tick count of the
 running process, and either swap it out if it has been in long enough
@@ -115,6 +121,15 @@ This must have no automatic or register variables */
 int clk_int(void)
 {
 	static ptptr p;
+
+#define INTS_PER_TICK	6
+	if (clk_int_count < INTS_PER_TICK) {
+		clk_int_count++;
+		return 0;
+	} else {
+		clk_int_count = 0;
+		tick_count++;
+	}
 
 	stop_clock();
 
@@ -135,6 +150,13 @@ UZI-NES WIP
 		sec = 0;
 
 		rdtod();  /* Update time-of-day */
+
+		kprintf("%d/%d/%d %d:%d:%d\n", (tod.t_date & 0x3e0) >> 5,
+						tod.t_date & 0x1f,
+					       (tod.t_date & 0xfe00) >> 9,
+					       (tod.t_time & 0xf800) >> 11,
+					       (tod.t_time & 0x7e0) >> 5,
+					       (tod.t_time & 0x1f) << 1);
 
 #if 0
 UZI-NES WIP

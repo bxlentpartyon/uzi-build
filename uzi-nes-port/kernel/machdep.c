@@ -130,10 +130,29 @@ void rdtod(void)
 /* Read BCD clock register, convert to binary. */
 uint16 tread(uint16 port)
 {
-	int n = 0;
+	int n;
 
-	//n = in(port);
-	return ( 10*((n>>4)&0x0f) + (n&0x0f) );
+#define SECS_PER_MIN	60
+#define MINS_PER_HOUR	60
+	switch(port) {
+		case SECS:
+			n = tick_count / TICKSPERSEC;
+			break;
+		case MINS:
+			n = tick_count / TICKSPERSEC / SECS_PER_MIN;
+			break;
+		case HRS:
+			n = tick_count / TICKSPERSEC / SECS_PER_MIN / MINS_PER_HOUR;
+			break;
+		case DAY:
+			n = 27;
+			break;
+		case MON:
+			n = 9;
+			break;
+	}
+
+	return n;
 }
 
 void start_kernel(void)
