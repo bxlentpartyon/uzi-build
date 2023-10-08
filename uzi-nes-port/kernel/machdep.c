@@ -39,7 +39,6 @@ void kputchar(char c)
 #define KPRINTF_BUF_SIZE	20
 
 /* Short version of printf to save space */
-/* TODO: fix the vararg handling here */
 void kprintf(char *fmt, ...)
         {
 	va_list ap;
