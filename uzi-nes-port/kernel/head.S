@@ -109,12 +109,14 @@ put_str_out:
 .endproc
 
 .proc _start_clock
+	cli
 	lda #%00000000
 	sta APU_FRAME_COUNTER	; enable clock interrupt
 	rts
 .endproc
 
 .proc _stop_clock
+	sei
 	lda #%01000000
 	sta APU_FRAME_COUNTER	; disable clock interrupt
 	rts
