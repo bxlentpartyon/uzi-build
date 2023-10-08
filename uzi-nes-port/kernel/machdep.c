@@ -14,7 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  machdep.c
 extern void ei(void);
 
 void kputchar(char c);
-uint16 tread(uint16 port);
 
 void puts(char *s)
 {
@@ -120,13 +119,6 @@ void rdtime(time_t *tloc)
 #define MON 0xe7
 #define YEAR 86
 
-/* Update global time of day */
-void rdtod(void)
-{
-    tod.t_time = (tread(SECS)>>1) | (tread(MINS)<<5) | (tread(HRS)<<11);
-    tod.t_date = tread(DAY) | (tread(MON)<<5) | (YEAR<<9);
-}
-
 /* Read BCD clock register, convert to binary. */
 uint16 tread(uint16 port)
 {
@@ -153,6 +145,13 @@ uint16 tread(uint16 port)
 	}
 
 	return n;
+}
+
+/* Update global time of day */
+void rdtod(void)
+{
+    tod.t_time = (tread(SECS)>>1) | (tread(MINS)<<5) | (tread(HRS)<<11);
+    tod.t_date = tread(DAY) | (tread(MON)<<5) | (YEAR<<9);
 }
 
 void start_kernel(void)
