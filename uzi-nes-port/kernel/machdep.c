@@ -113,6 +113,7 @@ void kprintf(char *fmt, ...)
 {
 	va_list ap;
 
+	/* TODO: size shouldn't be hard-coded here */
 	bzero(&printbuf, 896);
 
 	va_start(ap, fmt);
