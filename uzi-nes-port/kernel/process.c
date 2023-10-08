@@ -116,14 +116,16 @@ int clk_int(void)
 {
 	static ptptr p;
 
-	ifnot (in(0xf0))    /* See if clock actually interrupted, and turn it off */
-		return(0);
+	stop_clock();
 
+#if 0
+UZI-NES WIP
 	/* Increment processes and global tick counters */
 	if (udata.u_ptab->p_status == P_RUNNING)
 		incrtick(udata.u_insys ? &udata.u_stime : &udata.u_utime);
 
 	incrtick(&ticks);
+#endif
 
 	/* Do once-per-second things */
 
@@ -134,6 +136,8 @@ int clk_int(void)
 
 		rdtod();  /* Update time-of-day */
 
+#if 0
+UZI-NES WIP
 		/* Update process alarm clocks */
 		for (p=ptab; p < ptab+PTABSIZE; ++p)
 		{
@@ -141,9 +145,12 @@ int clk_int(void)
 				ifnot(--p->p_alarm)
 					sendsig(p,SIGALRM);
 		}
+#endif
 	}
 
 
+#if 0
+UZI-NES WIP
 	/* Check run time of current process */
 	if (++runticks >= MAXTICKS && !udata.u_insys)    /* Time to swap out */
 	{
@@ -154,6 +161,7 @@ int clk_int(void)
 		di();
 		udata.u_insys = 0;      /* We have swapped back in */
 	}
+#endif
 
-	return(1);
+	start_clock();
 }

@@ -2,6 +2,7 @@
 UZI (Unix Z80 Implementation) Kernel:  machdep.c
 ***************************************************/
 
+#include <extern.h>
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>
@@ -13,6 +14,7 @@ UZI (Unix Z80 Implementation) Kernel:  machdep.c
 extern void ei(void);
 
 void kputchar(char c);
+uint16 tread(uint16 port);
 
 void puts(char *s)
 {
@@ -89,6 +91,7 @@ void kprintf(char *fmt, ...)
 
 int nr_apu_irqs = 0;
 extern unsigned char apu_status_byte;
+#pragma zpsym ("apu_status_byte");
 
 void handle_irq(void)
 {
@@ -108,11 +111,29 @@ void rdtime(time_t *tloc)
     ei();
 }
 
+/* Port addresses of clock chip registers. */
+
+#define SECS 0xe2
+#define MINS 0xe3
+#define HRS 0xe4
+#define DAY 0xe6
+#define MON 0xe7
+#define YEAR 86
+
 /* Update global time of day */
 void rdtod(void)
 {
     tod.t_time = (tread(SECS)>>1) | (tread(MINS)<<5) | (tread(HRS)<<11);
     tod.t_date = tread(DAY) | (tread(MON)<<5) | (YEAR<<9);
+}
+
+/* Read BCD clock register, convert to binary. */
+uint16 tread(uint16 port)
+{
+	int n = 0;
+
+	//n = in(port);
+	return ( 10*((n>>4)&0x0f) + (n&0x0f) );
 }
 
 void start_kernel(void)

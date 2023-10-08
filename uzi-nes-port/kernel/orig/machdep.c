@@ -211,31 +211,11 @@ void calltrap(void)
     } 
 }
 
-
-
-/* Port addresses of clock chip registers. */
-
-#define SECS 0xe2
-#define MINS 0xe3
-#define HRS 0xe4
-#define DAY 0xe6
-#define MON 0xe7
-#define YEAR 86
-
 sttime()
 {
     panic("Calling sttime");
 }
 
-
-/* Read BCD clock register, convert to binary. */
-uint16 tread(uint16 port)
-{
-    int n;
-
-    n = in(port);
-    return ( 10*((n>>4)&0x0f) + (n&0x0f) );
-}
 
 /* This shifts an unsigned int right 8 places. */
 

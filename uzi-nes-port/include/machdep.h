@@ -10,4 +10,6 @@ void rdtime(time_t *tloc);
 void start_clock(void);
 void stop_clock(void);
 
+void rdtod(void);
+
 #endif /* __MACHDEP_H__ */

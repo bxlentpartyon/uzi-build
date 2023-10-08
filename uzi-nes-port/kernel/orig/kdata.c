@@ -11,12 +11,10 @@ struct devsw dev_tab[] =  /* The device driver switch table */
 
 /* Interrupt/timer stuff */
 
-time_t tod;	/* Time of day */
 time_t ticks;	/* Cumulative tick counter, in minutes and ticks  */
 int16 inint;	/* flag is set whenever interrupts are being serviced */
 int16 runticks;	/* Number of ticks current process has been
 		   swapped in */
-int16 sec;	/* Tick counter for counting off one second */
 
 /* Filesystem stuff */
 
