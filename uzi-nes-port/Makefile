@@ -9,6 +9,8 @@ PLATFORM := uzi
 TARGET := uzi.nes
 LINKER_SCRIPT := scripts/linker/uzi.cfg
 
+HEADER_DEPS := $(wildcard include/*.h)
+
 KERNEL_OBJS := head.o machdep.o process.o kdata.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS))
@@ -39,7 +41,10 @@ FONT :=	font/newfont.chr
 
 all: $(TARGET)
 
-%.s: %.c
+# Note that this basically makes _every_ C file depend on _every_ header.  This
+# isn't ideal, but it's better than missing rebuilds that should occur when
+# headers are changed.
+%.s: %.c $(HEADER_DEPS)
 	@echo "Building .c to .s $<"
 	$(CC) --target $(PLATFORM) -I$(CC65_DIR)/include/ -I$(PWD)/include/ -O $<
 
