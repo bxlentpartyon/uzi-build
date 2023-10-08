@@ -22,19 +22,6 @@ void puts(char *s)
 		kputchar(*(s++));
 }
 
-void strcpy_idx(char *dest, char *src, int *idx)
-{
-	int copy_idx = 0;
-
-	while(src[copy_idx]) {
-		dest[copy_idx] = src[copy_idx];
-		copy_idx++;
-	}
-
-	*idx = *idx + copy_idx;
-	dest[++copy_idx] = 0;
-}
-
 #define _putc ppu_putc
 
 void kputchar(char c)
@@ -48,6 +35,19 @@ void kputchar(char c)
 	}
 
 	_putc(c);
+}
+
+void strcpy_idx(char *dest, char *src, int *idx)
+{
+	int copy_idx = 0;
+
+	while(src[copy_idx]) {
+		dest[copy_idx] = src[copy_idx];
+		copy_idx++;
+	}
+
+	*idx = *idx + copy_idx;
+	dest[++copy_idx] = 0;
 }
 
 #define KPRINTF_BUF_SIZE	20
