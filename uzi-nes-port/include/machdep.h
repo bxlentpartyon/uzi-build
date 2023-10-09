@@ -4,6 +4,7 @@
 #include <unix.h>
 
 void kprintf(char *fmt, ...);
+void sprintf(char *str, char *fmt, ...);
 void ei(void);
 void di(void);
 void rdtime(time_t *tloc);

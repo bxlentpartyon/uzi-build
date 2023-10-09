@@ -121,6 +121,8 @@ This must have no automatic or register variables */
 int clk_int(void)
 {
 	static ptptr p;
+	int cur_hours, cur_mins, cur_secs;
+	char tmp_hours[3], tmp_mins[3], tmp_secs[3];
 
 #define INTS_PER_TICK	6
 	if (clk_int_count < INTS_PER_TICK) {
@@ -151,12 +153,28 @@ UZI-NES WIP
 
 		rdtod();  /* Update time-of-day */
 
-		kprintf("%d/%d/%d %d:%d:%d\n", (tod.t_date & 0x3e0) >> 5,
+		cur_hours = (tod.t_time & 0xf800) >> 11;
+		if (cur_hours < 10)
+			sprintf(tmp_hours, "0%d", cur_hours);
+		else
+			sprintf(tmp_hours, "%d", cur_hours);
+
+		cur_mins = (tod.t_time & 0x7e0) >> 5;
+		if (cur_mins < 10)
+			sprintf(tmp_mins, "0%d", cur_mins);
+		else
+			sprintf(tmp_mins, "%d", cur_mins);
+
+		cur_secs =  (tod.t_time & 0x1f) << 1;
+		if (cur_secs < 10)
+			sprintf(tmp_secs, "0%d", cur_secs);
+		else
+			sprintf(tmp_secs, "%d", cur_secs);
+
+		kprintf("%d/%d/%d %s:%s:%s\n", (tod.t_date & 0x3e0) >> 5,
 						tod.t_date & 0x1f,
 					       (tod.t_date & 0xfe00) >> 9,
-					       (tod.t_time & 0xf800) >> 11,
-					       (tod.t_time & 0x7e0) >> 5,
-					       (tod.t_time & 0x1f) << 1);
+						tmp_hours, tmp_mins, tmp_secs);
 
 #if 0
 UZI-NES WIP
