@@ -161,15 +161,16 @@ uint16 tread(uint16 port)
 
 #define SECS_PER_MIN	60
 #define MINS_PER_HOUR	60
+#define HRS_PER_DAY	24
 	switch(port) {
 		case SECS:
-			n = tick_count / TICKSPERSEC;
+			n = (tick_count / TICKSPERSEC) % SECS_PER_MIN;
 			break;
 		case MINS:
-			n = tick_count / TICKSPERSEC / SECS_PER_MIN;
+			n = (tick_count / TICKSPERSEC / SECS_PER_MIN) % MINS_PER_HOUR;
 			break;
 		case HRS:
-			n = tick_count / TICKSPERSEC / SECS_PER_MIN / MINS_PER_HOUR;
+			n = (tick_count / TICKSPERSEC / SECS_PER_MIN / MINS_PER_HOUR) % HRS_PER_DAY;
 			break;
 		case DAY:
 			n = 27;
