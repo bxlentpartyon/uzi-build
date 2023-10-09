@@ -124,16 +124,17 @@ int clk_int(void)
 	int cur_hours, cur_mins, cur_secs;
 	char tmp_hours[3], tmp_mins[3], tmp_secs[3];
 
+	stop_clock();
+
 #define INTS_PER_TICK	6
 	if (clk_int_count < INTS_PER_TICK) {
 		clk_int_count++;
+		start_clock();
 		return 0;
 	} else {
 		clk_int_count = 0;
 		tick_count++;
 	}
-
-	stop_clock();
 
 #if 0
 UZI-NES WIP
