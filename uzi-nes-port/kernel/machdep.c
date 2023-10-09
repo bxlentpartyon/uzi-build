@@ -117,7 +117,7 @@ void kprintf(char *fmt, ...)
 	bzero(&printbuf, 896);
 
 	va_start(ap, fmt);
-	vsprintf(&printbuf, fmt, ap);
+	vsprintf(printbuf, fmt, ap);
 	va_end(ap);
 
 	puts(printbuf);
