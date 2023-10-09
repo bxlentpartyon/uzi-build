@@ -47,7 +47,7 @@ void strcpy_idx(char *dest, char *src, int *idx)
 	}
 
 	*idx = *idx + copy_idx;
-	dest[++copy_idx] = 0;
+	dest[copy_idx] = 0;
 }
 
 #define KPRINTF_BUF_SIZE	20
