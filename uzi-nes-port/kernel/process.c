@@ -101,6 +101,10 @@ void init2(void)
 	/* Wait until the clock has interrupted, to set tod */
 	while (!tod.t_date);
 
+	/* Open the console tty device */
+	if (d_open(TTYDEV) != 0)
+		panic("no tty");
+
 	kprintf("boot:\n");
 
 	dump_proc(initproc);

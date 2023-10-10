@@ -260,12 +260,6 @@ Any device other than a disk will have only raw access.
 
 
 
-int d_open(int dev)
-{
-    ifnot (validdev(dev))
-        return(-1);
-    return ((*dev_tab[dev].dev_open)(dev_tab[dev].minor));
-}
 
 
 void d_close(int dev)
@@ -301,12 +295,6 @@ int ok(void)
 int nogood(void)
 {
     return(-1);
-}
-
-
-int validdev(int dev)
-{
-    return(dev >= 0 && dev < (sizeof(dev_tab)/sizeof(struct devsw)));
 }
 
 

@@ -18,10 +18,6 @@ void init2(void)
     static char bootchar;
     static char *arg[2] = { "init", NULL };
 
-    /* Open the console tty device */
-    if (d_open(TTYDEV) != 0)
-	panic("no tty");
-
     kprintf("boot: ");
     udata.u_base = &bootchar;
     udata.u_count = 1;
