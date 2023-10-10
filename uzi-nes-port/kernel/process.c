@@ -154,6 +154,7 @@ UZI-NES WIP
 
 		rdtod();  /* Update time-of-day */
 
+#ifdef DEBUG_TIME
 		cur_hours = (tod.t_time & 0xf800) >> 11;
 		if (cur_hours < 10)
 			sprintf(tmp_hours, "0%d", cur_hours);
@@ -176,6 +177,7 @@ UZI-NES WIP
 						tod.t_date & 0x1f,
 					       (tod.t_date & 0xfe00) >> 9,
 						tmp_hours, tmp_mins, tmp_secs);
+#endif
 
 #if 0
 UZI-NES WIP
