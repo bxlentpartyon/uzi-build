@@ -2,13 +2,6 @@
 
 #include <devio.h>
 
-struct devsw dev_tab[] =  /* The device driver switch table */
-{
-    { 0, tty_open, tty_close, tty_read, tty_write, ok },      /* tty */
-    { 0, ok, ok, ok, null_write, nogood },                      /* /dev/null */
-    { 0, ok, ok, mem_read, mem_write, nogood }              /* /dev/mem */
-};
-
 /* Interrupt/timer stuff */
 
 time_t ticks;	/* Cumulative tick counter, in minutes and ticks  */

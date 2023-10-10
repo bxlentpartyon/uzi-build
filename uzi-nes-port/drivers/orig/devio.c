@@ -286,18 +286,6 @@ int d_ioctl(int dev, int request, char *data)
         return(0);
 }
 
-
-int ok(void)
-{
-    return(0);
-}
-
-int nogood(void)
-{
-    return(-1);
-}
-
-
 /*************************************************************
 Character queue management routines
 ************************************************************/

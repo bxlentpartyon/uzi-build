@@ -2,6 +2,7 @@
 UZI (Unix Z80 Implementation) Kernel:  devio.c
 ***************************************************/
 
+#include <devio.h>
 #include <unix.h>
 #include <extern.h>
 
@@ -19,6 +20,16 @@ int d_open(int dev)
     ifnot (validdev(dev))
         return(-1);
     return ((*dev_tab[dev].dev_open)(dev_tab[dev].minor));
+}
+
+int ok(void)
+{
+    return(0);
+}
+
+int nogood(void)
+{
+    return(-1);
 }
 
 int validdev(int dev)
