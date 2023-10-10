@@ -12,7 +12,6 @@ int16 runticks;	/* Number of ticks current process has been
 /* Filesystem stuff */
 
 inoptr root;   /* Address of root dir in inode table */
-int16 ROOTDEV;
 struct cinode i_tab[1];    /* In-core inode table */
 struct filesys fs_tab[1];
 

@@ -3,6 +3,7 @@ UZI (Unix Z80 Implementation) Kernel:  devio.c
 ***************************************************/
 
 #include <devio.h>
+#include <ppu.h>
 #include <unix.h>
 #include <extern.h>
 
@@ -13,6 +14,13 @@ void bufinit(void)
 	for (bp = bufpool; bp < bufpool + NBUFS; ++bp) {
 		bp->bf_dev = -1;
 	}
+}
+
+int cdread(int dev)
+{
+    ifnot (validdev(dev))
+        panic("cdread: invalid dev");
+    return ((*dev_tab[dev].dev_read)(dev_tab[dev].minor, 1));
 }
 
 int d_open(int dev)

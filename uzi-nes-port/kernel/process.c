@@ -80,6 +80,7 @@ void dump_proc(ptptr proc)
 void init2(void)
 {
 	register char *j;
+	static char bootchar;
 
 	bufinit();
 
@@ -105,6 +106,10 @@ void init2(void)
 		panic("no tty");
 
 	kprintf("boot:\n");
+	udata.u_base = &bootchar;
+	udata.u_count = 1;
+	cdread(TTYDEV);
+	ROOTDEV = bootchar - '0';
 
 	dump_proc(initproc);
 

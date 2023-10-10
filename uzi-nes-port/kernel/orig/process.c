@@ -15,14 +15,9 @@ UZI (Unix Z80 Implementation) Kernel:  process.c
 
 void init2(void)
 {
-    static char bootchar;
     static char *arg[2] = { "init", NULL };
 
     kprintf("boot: ");
-    udata.u_base = &bootchar;
-    udata.u_count = 1;
-    cdread(TTYDEV);
-    ROOTDEV = bootchar - '0';
 
     /* Mount the root device */
     if (fmount(ROOTDEV,NULLINODE))

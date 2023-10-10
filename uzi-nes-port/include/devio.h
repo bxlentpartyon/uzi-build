@@ -3,6 +3,7 @@
 
 #include "unix.h"
 
+int cdread(int dev);
 void bufinit(void);
 int validdev(int dev);
 

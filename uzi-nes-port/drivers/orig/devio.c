@@ -214,13 +214,6 @@ int bdwrite(bufptr bp)
     return ((*dev_tab[bp->bf_dev].dev_write)(dev_tab[bp->bf_dev].minor, 0));
 }
 
-int cdread(int dev)
-{
-    ifnot (validdev(dev))
-        panic("cdread: invalid dev");
-    return ((*dev_tab[dev].dev_read)(dev_tab[dev].minor, 1));
-}
-
 int cdwrite(int dev)
 {
     ifnot (validdev(dev))

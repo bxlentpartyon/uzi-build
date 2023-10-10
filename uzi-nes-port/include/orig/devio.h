@@ -2,7 +2,6 @@ int remq(struct s_queue *q, char *cp);
 int uninsq(register struct s_queue *q, char *cp);
 int insq(register struct s_queue *q, char c);
 void brelse(bufptr bp);
-int cdread(int dev);
 void bawrite(bufptr bp);
 int cdwrite(int dev);
 int bfree(register bufptr bp, int dirty);

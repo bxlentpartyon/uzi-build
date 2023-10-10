@@ -21,6 +21,7 @@ int16 sec;	/* Tick counter for counting off one second */
 
 /* Filesystem stuff */
 
+int16 ROOTDEV;
 struct oft of_tab[1];
 
 /* Driver stuff */
