@@ -18,10 +18,6 @@ void init2(void)
     static char bootchar;
     static char *arg[2] = { "init", NULL };
 
-    /* Wait until the clock has interrupted, to set tod
-    while (!tod.t_date) ;  /* Loop */
-    /*
-
     /* Open the console tty device */
     if (d_open(TTYDEV) != 0)
 	panic("no tty");

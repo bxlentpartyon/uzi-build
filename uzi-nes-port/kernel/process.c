@@ -98,6 +98,9 @@ void init2(void)
 	start_clock();
 	ei();
 
+	/* Wait until the clock has interrupted, to set tod */
+	while (!tod.t_date);
+
 	kprintf("boot:\n");
 
 	dump_proc(initproc);
