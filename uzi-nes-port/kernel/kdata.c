@@ -3,9 +3,9 @@
 
 struct devsw dev_tab[] =  /* The device driver switch table */
 {
-    { 0, ok, ok, ok, ok, ok /* tty_open, tty_close, tty_read, tty_write, ok */ },      /* tty */
-    { 0, ok, ok, ok, ok, /* null_write, */ nogood },                      /* /dev/null */
-    { 0, ok, ok, ok, ok, /* mem_read, mem_write, */ nogood }              /* /dev/mem */
+	{ 0, ok, ok, ok, ok, ok /* tty_open, tty_close, tty_read, tty_write, ok */ },      /* tty */
+	{ 0, ok, ok, ok, ok, /* null_write, */ nogood },                      /* /dev/null */
+	{ 0, ok, ok, ok, ok, /* mem_read, mem_write, */ nogood }              /* /dev/mem */
 };
 
 /* Process/userspace stuff */
