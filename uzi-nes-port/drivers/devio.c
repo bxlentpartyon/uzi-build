@@ -18,29 +18,28 @@ void bufinit(void)
 
 int cdread(int dev)
 {
-    ifnot (validdev(dev))
-        panic("cdread: invalid dev");
-    return ((*dev_tab[dev].dev_read)(dev_tab[dev].minor, 1));
+	ifnot (validdev(dev))
+		panic("cdread: invalid dev");
+	return ((*dev_tab[dev].dev_read)(dev_tab[dev].minor, 1));
 }
 
 int d_open(int dev)
 {
-    ifnot (validdev(dev))
-        return(-1);
-    return ((*dev_tab[dev].dev_open)(dev_tab[dev].minor));
+	ifnot (validdev(dev))
+		return(-1);
+	return ((*dev_tab[dev].dev_open)(dev_tab[dev].minor));
 }
 
 int ok(void)
 {
-    return(0);
+	return(0);
 }
 
 int nogood(void)
 {
-    return(-1);
+	return(-1);
 }
 
 int validdev(int dev)
 {
-    return(dev >= 0 && dev < (sizeof(dev_tab)/sizeof(struct devsw)));
-}
+	return(dev >= 0 && dev < (sizeof(dev_tab)/sizeof(struct devsw))); }
