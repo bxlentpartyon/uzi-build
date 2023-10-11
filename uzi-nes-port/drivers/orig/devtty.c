@@ -93,11 +93,6 @@ int tty_write(int16 minor, int16 rawflag)
     return(towrite);
 }
 
-int tty_close(int minor)
-{
-    return(0);
-}
-
 
 int tty_ioctl(int minor)
 {
