@@ -5,4 +5,8 @@ int tty_open(int minor)
     return(0);
 }
 
+int tty_close(int minor)
+{
+	return(0);
+}
 
