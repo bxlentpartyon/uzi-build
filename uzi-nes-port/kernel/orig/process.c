@@ -59,33 +59,6 @@ void wakeup(char *event)
     ei();
 }
 
-
-/* Getproc returns the process table pointer of a runnable process.
-It is actually the scheduler.
-If there are none, it loops.  This is the only time-wasting loop in the
-system. */
-
-ptptr getproc(void)
-{
-    register status;
-    static ptptr pp = ptab;    /* Pointer for round-robin scheduling */
-
-    for (;;)
-    {
-	if (++pp >= ptab + PTABSIZE)
-	    pp = ptab;
-
-	di();
-	status = pp->p_status;
-	ei();
-
-	if (status == P_RUNNING)
-	    panic("getproc: extra running");
-	if (status == P_READY)
-	    return(pp);
-    }
-}
-
 /* This actually writes out the image */
 void swrite(void)
 {
