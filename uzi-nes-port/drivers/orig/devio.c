@@ -301,24 +301,6 @@ int insq(register struct s_queue *q, char c)
     return(1);
 }
 
-/* Remove something from the head. */
-remq(struct s_queue *q, char *cp)
-{
-    di();
-    ifnot (q->q_count)
-    {
-        ei();
-        return(0);
-    }
-    *cp = *(q->q_head);
-    --q->q_count;
-    if (++q->q_head >= q->q_base + q->q_size)
-        q->q_head = q->q_base;
-    ei();
-    return(1);
-}
-
-
 /* Remove something from the tail; the most recently added char. */
 uninsq(struct s_queue *q, char *cp)
 {

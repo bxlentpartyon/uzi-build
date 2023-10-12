@@ -3,6 +3,7 @@
 
 #include "unix.h"
 
+int remq(struct s_queue *q, char *cp);
 int cdread(int dev);
 void bufinit(void);
 int validdev(int dev);

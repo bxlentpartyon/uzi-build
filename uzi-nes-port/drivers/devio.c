@@ -3,6 +3,7 @@ UZI (Unix Z80 Implementation) Kernel:  devio.c
 ***************************************************/
 
 #include <devio.h>
+#include <machdep.h>
 #include <ppu.h>
 #include <unix.h>
 #include <extern.h>
@@ -42,4 +43,26 @@ int nogood(void)
 
 int validdev(int dev)
 {
-	return(dev >= 0 && dev < (sizeof(dev_tab)/sizeof(struct devsw))); }
+	return(dev >= 0 && dev < (sizeof(dev_tab)/sizeof(struct devsw)));
+}
+
+/*************************************************************
+Character queue management routines
+************************************************************/
+
+/* Remove something from the head. */
+int remq(struct s_queue *q, char *cp)
+{
+    di();
+    ifnot (q->q_count)
+    {
+        ei();
+        return(0);
+    }
+    *cp = *(q->q_head);
+    --q->q_count;
+    if (++q->q_head >= q->q_base + q->q_size)
+        q->q_head = q->q_base;
+    ei();
+    return(1);
+}

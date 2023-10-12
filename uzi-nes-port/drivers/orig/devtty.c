@@ -1,64 +1,10 @@
-/**************************************************
-UZI (Unix Z80 Implementation) Kernel:  devtty.c
-***************************************************/
-
-
 #include <unix.h>
 #include <machdep.h>
 #include <devio.h>
 #include <process.h>
 
-extern struct u_data udata;
-
-#define TTYSIZ 132
-
-char ttyinbuf[TTYSIZ];
-void _putc(char c);
-
-struct s_queue ttyinq = {
-    ttyinbuf,
-    ttyinbuf,
-    ttyinbuf,
-    TTYSIZ,
-    0,
-    TTYSIZ/2
-};
-
 int stopflag;   /* Flag for ^S/^Q */
 int flshflag;   /* Flag for ^O */
-
-int tty_read(int16 minor, int16 rawflag)
-{
-    int nread;
-
-    nread = 0;
-    while (nread < udata.u_count)
-    {
-        for (;;)
-        {
-            di();
-            if (remq(&ttyinq,udata.u_base))
-                break;
-            psleep((void *) &ttyinq);
-            if (udata.u_cursig || udata.u_ptab->p_pending)  /* messy */
-            {
-                udata.u_error = EINTR;
-                return(-1);
-            }
-        }
-        ei();   
-
-        if (nread++ == 0 && *udata.u_base == '\004')   /* ^D */
-            return(0);
-
-        if (*udata.u_base == '\n')
-            break;
-        ++udata.u_base;
-    } 
-    return(nread);
-}
-
-
 
 int tty_write(int16 minor, int16 rawflag)
 {
