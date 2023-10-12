@@ -5,6 +5,7 @@ UZI (Unix Z80 Implementation) Kernel:  devtty.c
 #include <devio.h>
 #include <extern.h>
 #include <machdep.h>
+#include <process.h>
 #include <unix.h>
 
 #define TTYSIZ 132

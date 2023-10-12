@@ -1,6 +1,7 @@
 #ifndef __PROCESS_H__
 #define __PROCESS_H__
 
+void psleep(void *event);
 void chksigs(void);
 void init2(void);
 int clk_int(void);
