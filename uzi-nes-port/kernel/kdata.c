@@ -19,6 +19,8 @@ struct p_tab ptab[PTABSIZE];
 
 time_t tod;	/* Time of day */
 int16 sec;	/* Tick counter for counting off one second */
+int16 runticks;	/* Number of ticks current process has been
+		   swapped in */
 
 /* Filesystem stuff */
 
