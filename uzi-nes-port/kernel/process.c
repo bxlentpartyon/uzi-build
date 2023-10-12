@@ -35,6 +35,16 @@ void newproc(ptptr p)
 			++of_tab[*j].o_refs;
 }
 
+void swrite(void)
+{
+	return;
+}
+
+void swapin(ptptr pp)
+{
+	return;
+}
+
 /* This allocates a new process table slot, and fills
 in its p_pid field with a unique number.  */
 ptptr
