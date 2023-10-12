@@ -302,3 +302,8 @@ UZI-NES WIP
 
 	start_clock();
 }
+
+int chksigs(void)
+{
+	return 0;
+}
