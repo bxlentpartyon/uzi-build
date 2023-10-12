@@ -7,6 +7,8 @@
 #include <process.h>
 #include <lib/string.h>
 
+int swapout(void);
+
 /* Newproc fixes up the tables for the child of a fork */
 void newproc(ptptr p)
 {
@@ -114,6 +116,87 @@ void init2(void)
 	dump_proc(initproc);
 
 	while(1);
+}
+
+/* psleep() puts a process to sleep on the given event.
+If another process is runnable, it swaps out the current one
+and starts the new one.
+Normally when psleep is called, the interrupts have already been
+disabled.   An event of 0 means a pause(), while an event equal
+to the process's own ptab address is a wait().   */
+
+void psleep(void *event)
+{
+    register dummy;  /* Force saving of registers */
+
+    di();
+    if (udata.u_ptab->p_status != P_RUNNING)
+	panic("psleep: voodoo");
+    if (!event)
+	udata.u_ptab->p_status = P_PAUSE;
+    else if (event == (char *)udata.u_ptab)
+	udata.u_ptab->p_status = P_WAIT;
+    else
+	udata.u_ptab->p_status = P_SLEEP;
+
+    udata.u_ptab->p_wait = event;
+
+    ei();
+
+    swapout();          /* Swap us out, and start another process */
+
+    /* Swapout doesn't return until we have been swapped back in */
+}
+
+/* Temp storage for swapout() */
+char *stkptr;
+
+/* Swapout swaps out the current process, finds another that is READY,
+possibly the same process, and swaps it in.
+When a process is restarted after calling swapout,
+it thinks it has just returned from swapout(). */
+
+/* This function can have no arguments or auto variables */
+int swapout(void)
+{
+    static ptptr newp;
+    ptptr getproc();
+
+
+    /* See if any signals are pending */
+    chksigs();
+
+    /* Get a new process */
+    newp = getproc();
+
+    /* If there is nothing else to run, just return */
+    if (newp == udata.u_ptab)
+    {
+	udata.u_ptab->p_status = P_RUNNING;
+	return (runticks = 0);
+    }
+
+    ;
+    /* Save the stack pointer and critical registers */
+/*
+#asm
+	LD      HL,01   ;this will return 1 if swapped.
+	PUSH    HL      ;will be return value
+	PUSH    BC
+	PUSH    IX
+	LD      HL,0
+	ADD     HL,SP   ;get sp into hl
+	LD      (stkptr?),HL
+#endasm
+*/
+    udata.u_sp = stkptr;
+
+    swrite();
+    /* Read the new process in, and return into its context. */
+    swapin(newp);
+
+    /* We should never get here. */
+    panic("swapin failed");
 }
 
 /* For now, this is the heart of how we tell time.  It only allows

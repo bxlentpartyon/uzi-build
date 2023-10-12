@@ -10,5 +10,4 @@ int clk_int(void);
 
 /* only referenced inside process.c */
 void newproc(ptptr p);
-int swapout(void);
 void swrite(void);
