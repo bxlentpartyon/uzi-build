@@ -1,4 +1,3 @@
-void psleep(void *event);
 void sendsig(ptptr proc, int16 sig);
 void wakeup(char *event);
 void ssig(register ptptr proc, int16 sig);
