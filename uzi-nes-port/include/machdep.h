@@ -11,6 +11,8 @@ void rdtime(time_t *tloc);
 void start_clock(void);
 void stop_clock(void);
 
+/* time functions */
 void rdtod(void);
+void addtick(time_t *t1, time_t *t2);
 
 #endif /* __MACHDEP_H__ */

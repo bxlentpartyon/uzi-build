@@ -1,8 +1,6 @@
 void sendsig(ptptr proc, int16 sig);
-void wakeup(char *event);
 void ssig(register ptptr proc, int16 sig);
 void swapin(ptptr pp);
-ptptr getproc(void);
 int dofork(void);
 int clk_int(void);
 
