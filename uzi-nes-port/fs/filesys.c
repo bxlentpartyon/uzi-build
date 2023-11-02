@@ -1,5 +1,6 @@
 #include <filesys.h>
 #include <ppu.h>
+#include <process.h>
 #include <unix.h>
 
 void magic(inoptr ino);
