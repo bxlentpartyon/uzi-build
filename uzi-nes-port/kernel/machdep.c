@@ -203,3 +203,20 @@ void start_kernel(void)
 
 	init2();	/* in process.c */
 }
+
+/* This adds two tick counts together.
+The t_time field holds up to one second of ticks,
+while the t_date field counts minutes */
+
+void addtick(time_t *t1, time_t *t2)
+{
+
+    t1->t_time += t2->t_time;
+    t1->t_date += t2->t_date;
+    if (t1->t_time >= 60*TICKSPERSEC)
+    {
+        t1->t_time -= 60*TICKSPERSEC;
+        ++t1->t_date;
+    }
+}
+

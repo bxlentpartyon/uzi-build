@@ -10,6 +10,19 @@ void bzero(char *p, unsigned int s)
 		p[i] = '\0';
 }
 
+/* Super slow bcopy */
+void bcopy(char *src, char *dest, unsigned int n)
+{
+	int i;
+	char tmp;
+
+	/* Not sure if the tmp swap is necessary here */
+	for (i = 0; i < n; i++) {
+		tmp = src[i];
+		dest[i] = tmp;
+	}
+}
+
 int strlen(char *s)
 {
 	char *curpos = s;

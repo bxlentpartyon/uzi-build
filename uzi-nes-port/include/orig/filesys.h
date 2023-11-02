@@ -15,7 +15,6 @@ int isdevice(inoptr ino);
 void d_close(int dev);
 inoptr i_open(int dev, unsigned ino);
 oid i_ref(inoptr ino);
-void i_deref(register inoptr ino);
 void f_trunc(register inoptr ino);
 void wr_inode(register inoptr ino);
 int ch_link(register inoptr wd, char *oldname, char *newname, inoptr nindex);

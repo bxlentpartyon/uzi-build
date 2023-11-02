@@ -39,22 +39,6 @@ int valadr(char *base, uint16 size)
 }
 
 
-/* This adds two tick counts together.
-The t_time field holds up to one second of ticks,
-while the t_date field counts minutes */
-
-void addtick(time_t *t1, time_t *t2)
-{
-
-    t1->t_time += t2->t_time;
-    t1->t_date += t2->t_date;
-    if (t1->t_time >= 60*TICKSPERSEC)
-    {
-        t1->t_time -= 60*TICKSPERSEC;
-        ++t1->t_date;
-    }
-}
-
 void incrtick(time_t *t)
 {
     if (++t->t_time == 60*TICKSPERSEC)

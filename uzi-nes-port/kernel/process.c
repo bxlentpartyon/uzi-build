@@ -5,6 +5,7 @@
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>
+#include <scall.h>
 #include <lib/string.h>
 
 int swapout(void);
@@ -184,6 +185,26 @@ void psleep(void *event)
     /* Swapout doesn't return until we have been swapped back in */
 }
 
+/* wakeup() looks for any process waiting on the event,
+and make them runnable */
+
+void wakeup(char *event)
+{
+    register ptptr p;
+
+    di();
+    for(p=ptab;p < ptab+PTABSIZE; ++p)
+    {
+	if (p->p_status > P_RUNNING && p->p_wait == event)
+	{
+	    p->p_status = P_READY;
+	    p->p_wait = (char *)NULL;
+	}
+    }
+    ei();
+}
+
+
 /* Temp storage for swapout() */
 char *stkptr;
 
@@ -339,7 +360,34 @@ UZI-NES WIP
 	start_clock();
 }
 
+/* This sees if the current process has any signals set, and deals with them */
 void chksigs(void)
 {
+    register j;
+
+    di();
+    ifnot (udata.u_ptab->p_pending)
+    {
+	ei();
 	return;
+    }
+
+    for (j=1; j < NSIGS; ++j)
+    {
+	ifnot (sigmask(j) & udata.u_ptab->p_pending)
+	    continue;
+	if (udata.u_sigvec[j] == SIG_DFL)
+	{
+	    ei();
+	    doexit(0,j);
+	}
+
+	if (udata.u_sigvec[j] != SIG_IGN)
+	{
+	    /* Arrange to call the user routine at return */
+	    udata.u_ptab->p_pending &= !sigmask(j);
+	    udata.u_cursig = j;
+	}
+    }
+    ei();
 }

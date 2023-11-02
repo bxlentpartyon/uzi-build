@@ -40,25 +40,6 @@ void init2(void)
 
 }
 
-/* wakeup() looks for any process waiting on the event,
-and make them runnable */
-
-void wakeup(char *event)
-{
-    register ptptr p;
-
-    di();
-    for(p=ptab;p < ptab+PTABSIZE; ++p)
-    {
-	if (p->p_status > P_RUNNING && p->p_wait == event)
-	{
-	    p->p_status = P_READY;
-	    p->p_wait = (char *)NULL;
-	}
-    }
-    ei();
-}
-
 /* This actually writes out the image */
 void swrite(void)
 {
@@ -259,41 +240,6 @@ int callno;
 
     return(udata.u_retval);
 }
-
-
-
-/* This sees if the current process has any signals set, and deals with them */
-void chksigs(void)
-{
-    register j;
-
-    di();
-    ifnot (udata.u_ptab->p_pending)
-    {
-	ei();
-	return;
-    }
-
-    for (j=1; j < NSIGS; ++j)
-    {
-	ifnot (sigmask(j) & udata.u_ptab->p_pending)
-	    continue;
-	if (udata.u_sigvec[j] == SIG_DFL)
-	{
-	    ei();
-	    doexit(0,j);
-	}
-
-	if (udata.u_sigvec[j] != SIG_IGN)
-	{
-	    /* Arrange to call the user routine at return */
-	    udata.u_ptab->p_pending &= !sigmask(j);
-	    udata.u_cursig = j;
-	}
-    }
-    ei();
-}
-
 
 void sendsig(ptptr proc, int16 sig)
 {
