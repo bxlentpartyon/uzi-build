@@ -1,4 +1,5 @@
 #include <filesys.h>
+#include <lib/string.h>
 #include <ppu.h>
 #include <process.h>
 #include <unix.h>
