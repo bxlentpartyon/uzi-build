@@ -15,7 +15,7 @@ UZI (Unix Z80 Implementation) Kernel:  extern.h
 
 
 extern struct u_data udata;	/* MUST BE FIRST */
-extern struct p_tab ptab[1];
+extern struct p_tab ptab[PTABSIZE];
 
 extern inoptr root;	/* Address of root dir in inode table */
 extern int16 ROOTDEV; 	/* Device number of root filesystem. */
