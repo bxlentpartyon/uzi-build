@@ -5,6 +5,7 @@
 #include <unix.h>
 
 void magic(inoptr ino);
+void freeblk(int dev, blkno_t blk, int level);
 
 /* I_ref increases the reference count of the given inode table entry. */
 
@@ -72,6 +73,26 @@ void f_trunc(register inoptr ino)
     ino->c_dirty = 1;
     ino->c_node.i_size.o_blkno = 0;
     ino->c_node.i_size.o_offset = 0;
+}
+
+/* Companion function to f_trunc(). */
+void freeblk(int dev, blkno_t blk, int level)
+{
+    blkno_t *buf;
+    int j;
+
+    ifnot (blk)
+	return;
+
+    if (level)
+    {
+	buf = (blkno_t *)bread(dev, blk, 0);
+	for (j=255; j >= 0; --j)
+	    freeblk(dev, buf[j], level-1);
+	brelse((char *)buf);
+    }
+
+    blk_free(dev,blk);
 }
 
 void magic(inoptr ino)

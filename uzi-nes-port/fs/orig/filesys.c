@@ -704,28 +704,6 @@ devnum(inoptr ino)
     return (*(ino->c_node.i_addr));
 }
 
-/* Companion function to f_trunc(). */
-void freeblk(int dev, blkno_t blk, int level)
-{
-    blkno_t *buf;
-    int j;
-
-    ifnot (blk)
-	return;
-
-    if (level)
-    {
-	buf = (blkno_t *)bread(dev, blk, 0);
-	for (j=255; j >= 0; --j)
-	    freeblk(dev, buf[j], level-1);
-	brelse((char *)buf);
-    }
-
-    blk_free(dev,blk);
-}
-
-
-
 /* Changes: blk_alloc zeroes block it allocates */
 
 /*
