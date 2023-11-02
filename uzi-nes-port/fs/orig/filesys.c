@@ -970,11 +970,3 @@ int fmount(register int dev, register inoptr ino)
 
     return (0);
 }
-
-
-void magic(inoptr ino)
-{
-    if (ino->c_magic != CMAGIC)
-	panic("Corrupt inode");
-}
-

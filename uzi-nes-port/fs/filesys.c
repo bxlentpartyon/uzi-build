@@ -2,6 +2,8 @@
 #include <ppu.h>
 #include <unix.h>
 
+void magic(inoptr ino);
+
 /* I_ref increases the reference count of the given inode table entry. */
 
 void i_ref(inoptr ino)
@@ -41,4 +43,10 @@ void i_deref(register inoptr ino)
 	}
 	wr_inode(ino);
     }
+}
+
+void magic(inoptr ino)
+{
+    if (ino->c_magic != CMAGIC)
+	panic("Corrupt inode");
 }
