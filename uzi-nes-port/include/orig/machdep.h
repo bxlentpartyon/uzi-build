@@ -12,7 +12,6 @@ void calltrap(void);
 
 /* time functions */
 void rdtime(time_t *tloc);
-void addtick(time_t *t1, time_t *t2);
 void incrtick(time_t *t);
 
 /* Not actually implemented yet */

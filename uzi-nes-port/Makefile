@@ -11,7 +11,7 @@ LINKER_SCRIPT := scripts/linker/uzi.cfg
 
 HEADER_DEPS := $(wildcard include/*.h)
 
-KERNEL_OBJS := head.o machdep.o process.o kdata.o
+KERNEL_OBJS := head.o machdep.o process.o kdata.o scall1.o scall2.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS))
 

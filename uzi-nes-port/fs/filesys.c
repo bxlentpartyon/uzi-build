@@ -9,3 +9,8 @@ void i_ref(inoptr ino)
     if (++(ino->c_refs) == 2*ITABSIZE)  /* Arbitrary limit. */
 	panic("too many i-refs");
 }
+
+void i_deref(register inoptr ino)
+{
+	return;
+}
