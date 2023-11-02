@@ -46,6 +46,33 @@ void i_deref(register inoptr ino)
     }
 }
 
+/* F_trunc frees all the blocks associated with the file,
+if it is a disk file. */
+
+void f_trunc(register inoptr ino)
+{
+    int dev;
+    int j;
+
+    dev = ino->c_dev;
+
+    /* First deallocate the double indirect blocks */
+    freeblk(dev, ino->c_node.i_addr[19], 2);
+
+    /* Also deallocate the indirect blocks */
+    freeblk(dev, ino->c_node.i_addr[18], 1);
+
+    /* Finally, free the direct blocks */
+    for (j=17; j >= 0; --j)
+	freeblk(dev, ino->c_node.i_addr[j], 0);
+
+    bzero((char *)ino->c_node.i_addr, sizeof(ino->c_node.i_addr));
+
+    ino->c_dirty = 1;
+    ino->c_node.i_size.o_blkno = 0;
+    ino->c_node.i_size.o_offset = 0;
+}
+
 void magic(inoptr ino)
 {
     if (ino->c_magic != CMAGIC)

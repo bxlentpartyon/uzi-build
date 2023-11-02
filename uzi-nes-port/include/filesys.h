@@ -6,5 +6,6 @@
 int d_open(int dev);
 void i_ref(inoptr ino);
 void i_deref(inoptr ino);
+void f_trunc(register inoptr ino);
 
 #endif /* __FILESYS_H__ */
