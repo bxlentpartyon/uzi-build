@@ -12,7 +12,6 @@ void calltrap(void);
 
 /* time functions */
 void rdtime(time_t *tloc);
-void incrtick(time_t *t);
 
 /* Not actually implemented yet */
 unsigned int in(unsigned int *addr);

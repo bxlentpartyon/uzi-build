@@ -220,3 +220,11 @@ void addtick(time_t *t1, time_t *t2)
     }
 }
 
+void incrtick(time_t *t)
+{
+    if (++t->t_time == 60*TICKSPERSEC)
+    {
+        t->t_time = 0;
+        ++t->t_date;
+    }
+}

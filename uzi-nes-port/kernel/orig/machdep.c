@@ -39,16 +39,6 @@ int valadr(char *base, uint16 size)
 }
 
 
-void incrtick(time_t *t)
-{
-    if (++t->t_time == 60*TICKSPERSEC)
-    {
-        t->t_time = 0;
-        ++t->t_date;
-    }
-}
-
-
 void stkreset(void)
 {
 /*
@@ -71,8 +61,6 @@ void tempstack(void)
 #endasm
 */
 }
-
-
 
 void initvec(void)
 {

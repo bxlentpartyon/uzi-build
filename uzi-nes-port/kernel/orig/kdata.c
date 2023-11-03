@@ -4,7 +4,6 @@
 
 /* Interrupt/timer stuff */
 
-time_t ticks;	/* Cumulative tick counter, in minutes and ticks  */
 int16 inint;	/* flag is set whenever interrupts are being serviced */
 
 /* Filesystem stuff */

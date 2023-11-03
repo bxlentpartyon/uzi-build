@@ -14,5 +14,6 @@ void stop_clock(void);
 /* time functions */
 void rdtod(void);
 void addtick(time_t *t1, time_t *t2);
+void incrtick(time_t *t);
 
 #endif /* __MACHDEP_H__ */
