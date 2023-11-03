@@ -289,14 +289,11 @@ int clk_int(void)
 		tick_count++;
 	}
 
-#if 0
-UZI-NES WIP
 	/* Increment processes and global tick counters */
 	if (udata.u_ptab->p_status == P_RUNNING)
 		incrtick(udata.u_insys ? &udata.u_stime : &udata.u_utime);
 
 	incrtick(&ticks);
-#endif
 
 	/* Do once-per-second things */
 
