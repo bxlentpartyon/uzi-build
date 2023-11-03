@@ -111,7 +111,7 @@ nogood:
 
 void dump_proc(ptptr proc)
 {
-	kprintf("P %d U %d T %x r %x A %d X %d W %x R %d S %x I %x\n",
+	kprintf("P %d U %d T %x r %x A %x X %d W %x R %d S %x I %x\n",
 		proc->p_pid, proc->p_uid, proc->p_status, proc->p_pptr,
 		proc->p_alarm, proc->p_exitval, proc->p_wait, proc->p_priority,
 		proc->p_pending, proc->p_ignored);
@@ -128,6 +128,7 @@ void init2(void)
 	initproc = ptab_alloc();
 	udata.u_ptab = initproc;
 	newproc(initproc);
+	dump_proc(initproc);
 	initproc->p_status = P_RUNNING;
 
 	/* User's file table */
@@ -152,6 +153,7 @@ void init2(void)
 	cdread(TTYDEV);
 	ROOTDEV = bootchar - '0';
 
+	dump_proc(initproc);
 	dump_proc(initproc);
 
 	while(1);
