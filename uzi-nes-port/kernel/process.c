@@ -1,6 +1,7 @@
 #include <unix.h>
 #include <extern.h>
 #include <devio.h>
+#include <devtty.h>
 #include <filesys.h>
 #include <machdep.h>
 #include <ppu.h>
@@ -141,6 +142,7 @@ void init2(void)
 	while (!tod.t_date);
 
 	/* Open the console tty device */
+	tty_init();
 	if (d_open(TTYDEV) != 0)
 		panic("no tty");
 

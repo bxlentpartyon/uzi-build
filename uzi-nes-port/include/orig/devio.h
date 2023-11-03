@@ -1,5 +1,4 @@
 int uninsq(register struct s_queue *q, char *cp);
-int insq(register struct s_queue *q, char c);
 void brelse(bufptr bp);
 void bawrite(bufptr bp);
 int cdwrite(int dev);

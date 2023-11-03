@@ -283,24 +283,6 @@ int d_ioctl(int dev, int request, char *data)
 Character queue management routines
 ************************************************************/
 
-
-/* add something to the tail */
-int insq(register struct s_queue *q, char c)
-{
-    di();
-    if (q->q_count == q->q_size)
-    {
-        ei();
-        return(0);
-    }
-    *(q->q_tail) = c;
-    ++q->q_count;
-    if (++q->q_tail >= q->q_base + q->q_size)
-        q->q_tail = q->q_base;
-    ei();
-    return(1);
-}
-
 /* Remove something from the tail; the most recently added char. */
 uninsq(struct s_queue *q, char *cp)
 {

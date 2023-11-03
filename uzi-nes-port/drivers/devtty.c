@@ -64,3 +64,8 @@ int tty_close(int minor)
 {
 	return(0);
 }
+
+void tty_init(void)
+{
+	insq(&ttyinq, '0');
+}
