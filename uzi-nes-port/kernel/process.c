@@ -111,7 +111,7 @@ nogood:
 
 void dump_proc(ptptr proc)
 {
-	kprintf("P %d U %d T %x r %x A %d X %d W %x R %d S %x I %x\n",
+	kprintf("P %d U %d T %x r %x A %x X %d W %x R %d S %x I %x\n",
 		proc->p_pid, proc->p_uid, proc->p_status, proc->p_pptr,
 		proc->p_alarm, proc->p_exitval, proc->p_wait, proc->p_priority,
 		proc->p_pending, proc->p_ignored);
@@ -128,6 +128,7 @@ void init2(void)
 	initproc = ptab_alloc();
 	udata.u_ptab = initproc;
 	newproc(initproc);
+	dump_proc(initproc);
 	initproc->p_status = P_RUNNING;
 
 	/* User's file table */
@@ -152,6 +153,7 @@ void init2(void)
 	cdread(TTYDEV);
 	ROOTDEV = bootchar - '0';
 
+	dump_proc(initproc);
 	dump_proc(initproc);
 
 	while(1);
@@ -329,8 +331,6 @@ int clk_int(void)
 						tmp_hours, tmp_mins, tmp_secs);
 #endif
 
-#if 0
-UZI-NES WIP
 		/* Update process alarm clocks */
 		for (p=ptab; p < ptab+PTABSIZE; ++p)
 		{
@@ -338,7 +338,6 @@ UZI-NES WIP
 				ifnot(--p->p_alarm)
 					sendsig(p,SIGALRM);
 		}
-#endif
 	}
 
 
@@ -388,5 +387,39 @@ void chksigs(void)
 	    udata.u_cursig = j;
 	}
     }
+    ei();
+}
+
+void sendsig(ptptr proc, int16 sig)
+{
+    register ptptr p;
+
+    if (proc)
+	ssig(proc,sig);
+    else
+	for (p=ptab; p < ptab+PTABSIZE; ++p)
+	    if (p->p_status)
+	        ssig(p,sig);
+	
+}
+
+void ssig(register ptptr proc, int16 sig)
+{
+    register stat;
+
+    di();
+    ifnot(proc->p_status)
+	goto done;              /* Presumably was killed just now */
+
+    if (proc->p_ignored & sigmask(sig))
+	goto done;
+
+    stat = proc->p_status;
+    if (stat == P_PAUSE || stat == P_WAIT || stat == P_SLEEP)
+	proc->p_status = P_READY;
+
+    proc->p_wait = (char *)NULL;
+    proc->p_pending |= sigmask(sig);
+done:
     ei();
 }
