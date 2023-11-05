@@ -13,7 +13,7 @@
 	.export		_start_clock, _stop_clock
 	.export		_apu_status_byte
 
-	.include	"nes.inc"
+	.include	"uzi_nes.inc"
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
