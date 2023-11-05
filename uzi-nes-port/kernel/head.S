@@ -327,8 +327,8 @@ stub_entry:
 	ldx #$06	;
 	stx $5117	; PRG-ROM high bank to 3
 
-	ldx #$03	;
-	stx $5104	; Set ExRAM to read-only
+	ldx #$02	;
+	stx $5104	; Set ExRAM to read-write
 
 	jmp reset
 	.addr nmi, stub_entry, irq
