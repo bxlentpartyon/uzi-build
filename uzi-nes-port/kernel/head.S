@@ -277,9 +277,7 @@ set_palette:
 	pla
 .endmacro
 
-.proc nmi
-	save_regs
-
+.macro activate_irq_stack
 	; zpsave borrowed from libsrc/common/interrupt.s in cc65
 	ldx #$14
 zpsave_loop:
@@ -297,9 +295,9 @@ zpsave_loop:
 	ldx #$06
 	sta sp
 	stx sp+1
+.endmacro
 
-	jsr _handle_vblank
-
+.macro deacivate_irq_stack
 	ldx #$14
 zprestore_loop:
 	lda zpsave, x
@@ -311,7 +309,13 @@ zprestore_loop:
 	sta jmpvec+2
 	pla
 	sta jmpvec+1
+.endmacro
 
+.proc nmi
+	save_regs
+	activate_irq_stack
+	jsr _handle_vblank
+	deacivate_irq_stack
 	restore_regs
 
 	rti
@@ -328,40 +332,12 @@ zprestore_loop:
 	txa
 	pha
 
-	; zpsave borrowed from libsrc/common/interrupt.s in cc65
-	ldx #$14
-zpsave_loop2:
-	lda $15, x
-	sta zpsave, x
-	dex
-	bpl zpsave_loop2
-
-	lda jmpvec+1
-	pha
-	lda jmpvec+2
-	pha
-
-	lda #$00
-	ldx #$06
-	sta sp
-	stx sp+1
-
 	lda APU_STATUS
 	sta _apu_status_byte
 
+	activate_irq_stack
 	jsr _handle_irq
-
-	ldx #$14
-zprestore_loop2:
-	lda zpsave, x
-	sta $15, x
-	dex
-	bpl zprestore_loop2
-
-	pla
-	sta jmpvec+2
-	pla
-	sta jmpvec+1
+	deacivate_irq_stack
 
 	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
 	lda #%10000000
