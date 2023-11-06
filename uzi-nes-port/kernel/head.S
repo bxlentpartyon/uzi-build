@@ -1,6 +1,7 @@
 	.importzp	sp
 	.import 	_start_kernel
 	.import		_handle_vblank, _handle_irq
+	.import		jmpvec
 	.export		___dump_screenbuf
 	.export		_ppu_reset
 	.export		_screenbuf
@@ -14,6 +15,7 @@
 	.export		_apu_status_byte
 
 	.include	"uzi_nes.inc"
+	.include	"zeropage.inc"
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
@@ -42,9 +44,11 @@
 _screenbuf:
 	.res 896, $00
 _screenbuf_advance:
-	.byte $80
+	.byte $40
 _printbuf:
 	.res 896, $00
+zpsave: .res zpsavespace
+zpsave_size: .byte $14
 
 .segment "ZEROPAGE"
 _buffer_dump_pos:
@@ -264,7 +268,37 @@ set_palette:
 	txa
 	pha
 
+	; zpsave borrowed from libsrc/common/interrupt.s in cc65
+	ldx #$14
+zpsave_loop:
+	lda $15, x
+	sta zpsave, x
+	dex
+	bpl zpsave_loop
+
+	lda jmpvec+1
+	pha
+	lda jmpvec+2
+	pha
+
+	lda #$00
+	ldx #$06
+	sta sp
+	stx sp+1
+
 	jsr _handle_vblank
+
+	ldx #$14
+zprestore_loop:
+	lda zpsave, x
+	sta $15, x
+	dex
+	bpl zprestore_loop
+
+	pla
+	sta jmpvec+2
+	pla
+	sta jmpvec+1
 
 	pla	; restore registers
 	tax
@@ -277,15 +311,53 @@ set_palette:
 
 .proc irq
 	pha	; save registers
+
+	lda #$00
+	sta PPU_CTRL	; disable vblank NMI
+
 	tya
 	pha
 	txa
 	pha
 
+	; zpsave borrowed from libsrc/common/interrupt.s in cc65
+	ldx #$14
+zpsave_loop2:
+	lda $15, x
+	sta zpsave, x
+	dex
+	bpl zpsave_loop2
+
+	lda jmpvec+1
+	pha
+	lda jmpvec+2
+	pha
+
+	lda #$00
+	ldx #$06
+	sta sp
+	stx sp+1
+
 	lda APU_STATUS
 	sta _apu_status_byte
 
 	jsr _handle_irq
+
+	ldx #$14
+zprestore_loop2:
+	lda zpsave, x
+	sta $15, x
+	dex
+	bpl zprestore_loop2
+
+	pla
+	sta jmpvec+2
+	pla
+	sta jmpvec+1
+
+	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
+	lda #%10000000
+	sta PPU_CTRL	; enable vblank NMI
 
 	pla	; restore registers
 	tax
