@@ -154,7 +154,6 @@ void init2(void)
 	ROOTDEV = bootchar - '0';
 
 	dump_proc(initproc);
-	dump_proc(initproc);
 
 	while(1);
 }
