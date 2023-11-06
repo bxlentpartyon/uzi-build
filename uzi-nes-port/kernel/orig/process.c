@@ -241,36 +241,3 @@ int callno;
     return(udata.u_retval);
 }
 
-void sendsig(ptptr proc, int16 sig)
-{
-    register ptptr p;
-
-    if (proc)
-	ssig(proc,sig);
-    else
-	for (p=ptab; p < ptab+PTABSIZE; ++p)
-	    if (p->p_status)
-	        ssig(p,sig);
-	
-}
-
-void ssig(register ptptr proc, int16 sig)
-{
-    register stat;
-
-    di();
-    ifnot(proc->p_status)
-	goto done;              /* Presumably was killed just now */
-
-    if (proc->p_ignored & sigmask(sig))
-	goto done;
-
-    stat = proc->p_status;
-    if (stat == P_PAUSE || stat == P_WAIT || stat == P_SLEEP)
-	proc->p_status = P_READY;
-
-    proc->p_wait = (char *)NULL;
-    proc->p_pending |= sigmask(sig);
-done:
-    ei();
-}
