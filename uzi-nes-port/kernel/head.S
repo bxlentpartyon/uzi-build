@@ -60,27 +60,6 @@ _apu_status_byte:
 
 .segment "CODE"
 
-; enable interrupts
-.proc _ei
-	cli
-
-	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
-	lda #%10000000
-	sta PPU_CTRL	; enable vblank NMI
-
-	rts
-.endproc
-
-; disable interrupts
-.proc _di
-	sei
-
-	lda #$00
-	sta PPU_CTRL	; disable vblank NMI
-
-	rts
-.endproc
-
 .proc ___dump_screenbuf
 
 put_str:
@@ -261,6 +240,31 @@ set_palette:
 	jmp _start_kernel
 .endproc
 
+.macro enable_vblank_nmi
+	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
+	lda #%10000000
+	sta PPU_CTRL	; enable vblank NMI
+.endmacro
+
+.macro disable_vblank_nmi
+	lda #$00
+	sta PPU_CTRL	; disable vblank NMI
+.endmacro
+
+; enable interrupts
+.proc _ei
+	cli
+	enable_vblank_nmi
+	rts
+.endproc
+
+; disable interrupts
+.proc _di
+	sei
+	disable_vblank_nmi
+	rts
+.endproc
+
 .macro save_regs
 	pha	; save registers
 	tya
@@ -322,11 +326,8 @@ zprestore_loop:
 .endproc
 
 .proc irq
-	pha	; save registers
-
-	lda #$00
-	sta PPU_CTRL	; disable vblank NMI
-
+	pha	; broken up register to save to disable vblank NMI ASAP
+	disable_vblank_nmi
 	tya
 	pha
 	txa
@@ -338,11 +339,7 @@ zprestore_loop:
 	activate_irq_stack
 	jsr _handle_irq
 	deacivate_irq_stack
-
-	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
-	lda #%10000000
-	sta PPU_CTRL	; enable vblank NMI
-
+	enable_vblank_nmi
 	restore_regs
 
 	rti
