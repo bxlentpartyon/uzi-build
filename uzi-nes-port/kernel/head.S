@@ -261,12 +261,24 @@ set_palette:
 	jmp _start_kernel
 .endproc
 
-.proc nmi
+.macro save_regs
 	pha	; save registers
 	tya
 	pha
 	txa
 	pha
+.endmacro
+
+.macro restore_regs
+	pla	; restore registers
+	tax
+	pla
+	tay
+	pla
+.endmacro
+
+.proc nmi
+	save_regs
 
 	; zpsave borrowed from libsrc/common/interrupt.s in cc65
 	ldx #$14
@@ -300,11 +312,7 @@ zprestore_loop:
 	pla
 	sta jmpvec+1
 
-	pla	; restore registers
-	tax
-	pla
-	tay
-	pla
+	restore_regs
 
 	rti
 .endproc
@@ -359,11 +367,7 @@ zprestore_loop2:
 	lda #%10000000
 	sta PPU_CTRL	; enable vblank NMI
 
-	pla	; restore registers
-	tax
-	pla
-	tay
-	pla
+	restore_regs
 
 	rti
 .endproc
