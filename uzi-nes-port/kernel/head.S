@@ -60,6 +60,7 @@ _apu_status_byte:
 .proc _ei
 	cli
 
+	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
 	lda #%10000000
 	sta PPU_CTRL	; enable vblank NMI
 
