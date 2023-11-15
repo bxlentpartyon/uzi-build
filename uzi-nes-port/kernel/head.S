@@ -2,13 +2,6 @@
 	.import 	_start_kernel
 	.import		_handle_vblank, _handle_irq
 	.import		jmpvec
-	.export		___dump_screenbuf
-	.export		_ppu_reset
-	.export		_screenbuf
-	.export		_screenbuf_advance
-	.export		_printbuf
-	.export		_buffer_dump_pos
-	.export		_ppu_dump_pos
 	.export		_ei
 	.export		_di
 	.export		_start_clock, _stop_clock
@@ -41,59 +34,14 @@
 	.byte $00, $00
 
 .segment "DATA"
-_screenbuf:
-	.res 896, $00
-_screenbuf_advance:
-	.byte $40
-_printbuf:
-	.res 896, $00
 zpsave: .res zpsavespace
 zpsave_size: .byte $14
 
 .segment "ZEROPAGE"
-_buffer_dump_pos:
-	.addr $0000
-_ppu_dump_pos:
-	.addr $0000
 _apu_status_byte:
 	.byte $00
 
 .segment "CODE"
-
-.proc ___dump_screenbuf
-
-put_str:
-	lda _ppu_dump_pos+1
-	sta PPU_ADDR
-	lda _ppu_dump_pos
-	sta PPU_ADDR
-
-	ldy #$00
-loop:
-	lda (_buffer_dump_pos), y
-	sta PPU_DATA
-	iny
-	cpy _screenbuf_advance
-	bne loop
-
-put_str_out:
-	rts
-
-.endproc
-
-.proc _ppu_reset
-	lda #$20	; reset ppu read address
-	sta PPU_ADDR
-	lda #$00
-	sta PPU_ADDR
-
-	sta PPU_SCROLL	; reset scrolling
-	sta PPU_SCROLL
-
-	ldx #$0a	; enable BG rendering
-	stx PPU_MASK
-	rts
-.endproc
 
 .proc _start_clock
 	cli
