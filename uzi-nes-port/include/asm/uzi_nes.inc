@@ -1,3 +1,6 @@
+.ifndef __UZI_NES_INC__
+.define __UZI_NES_INC__
+
 ; PPU registers
 PPU_CTRL	= $2000
 PPU_MASK	= $2001
@@ -8,3 +11,5 @@ PPU_DATA	= $2007
 
 APU_STATUS		= $4015
 APU_FRAME_COUNTER	= $4017
+
+.endif
