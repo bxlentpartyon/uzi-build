@@ -2,10 +2,9 @@
 	.import 	_start_kernel
 	.import		_handle_vblank, _handle_irq
 	.import		jmpvec
+	.import		_apu_status_byte, _stop_clock
 	.export		_ei
 	.export		_di
-	.export		_start_clock, _stop_clock
-	.export		_apu_status_byte
 
 	.include	"uzi_nes.inc"
 	.include	"zeropage.inc"
@@ -37,25 +36,7 @@
 zpsave: .res zpsavespace
 zpsave_size: .byte $14
 
-.segment "ZEROPAGE"
-_apu_status_byte:
-	.byte $00
-
 .segment "CODE"
-
-.proc _start_clock
-	cli
-	lda #%00000000
-	sta APU_FRAME_COUNTER	; enable clock interrupt
-	rts
-.endproc
-
-.proc _stop_clock
-	sei
-	lda #%01000000
-	sta APU_FRAME_COUNTER	; disable clock interrupt
-	rts
-.endproc
 
 .proc reset
 	sei
