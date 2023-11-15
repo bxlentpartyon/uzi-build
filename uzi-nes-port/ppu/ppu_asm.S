@@ -22,6 +22,9 @@ _buffer_dump_pos:
 _ppu_dump_pos:
 	.addr $0000
 
+.segment "CHR"
+	.incbin "font/newfont.chr"
+
 .segment "CODE"
 
 .proc _ppu_reset

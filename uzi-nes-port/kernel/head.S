@@ -204,6 +204,3 @@ reset_stub "STUB00"
 reset_stub "STUB01"
 reset_stub "STUB02"
 reset_stub "STUB03"
-
-.segment "CHR"
-	.incbin "font/newfont.chr"
