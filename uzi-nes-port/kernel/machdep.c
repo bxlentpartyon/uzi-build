@@ -127,14 +127,14 @@ int nr_apu_irqs = 0;
 extern unsigned char apu_status_byte;
 #pragma zpsym ("apu_status_byte");
 
-extern unsigned char kb_rows[8];
+extern unsigned char kb_rows[9];
 
 void print_kb_bytes(void)
 {
 	int i;
 
 	kprintf("KB: ");
-	for (i = 0; i < 8; i++)
+	for (i = 0; i < 9; i++)
 		kprintf("%x ", kb_rows[i]);
 	kprintf("\n");
 
