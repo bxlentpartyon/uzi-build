@@ -272,6 +272,8 @@ and is in user space or mark it to be swapped out if in system space.
 Also it decrements the alarm clock of processes.
 This must have no automatic or register variables */
 
+extern void print_kb_bytes(void);
+
 int clk_int(void)
 {
 	static ptptr p;
@@ -300,6 +302,7 @@ int clk_int(void)
 
 	if (++sec == TICKSPERSEC)
 	{
+		print_kb_bytes();
 		/* Update global time counters */
 		sec = 0;
 

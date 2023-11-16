@@ -2,7 +2,7 @@
 	.import		jmpvec
 	.importzp	_apu_status_byte
 	.import		_handle_irq, _handle_vblank
-	.export		_ei, _di, nmi, irq
+	.export		_ei, _di, nmi, irq, _kb_rows
 
 	.include	"uzi_nes.inc"
 	.include	"zeropage.inc"
@@ -10,6 +10,8 @@
 .segment "DATA"
 zpsave: .res zpsavespace
 zpsave_size: .byte $14
+_kb_rows:	.res 8
+kb_tmp:	.byte $00
 
 .segment "CODE"
 
@@ -88,10 +90,47 @@ zprestore_loop:
 	pla
 .endmacro
 
+.proc read_keyboard
+	lda #$05
+	sta $4016	; reset keyboard reader to row 0
+
+	ldx #$00
+kb_read_loop:
+	lda #$04
+	sta $4016	; begin next row
+
+	lda $4017	; load column 0 bits xxxH HHHx
+	and #$1e	; mask out unused bits to be super-safe
+	lsr a		; shift right for xxxx HHHH
+	sta kb_tmp
+
+	lda #$06
+	sta $4016	; switch to column 1
+
+	lda $4017	; load colum 1 bits xxxH HHHx
+	and #$1e	; mask out unused bits again
+	asl
+	asl
+	asl		; shift left for HHHH xxxx
+	ora kb_tmp	; OR with the lower bits to get the full column byte in A
+
+	sta _kb_rows, x	; store the computed row byte
+
+	inx
+	txa
+	cmp #$09	; loop through all 8 columns
+	bne kb_read_loop
+
+	rts
+.endproc
+
 .proc nmi
 	save_regs
 	activate_irq_stack
+
 	jsr _handle_vblank
+	jsr read_keyboard
+
 	deacivate_irq_stack
 	restore_regs
 
