@@ -8,10 +8,10 @@
 	.include	"zeropage.inc"
 
 .segment "DATA"
-zpsave: .res zpsavespace
-zpsave_size: .byte $14
-_kb_rows:	.res 8
-kb_tmp:	.byte $00
+zpsave:		.res zpsavespace
+zpsave_size:	.byte	$14
+_kb_rows:	.res	 9
+kb_tmp:		.byte	$00
 
 .segment "CODE"
 
