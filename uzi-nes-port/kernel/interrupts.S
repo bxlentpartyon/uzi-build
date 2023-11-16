@@ -1,6 +1,7 @@
 	.importzp	sp
 	.import		jmpvec
-	.import		_handle_irq, _handle_vblank, _apu_status_byte
+	.importzp	_apu_status_byte
+	.import		_handle_irq, _handle_vblank
 	.export		_ei, _di, nmi, irq
 
 	.include	"uzi_nes.inc"
