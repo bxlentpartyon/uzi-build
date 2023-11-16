@@ -42,6 +42,9 @@ kb_tmp:	.byte $00
 
 .macro activate_irq_stack
 	; zpsave borrowed from libsrc/common/interrupt.s in cc65
+	; the magic number here #$14 is the size of the zeropage data that needs
+	; to be saved - it should be replaced with zpsave_size, or better yet a
+	; .sizeof(zpsavespace) or something like that
 	ldx #$14
 zpsave_loop:
 	lda $15, x
