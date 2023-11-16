@@ -11,6 +11,8 @@
 zpsave: .res zpsavespace
 zpsave_size: .byte $14
 
+.segment "CODE"
+
 .macro enable_vblank_nmi
 	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
 	lda #%10000000
