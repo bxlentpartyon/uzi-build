@@ -1,16 +1,28 @@
 	.importzp	sp
 	.import		jmpvec
 	.importzp	_apu_status_byte
-	.import		_handle_irq, _handle_vblank
-	.export		_ei, _di, nmi, irq, _kb_rows
+	.import		_handle_irq, _handle_vblank, _dump_keyboard
+	.export		_ei, _di, nmi, irq, _kb_rows, _kb_map, _kb_checked
 
 	.include	"uzi_nes.inc"
 	.include	"zeropage.inc"
+
+	.linecont
 
 .segment "DATA"
 zpsave:		.res zpsavespace
 _kb_rows:	.res	 9
 kb_tmp:		.byte	$00
+_kb_map:	.byte	$00, "\n", "[", "]", $01, $02, "\\", $03,	\
+			$04, "@", ":", ";", "_", "/", "-", "^",		\
+			$05, "O", "L", "K", ".", ",", "P", "0",		\
+			$06, "I", "U", "J", "M", "N", "9", "8",		\
+			$07, "Y", "G", "H", "B", "V", "7", "6",		\
+			$08, "T", "R", "D", "F", "C", "5", "4",		\
+			$09, "W", "S", "A", "X", "Z", "E", "3",		\
+			$0a, $0b, "Q", $0c, $0d, $0e, "1", "2",		\
+			$0f, $10, $11, $12, $13, $14, $15, $16
+_kb_checked:	.byte $00
 
 .segment "CODE"
 
@@ -120,6 +132,9 @@ kb_read_loop:
 	cmp #$09	; loop through all 8 columns
 	bne kb_read_loop
 
+	lda #$00
+	sta _kb_checked
+
 	rts
 .endproc
 
@@ -127,8 +142,8 @@ kb_read_loop:
 	save_regs
 	activate_irq_stack
 
-	jsr _handle_vblank
 	jsr read_keyboard
+	jsr _handle_vblank
 
 	deacivate_irq_stack
 	restore_regs

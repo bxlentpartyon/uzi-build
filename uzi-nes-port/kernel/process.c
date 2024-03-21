@@ -8,6 +8,7 @@
 #include <process.h>
 #include <scall.h>
 #include <lib/string.h>
+#include <kb.h>
 
 int swapout(void);
 
@@ -155,7 +156,8 @@ void init2(void)
 
 	dump_proc(initproc);
 
-	while(1);
+	while(1)
+		dump_keyboard();
 }
 
 /* psleep() puts a process to sleep on the given event.
@@ -302,7 +304,7 @@ int clk_int(void)
 
 	if (++sec == TICKSPERSEC)
 	{
-		print_kb_bytes();
+		//print_kb_bytes();
 		/* Update global time counters */
 		sec = 0;
 
