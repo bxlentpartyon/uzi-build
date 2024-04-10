@@ -22,7 +22,6 @@ void dump_keyboard(void)
 	for (i = 0; i < KB_ROW_COUNT; i++) {
 		for (bit = 0; bit < BYTE_BITS; bit++) {
 			if (!(kb_rows[i] >> bit & 0x1))
-				// FIXME this should not have the +2 here - that's stupid
 				ppu_putc(kb_map[overall]);
 			overall++;
 		}
