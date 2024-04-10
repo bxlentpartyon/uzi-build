@@ -304,7 +304,6 @@ int clk_int(void)
 
 	if (++sec == TICKSPERSEC)
 	{
-		//print_kb_bytes();
 		/* Update global time counters */
 		sec = 0;
 
