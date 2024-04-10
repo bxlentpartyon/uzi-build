@@ -7,6 +7,7 @@
 .segment "DATA"
 _kb_rows:	.res	 9
 kb_tmp:		.byte	$00
+kb_enabled:	.byte	$00
 
 ; TODO fix this table.  It's copied directly from the nesdev wiki,
 ; so it's correct, the bits just aren't in the right order to make
@@ -32,10 +33,48 @@ _kb_map: .byte	$00, $01, '[', ']', $02, $03, '\', $04,	\
 			$10, $11, $12, $13, $14, $15, $16, $17
 _kb_checked:	.byte $00
 
+.proc check_kb_enabled
+	; this subroutine assumes that the keyboard has been enabled
+	; in software, and is set to row zero, i.e. $4016 == #$05
+	;
+	; we use the "Lode Runner method" to see if the kb is enabled:
+	; https://www.nesdev.org/wiki/Family_BASIC_Keyboard#Detection
+	ldx #$00
+kb_skip_loop:
+	lda #$06	; advance to column 1
+	sta $4016
+	lda #$04	; advance to next row
+
+	inx
+	txa
+	cmp #$0a
+	bne kb_skip_loop
+
+	; at this point we should be at row 10, column 0
+	lda #$1e	;
+	and $4017	; $4017 should be set to 0x1e if the keyboard is connected
+	cmp #$1e	;
+	bne kb_enabled_out
+
+	lda #$01
+	sta kb_enabled
+
+kb_enabled_out:
+	rts
+.endproc
+
 .proc read_keyboard
 	lda #$05
 	sta $4016	; reset keyboard reader to row 0
 
+	lda kb_enabled		; if kb_enabled is set, jump to the loop
+	bne kb_is_enabled	;
+
+	jsr check_kb_enabled	; check if the kb has been enabled
+	lda kb_enabled		; if not, bail out
+	beq read_keyboard_out
+
+kb_is_enabled:
 	ldx #$00
 kb_read_loop:
 	lda #$04
@@ -66,6 +105,7 @@ kb_read_loop:
 	lda #$00
 	sta _kb_checked
 
+read_keyboard_out:
 	rts
 .endproc
 
