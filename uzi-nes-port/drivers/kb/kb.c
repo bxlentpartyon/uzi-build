@@ -9,6 +9,8 @@ extern unsigned char kb_map[KB_OVERALL];
 extern void ppu_putc(char c);
 extern char kb_checked;
 
+unsigned char prev_kb_rows[KB_ROW_COUNT];
+
 void dump_keyboard(void)
 {
 	int i, bit;
@@ -21,9 +23,16 @@ void dump_keyboard(void)
 
 	for (i = 0; i < KB_ROW_COUNT; i++) {
 		for (bit = 0; bit < BYTE_BITS; bit++) {
-			if (!(kb_rows[i] >> bit & 0x1))
+			/*
+			 * we only print the char if the key was "freshly" pressed
+			 * on this frame
+			 */
+			if ((kb_rows[i] >> bit & 0x1) == 0 &&
+			    (prev_kb_rows[i] >> bit & 0x1) == 1)
 				ppu_putc(kb_map[overall]);
 			overall++;
 		}
+
+		prev_kb_rows[i] = kb_rows[i];
 	}
 }
