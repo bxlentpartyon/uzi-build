@@ -31,7 +31,7 @@ _kb_map: .byte	$00, $01, '[', ']', $02, $03, '\', $04,	\
 			$0a, 'W', 'S', 'A', 'X', 'Z', 'E', '3',		\
 			$0b, $0c, 'Q', $0d, $0e, $0f, '1', '2',		\
 			$10, $11, $12, $13, $14, $15, $16, $17
-_kb_checked:	.byte $00
+_kb_checked:	.byte $01
 
 .proc check_kb_enabled
 	; this subroutine assumes that the keyboard has been enabled
