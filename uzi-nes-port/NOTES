@@ -1,1 +1,25 @@
 Current size of p_tab: 0x15 (21) bytes
+
+# Handling multiple processes
+
+## The problem
+
+The NES doesn't have any kind of respectable external storage available to it.
+The FDS (Famicom Disk System) provides 64K per disk-side of storage, but it
+also needs a bunch of special hardware and a BIOS ROM to make it work, so it
+can't be made to work with MMC5.  Even if it could, the 128K of storage provided
+by a single disk isn't any better than the 128K of WRAM potentially provided by
+the MMC5.
+
+## Current WIP solution
+
+Use the 16 8K pages of WRAM as the entire working address space for each
+process.  This leaves us with a maximum of 15 potential processes, since we need
+one page for the kernel.  Realistically, we want to take advantage of the
+battery-backing on the lower half of the WRAM for some R/W filesystem space, so
+I'm currently thinking that I'll divide this in half:  The first 8 pages will be
+an R/W filesystem, and the second 8 pages will be the kernel and 7 userspace
+processes.
+
+This solution is still just theoretical.  For now, I'm just not going to
+implement swapping and get a single userspace process working.

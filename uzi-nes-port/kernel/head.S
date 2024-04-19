@@ -8,11 +8,11 @@
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
 	.byte 4				; 4	PRG-ROM Banks
 	.byte 1				; 5	CHR-ROM Banks
-	.byte $50			; 6	Horizontal mirroring, mapper 5
+	.byte $52			; 6	Horizontal mirroring, mapper 5, battery-backed
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
 	.byte 0				; 8	Even more mapper bits
 	.byte 0				; 9	Repeat of PRG/CHR banks
-	.byte $07				; 10	PRG-RAM/EEPROM size
+	.byte $aa			; 10	PRG-RAM/EEPROM size
 	.byte 0				; 11	CHR-RAM size
 	.byte 0				; 12	CPU timing (NTSC)
 	.byte 0				; 13 	TV system (NTSC)
@@ -183,8 +183,8 @@ stub_entry:
 	ldx #$01	; Set PRG RAM protect 2
 	stx $5103
 
-	ldx #$01	;
-	stx $5113	; PRG-RAM Page 0
+	ldx #$08	;
+	stx $5113	; PRG-RAM Page 8 (first non-battery-backed page)
 
 	ldx #$82	;
 	stx $5115	; PRG-ROM low bank to 1
