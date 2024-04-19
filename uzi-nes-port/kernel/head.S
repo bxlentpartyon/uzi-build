@@ -3,6 +3,7 @@
 	.import		nmi, irq
 
 	.include	"uzi_nes.inc"
+	.include	"mmc5.inc"
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
@@ -169,31 +170,30 @@ stub_entry:
 	txs
 
 	ldx #$00
-	stx $5101	; CHR bank mode 00
-	stx $5130	; Set high bits of CHR bank to 00
-	stx $5127	; Select CHR bank 0
+	stx MMC5_CHR_MODE	; CHR bank mode 00
+	stx MMC5_CHR_UPPER	; Set high bits of CHR bank to 00
+	stx MMC5_CHR_8K_SEG0	; Select CHR bank 0
+	stx MMC5_NAMETABLE	; Set all nametables to 00
 
-	stx $5105	; Set all nametables to 00
+	ldx #$01		;
+	stx MMC5_PRG_MODE	; PRG bank mode 01 (2 16K banks)
 
-	ldx #$01	;
-	stx $5100	; PRG bank mode 01 (2 16K banks)
+	ldx #$02		; Set PRG RAM protect 1
+	stx MMC5_RAM_PROT1	;
+	ldx #$01		; Set PRG RAM protect 2
+	stx MMC5_RAM_PROT2	;
 
-	ldx #$02	; Set PRG RAM protect 1
-	stx $5102
-	ldx #$01	; Set PRG RAM protect 2
-	stx $5103
+	ldx #$08		;
+	stx MMC5_PRG_RAM_P0	; PRG-RAM Page 8 (first non-battery-backed page)
 
-	ldx #$08	;
-	stx $5113	; PRG-RAM Page 8 (first non-battery-backed page)
+	ldx #$82		;
+	stx MMC5_PRG_16x2_P0	; PRG-ROM low bank to 1
 
-	ldx #$82	;
-	stx $5115	; PRG-ROM low bank to 1
+	ldx #$06		;
+	stx MMC5_PRG_16x2_P1	; PRG-ROM high bank to 3
 
-	ldx #$06	;
-	stx $5117	; PRG-ROM high bank to 3
-
-	ldx #$02	;
-	stx $5104	; Set ExRAM to read-write
+	ldx #$02		;
+	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
 
 	jmp reset
 	.addr nmi, stub_entry, irq

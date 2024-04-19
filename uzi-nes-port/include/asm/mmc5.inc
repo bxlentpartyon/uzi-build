@@ -1,0 +1,27 @@
+.ifndef	__MMC5_INC__
+.define	__MMC5_INC__
+
+; General control registers
+
+MMC5_PRG_MODE		= $5100
+MMC5_CHR_MODE		= $5101
+MMC5_RAM_PROT1		= $5102
+MMC5_RAM_PROT2		= $5103
+MMC5_EXRAM_MODE		= $5104
+MMC5_NAMETABLE		= $5105
+
+; PRG bankswitch registers
+
+MMC5_PRG_RAM_P0		= $5113
+
+MMC5_PRG_16x2_P0	= $5115
+MMC5_PRG_16x2_P1	= $5117
+
+; CHR bankswitch registers
+
+MMC5_CHR_UPPER		= $5130
+
+MMC5_CHR_8K_SEG0	= $5127
+MMC5_CHR_8K_SEG1	= $512b
+
+.endif ; __MMC5_INC__
