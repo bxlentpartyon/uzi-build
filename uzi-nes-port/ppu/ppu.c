@@ -87,6 +87,7 @@ void dump_screenbuf(void)
 void handle_vblank(void)
 {
 	dump_screenbuf();
+	ppu_spray();
 	ppu_reset();
 }
 

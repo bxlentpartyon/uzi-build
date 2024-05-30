@@ -6,6 +6,7 @@
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
 	.export		_ppu_load_font
+	.export		_ppu_spray
 
 	.include "uzi_nes.inc"
 	.include "mmc5.inc"
@@ -89,5 +90,21 @@ font_load_loop:
 	inc font_load_ptr+1
 	dex
 	bne font_load_loop
+	rts
+.endproc
+
+.proc _ppu_spray
+	ldy #$10
+	sty PPU_ADDR
+	ldy #$00
+	sty PPU_ADDR
+
+	ldy #$04
+spray_loop:
+	lda #$69
+	sta PPU_DATA
+	dey
+	bne spray_loop
+
 	rts
 .endproc
