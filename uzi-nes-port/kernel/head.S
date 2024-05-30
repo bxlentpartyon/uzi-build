@@ -8,13 +8,13 @@
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
 	.byte 4				; 4	PRG-ROM Banks
-	.byte 1				; 5	CHR-ROM Banks
+	.byte 0				; 5	CHR-ROM Banks
 	.byte $52			; 6	Horizontal mirroring, mapper 5, battery-backed
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
 	.byte 0				; 8	Even more mapper bits
 	.byte 0				; 9	Repeat of PRG/CHR banks
 	.byte $aa			; 10	PRG-RAM/EEPROM size
-	.byte 0				; 11	CHR-RAM size
+	.byte $07			; 11	CHR-RAM size (64 << 7 => 8192 => 8K)
 	.byte 0				; 12	CPU timing (NTSC)
 	.byte 0				; 13 	TV system (NTSC)
 	.byte 0, 0			; 14-15 Misc ROM, expansion device
@@ -23,9 +23,6 @@
 	.byte $00, $00
 
 .segment "BANK01"
-	.byte $00, $00
-
-.segment "BANK02"
 	.byte $00, $00
 
 .segment "CODE"
@@ -169,10 +166,17 @@ stub_entry:
 	ldx #$ff
 	txs
 
+	ldx #$01		;
+	stx MMC5_CHR_MODE	; CHR bank mode 1 (4K banks)
+
+	ldx #$00		;
+	stx MMC5_CHR_4K_SEG0	; Select CHR bank 0 for segment 0
+
+	ldx #$01		;
+	stx MMC5_CHR_4K_SEG1	; Select CHR bank 1 for segment 1
+
 	ldx #$00
-	stx MMC5_CHR_MODE	; CHR bank mode 00
 	stx MMC5_CHR_UPPER	; Set high bits of CHR bank to 00
-	stx MMC5_CHR_8K_SEG0	; Select CHR bank 0
 	stx MMC5_NAMETABLE	; Set all nametables to 00
 
 	ldx #$01		;

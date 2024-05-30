@@ -5,8 +5,10 @@
 	.export		_printbuf
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
+	.export		_ppu_load_font
 
 	.include "uzi_nes.inc"
+	.include "mmc5.inc"
 
 .segment "DATA"
 _screenbuf:
@@ -21,9 +23,11 @@ _buffer_dump_pos:
 	.addr $0000
 _ppu_dump_pos:
 	.addr $0000
+font_load_ptr:
+	.addr $0000
 
-.segment "CHR"
-	.incbin "font/newfont.chr"
+.segment "FONTDATA"
+	fontdata: .incbin "font/newfont.chr"
 
 .segment "CODE"
 
@@ -58,5 +62,32 @@ loop:
 
 put_str_out:
 	rts
+.endproc
 
+; Heavily inspired by https://www.nesdev.org/wiki/CHR_ROM_vs._CHR_RAM#Switching_to_CHR_RAM
+.proc _ppu_load_font
+	ldx #$84		;
+	stx MMC5_PRG_16x2_P0	; PRG-ROM low bank to 2 (font data)
+
+	lda #<fontdata		;
+	sta font_load_ptr	;
+	lda #>fontdata		; load address of font data into zero page pointer
+	sta font_load_ptr+1	;
+
+	ldy #$00		;
+	sty PPU_MASK		; disable rendering, just to be safe
+
+	sty PPU_ADDR		;
+	sty PPU_ADDR		; PPU_ADDR to $0000
+
+	ldx #$10		; number of 256 byte pages to copy (4K)
+font_load_loop:
+	lda (font_load_ptr), y
+	sta PPU_DATA
+	iny
+	bne font_load_loop
+	inc font_load_ptr+1
+	dex
+	bne font_load_loop
+	rts
 .endproc

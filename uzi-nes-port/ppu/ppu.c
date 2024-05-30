@@ -2,6 +2,7 @@
 
 extern void __dump_screenbuf(void);
 extern void ppu_reset(void);
+extern void ppu_load_font(void);
 
 extern char *buffer_dump_pos;
 extern char *ppu_dump_pos;
@@ -91,6 +92,8 @@ void handle_vblank(void)
 
 void init_ppu(void)
 {
+	ppu_load_font();
+
 	buffer_dump_pos = SCREEN_BUF_START;
 	ppu_dump_pos = PPU_FIRST_VIS_ROW;
 }
