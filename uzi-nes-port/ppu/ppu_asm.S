@@ -42,7 +42,6 @@ _ppu_dump_pos:
 .endproc
 
 .proc ___dump_screenbuf
-
 put_str:
 	lda _ppu_dump_pos+1
 	sta PPU_ADDR
