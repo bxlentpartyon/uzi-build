@@ -13,6 +13,8 @@ the MMC5.
 
 ## Current WIP solution
 
+### RAM
+
 Use the 16 8K pages of WRAM as the entire working address space for each
 process.  This leaves us with a maximum of 15 potential processes, since we need
 one page for the kernel.  Realistically, we want to take advantage of the
@@ -23,3 +25,18 @@ processes.
 
 This solution is still just theoretical.  For now, I'm just not going to
 implement swapping and get a single userspace process working.
+
+### ROM
+
+#### Layout
+
+Code for each userspace process will live in one PRG ROM bank.  The kernel will
+page in the appropriate process, and its RAM page, before jumping into the
+userspace process.
+
+#### What does this mean for the filesystem?
+
+For now we need to have a read-only, program-only filesystem.  The FS metadata
+will be a super-simple table, mapping a 16-character program name to a 1-byte
+page number.  For now we'll just bake this into the kernel to get something
+working.
