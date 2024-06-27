@@ -40,3 +40,17 @@ For now we need to have a read-only, program-only filesystem.  The FS metadata
 will be a super-simple table, mapping a 16-character program name to a 1-byte
 page number.  For now we'll just bake this into the kernel to get something
 working.
+
+## A real solution?
+
+There is apparently some level of support for battery-backed CHR-RAM in FCEUX,
+and we can theoretically page 4M of data in CHR-RAM.  Only 2M is battery-backed
+(non-volatile), but this is more non-volatile storage than we have available
+elsewhere.
+
+I'm going to use the CHR-RAM like a disk, where a regular UZI filesystem will
+live in the battery-backed portion.  This will require a properly formatted
+filesystem in the uzi.nes .sav file, but that's trivial to cook up.  If I use
+PRG-RAM for the 8000-BFFF page and load programs from CHR-RAM as needed, this
+will allow me to more-or-less port UZI as it originally existed, but our "disk"
+will actually be NVRAM accessed through the PPU.
