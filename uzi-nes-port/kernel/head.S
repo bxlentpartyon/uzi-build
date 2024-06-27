@@ -14,7 +14,7 @@
 	.byte 0				; 8	Even more mapper bits
 	.byte 0				; 9	Repeat of PRG/CHR banks
 	.byte $aa			; 10	PRG-RAM/EEPROM size
-	.byte $07			; 11	CHR-RAM size (64 << 7 => 8192 => 8K)
+	.byte $ff			; 11	CHR-RAM size (2M battery backed, 2M volatile)
 	.byte 0				; 12	CPU timing (NTSC)
 	.byte 0				; 13 	TV system (NTSC)
 	.byte 0, 0			; 14-15 Misc ROM, expansion device
