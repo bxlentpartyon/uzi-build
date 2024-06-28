@@ -54,3 +54,24 @@ filesystem in the uzi.nes .sav file, but that's trivial to cook up.  If I use
 PRG-RAM for the 8000-BFFF page and load programs from CHR-RAM as needed, this
 will allow me to more-or-less port UZI as it originally existed, but our "disk"
 will actually be NVRAM accessed through the PPU.
+
+# Stash area
+
+This is a place for stuff I know I wanted to save, but don't remember why.
+
+## IRQ stack clearing code
+
+<snip>
+	; clear irq stack
+.if 0
+	ldx #$00
+clear_stack_loop:
+	lda #$00
+	sta $5c00, x
+	sta $5d00, x
+	sta $5e00, x
+	sta $5f00, x
+	inx
+	bne clear_stack_loop
+.endif
+</snip>
