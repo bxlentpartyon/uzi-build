@@ -89,6 +89,11 @@ zprestore_loop:
 	pla
 .endmacro
 
+; The NMI routine, or at least the portion of it that manipulates the PPU,
+; needs to be shorter than VBlank, which is ~2273 CPU cycles.  Otherwise, we'll
+; see totally unpredictable behavior.
+;
+; https://forums.nesdev.org/viewtopic.php?t=7878
 .proc nmi
 	save_regs
 	activate_irq_stack
