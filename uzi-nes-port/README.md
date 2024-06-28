@@ -1,3 +1,8 @@
+# Original README
+
+This is the README as it existed when I began working on my port for the NES:
+
+<snip>
 This is a public repo of Doug Braun's UZI (Unix: Z80 Implementation) source
 code. The author's site no longer serves the archive and it took some
 digging to find, so it's uploaded here for conservation purposes.
@@ -12,3 +17,7 @@ This is interesting because the Z80 had 64kB of RAM, no mmu and various
 other restrictions. This means it's a good jumping-off point for new projects
 aimed at highly constrained systems, whether it be embedded or micro
 guests on VMs.
+</snip>
+
+There's a better version in the "uzics" repo, which I should include here
+later, but for now I'm just stashing this one.
