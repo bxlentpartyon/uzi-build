@@ -12,12 +12,17 @@
 	.include "mmc5.inc"
 
 .segment "DATA"
+.define SCREENBUF_SIZE	896
 _screenbuf:
-	.res 896, $00
+	.res SCREENBUF_SIZE, $00
+screenbuf_end:
+	.word _screenbuf + SCREENBUF_SIZE
 screenbuf_advance:
 	.byte $40
 _printbuf:
-	.res 896, $00
+	.res SCREENBUF_SIZE, $00
+ppu_dump_start:
+	.addr $2020
 
 .segment "ZEROPAGE"
 _buffer_dump_pos:
@@ -70,10 +75,28 @@ loop:
 	clc
 	adc _buffer_dump_pos
 	sta _buffer_dump_pos
-	bcc out			; We only check the carry for the second operation.
+	bcc check_buffer_pos	; We only check the carry for the second operation.
 				; If the second overflowed, so did the first.
 	inc _ppu_dump_pos+1
 	inc _buffer_dump_pos+1
+
+; check if buffer_dump_pos == screenbuf_end
+check_buffer_pos:
+	lda _buffer_dump_pos
+	cmp #<screenbuf_end
+	bcc out
+	lda _buffer_dump_pos+1
+	cmp #>screenbuf_end
+	bcc out
+
+	lda #<_screenbuf
+	sta _buffer_dump_pos
+	lda #>_screenbuf
+	sta _buffer_dump_pos+1
+	lda ppu_dump_start
+	sta _ppu_dump_pos
+	lda ppu_dump_start+1
+	sta _ppu_dump_pos+1
 
 out:
 	rts

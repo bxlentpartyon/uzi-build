@@ -71,19 +71,9 @@ void panic(char *msg)
 	}
 }
 
-void dump_screenbuf(void)
-{
-	__dump_screenbuf();
-
-	if (buffer_dump_pos == SCREEN_BUF_START + SCREEN_BUF_SIZE) {
-		buffer_dump_pos = SCREEN_BUF_START;
-		ppu_dump_pos = PPU_FIRST_VIS_ROW;
-	}
-}
-
 void handle_vblank(void)
 {
-	dump_screenbuf();
+	__dump_screenbuf();
 	ppu_spray();
 	ppu_reset();
 }
