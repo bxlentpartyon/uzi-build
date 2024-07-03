@@ -1,7 +1,7 @@
 #ifndef __PPU_H__
 #define __PPU_H__
 
-void init_ppu(void);
+extern void init_ppu(void);
 void ppu_puts(char *s);
 void ppu_putc(char c);
 void ppu_spray(void);

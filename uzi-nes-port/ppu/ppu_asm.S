@@ -1,12 +1,8 @@
-	.export		_ppu_reset
-	.export		___dump_screenbuf
 	.export		_screenbuf
-	.export		_screenbuf_advance
 	.export		_printbuf
-	.export		_buffer_dump_pos
-	.export		_ppu_dump_pos
-	.export		_ppu_load_font
-	.export		_ppu_spray
+	.export		buffer_dump_pos
+	.export		_init_ppu, handle_vblank
+	.export screenbuf_end
 
 	.include "uzi_nes.inc"
 	.include "mmc5.inc"
@@ -14,15 +10,21 @@
 .segment "DATA"
 _screenbuf:
 	.res 896, $00
-_screenbuf_advance:
+screenbuf_size:
+	.word .sizeof(_screenbuf)
+screenbuf_end:
+	.addr (_screenbuf) + screenbuf_size
+screenbuf_advance:
 	.byte $40
+ppu_first_vis_row:
+	.addr $2020
 _printbuf:
 	.res 896, $00
 
 .segment "ZEROPAGE"
-_buffer_dump_pos:
+buffer_dump_pos:
 	.addr $0000
-_ppu_dump_pos:
+ppu_dump_pos:
 	.addr $0000
 font_load_ptr:
 	.addr $0000
@@ -32,7 +34,7 @@ font_load_ptr:
 
 .segment "CODE"
 
-.proc _ppu_reset
+.proc ppu_reset
 	lda #$20	; reset ppu read address
 	sta PPU_ADDR
 	lda #$00
@@ -46,27 +48,80 @@ font_load_ptr:
 	rts
 .endproc
 
-.proc ___dump_screenbuf
+.proc ppu_spray
+	ldy #$10
+	sty PPU_ADDR
+	ldy #$00
+	sty PPU_ADDR
+
+	ldy #$04
+spray_loop:
+	lda #$69
+	sta PPU_DATA
+	dey
+	bne spray_loop
+
+	rts
+.endproc
+
+.proc reset_buf_pos
+	lda #>_screenbuf
+	sta buffer_dump_pos+1
+	lda #<_screenbuf
+	sta buffer_dump_pos
+
+	lda >ppu_first_vis_row
+	sta ppu_dump_pos+1
+	lda <ppu_first_vis_row
+	sta ppu_dump_pos
+
+	rts
+.endproc
+
+.proc handle_vblank
 put_str:
-	lda _ppu_dump_pos+1
+	lda ppu_dump_pos+1
 	sta PPU_ADDR
-	lda _ppu_dump_pos
+	lda ppu_dump_pos
 	sta PPU_ADDR
 
 	ldy #$00
 loop:
-	lda (_buffer_dump_pos), y
+	lda (buffer_dump_pos), y
 	sta PPU_DATA
 	iny
-	cpy _screenbuf_advance
+	cpy screenbuf_advance
 	bne loop
 
-put_str_out:
+; 16-bit add logic for ppu_dump_pos and buffer_dump_pos
+	lda screenbuf_advance
+	clc
+	adc ppu_dump_pos
+	clc
+	adc buffer_dump_pos
+	bcc check_buffer_end
+	inc ppu_dump_pos+1
+	inc buffer_dump_pos+1
+
+check_buffer_end:
+	lda screenbuf_size+1
+	cmp >buffer_dump_pos
+	bne spray_reset
+	lda screenbuf_size
+	cmp <buffer_dump_pos
+	bne spray_reset
+
+	jsr reset_buf_pos
+
+spray_reset:
+	jsr ppu_spray
+	jsr ppu_reset
+
 	rts
 .endproc
 
 ; Heavily inspired by https://www.nesdev.org/wiki/CHR_ROM_vs._CHR_RAM#Switching_to_CHR_RAM
-.proc _ppu_load_font
+.proc ppu_load_font
 	ldx #$84		;
 	stx MMC5_PRG_16x2_P0	; PRG-ROM low bank to 2 (font data)
 
@@ -93,18 +148,7 @@ font_load_loop:
 	rts
 .endproc
 
-.proc _ppu_spray
-	ldy #$10
-	sty PPU_ADDR
-	ldy #$00
-	sty PPU_ADDR
-
-	ldy #$04
-spray_loop:
-	lda #$69
-	sta PPU_DATA
-	dey
-	bne spray_loop
-
-	rts
+.proc _init_ppu
+	jsr ppu_load_font
+	jsr reset_buf_pos
 .endproc
