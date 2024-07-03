@@ -75,9 +75,6 @@ void dump_screenbuf(void)
 {
 	__dump_screenbuf();
 
-	buffer_dump_pos += screenbuf_advance;
-	ppu_dump_pos += screenbuf_advance;
-
 	if (buffer_dump_pos == SCREEN_BUF_START + SCREEN_BUF_SIZE) {
 		buffer_dump_pos = SCREEN_BUF_START;
 		ppu_dump_pos = PPU_FIRST_VIS_ROW;

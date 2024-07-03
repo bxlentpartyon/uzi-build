@@ -1,7 +1,7 @@
 	.export		_ppu_reset
 	.export		___dump_screenbuf
 	.export		_screenbuf
-	.export		_screenbuf_advance
+	.export		screenbuf_advance
 	.export		_printbuf
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
@@ -14,7 +14,7 @@
 .segment "DATA"
 _screenbuf:
 	.res 896, $00
-_screenbuf_advance:
+screenbuf_advance:
 	.byte $40
 _printbuf:
 	.res 896, $00
@@ -58,10 +58,24 @@ loop:
 	lda (_buffer_dump_pos), y
 	sta PPU_DATA
 	iny
-	cpy _screenbuf_advance
+	cpy screenbuf_advance
 	bne loop
 
-put_str_out:
+; 16-bit add logic for ppu_dump_pos and buffer_dump_pos
+	lda screenbuf_advance
+	clc
+	adc _ppu_dump_pos
+	sta _ppu_dump_pos
+	lda screenbuf_advance
+	clc
+	adc _buffer_dump_pos
+	sta _buffer_dump_pos
+	bcc out			; We only check the carry for the second operation.
+				; If the second overflowed, so did the first.
+	inc _ppu_dump_pos+1
+	inc _buffer_dump_pos+1
+
+out:
 	rts
 .endproc
 
