@@ -1,7 +1,5 @@
 #include <ppu.h>
 
-extern void __dump_screenbuf(void);
-extern void ppu_reset(void);
 extern void ppu_load_font(void);
 
 extern char *buffer_dump_pos;
@@ -10,7 +8,6 @@ extern char *ppu_dump_pos;
 #pragma zpsym ("ppu_dump_pos")
 
 extern char screenbuf[];
-extern char screenbuf_advance;
 
 #define SCREEN_VIS_ROWS		28
 #define SCREEN_COLS		32
@@ -69,13 +66,6 @@ void panic(char *msg)
 		ppu_puts(msg);
 		while(1);
 	}
-}
-
-void handle_vblank(void)
-{
-	__dump_screenbuf();
-	ppu_spray();
-	ppu_reset();
 }
 
 void init_ppu(void)

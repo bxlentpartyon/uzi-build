@@ -1,12 +1,9 @@
-	.export		_ppu_reset
-	.export		___dump_screenbuf
 	.export		_screenbuf
-	.export		screenbuf_advance
 	.export		_printbuf
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
 	.export		_ppu_load_font
-	.export		_ppu_spray
+	.export		handle_vblank
 
 	.include "uzi_nes.inc"
 	.include "mmc5.inc"
@@ -37,7 +34,7 @@ font_load_ptr:
 
 .segment "CODE"
 
-.proc _ppu_reset
+.proc ppu_reset
 	lda #$20	; reset ppu read address
 	sta PPU_ADDR
 	lda #$00
@@ -51,7 +48,7 @@ font_load_ptr:
 	rts
 .endproc
 
-.proc ___dump_screenbuf
+.proc dump_screenbuf
 put_str:
 	lda _ppu_dump_pos+1
 	sta PPU_ADDR
@@ -130,7 +127,7 @@ font_load_loop:
 	rts
 .endproc
 
-.proc _ppu_spray
+.proc ppu_spray
 	ldy #$10
 	sty PPU_ADDR
 	ldy #$00
@@ -142,6 +139,14 @@ spray_loop:
 	sta PPU_DATA
 	dey
 	bne spray_loop
+
+	rts
+.endproc
+
+.proc handle_vblank
+	jsr dump_screenbuf
+	jsr ppu_spray
+	jsr ppu_reset
 
 	rts
 .endproc
