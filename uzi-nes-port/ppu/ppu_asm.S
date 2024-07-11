@@ -68,13 +68,15 @@ loop:
 	clc
 	adc _ppu_dump_pos
 	sta _ppu_dump_pos
+	bcc skip_ppu_upper_add
+	inc _ppu_dump_pos+1
+
+skip_ppu_upper_add:
 	lda screenbuf_advance
 	clc
 	adc _buffer_dump_pos
 	sta _buffer_dump_pos
-	bcc check_buffer_pos	; We only check the carry for the second operation.
-				; If the second overflowed, so did the first.
-	inc _ppu_dump_pos+1
+	bcc check_buffer_pos
 	inc _buffer_dump_pos+1
 
 ; check if buffer_dump_pos == screenbuf_end
