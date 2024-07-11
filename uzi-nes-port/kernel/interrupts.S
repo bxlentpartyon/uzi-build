@@ -1,7 +1,7 @@
 	.importzp	sp
 	.import		jmpvec
 	.importzp	_apu_status_byte
-	.import		_handle_irq, handle_vblank, read_keyboard
+	.import		_handle_irq, handle_vblank
 	.export		_ei, _di, nmi, irq
 
 	.include	"uzi_nes.inc"
@@ -98,7 +98,6 @@ zprestore_loop:
 	save_regs
 	activate_irq_stack
 
-	jsr read_keyboard
 	jsr handle_vblank
 
 	deacivate_irq_stack

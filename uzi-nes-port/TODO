@@ -4,3 +4,5 @@
     like I had with the kb_checked var, where I wrote it as a byte in asm,
     but an int in C (i.e. 2 bytes).
     * Probably should have more safety checks for C<->ASM types like this.
+
+7/8/24 - Move read_keyboard out of NMI to make more room for data transfers.

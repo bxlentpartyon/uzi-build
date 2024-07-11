@@ -1,6 +1,5 @@
 	.import		_dump_keyboard
-	.export		read_keyboard
-	.export		_kb_rows, _kb_map, _kb_checked
+	.export		_read_keyboard, _kb_rows, _kb_map, _kb_checked
 
 	.linecont
 
@@ -63,7 +62,7 @@ kb_enabled_out:
 	rts
 .endproc
 
-.proc read_keyboard
+.proc _read_keyboard
 	lda #$05
 	sta $4016	; reset keyboard reader to row 0
 

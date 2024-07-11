@@ -287,6 +287,7 @@ int clk_int(void)
 #define INTS_PER_TICK	6
 	if (clk_int_count < INTS_PER_TICK) {
 		clk_int_count++;
+		read_keyboard();
 		start_clock();
 		return 0;
 	} else {
