@@ -55,6 +55,32 @@ PRG-RAM for the 8000-BFFF page and load programs from CHR-RAM as needed, this
 will allow me to more-or-less port UZI as it originally existed, but our "disk"
 will actually be NVRAM accessed through the PPU.
 
+### Deeper Investigation
+
+R/W with the PPU is relatively slow because it can only be done during VBlank.
+Currently, I only have about 300 spare CPU cycles in VBlank to do PPU R/W, so,
+for a worst-case scenario R/W speed analysis, if we use indirect y-indexed
+loads, and absolute stores (since we always know the address of the PPUDATA
+regsiter), like this:
+
+lda (addr), y    ; 6 cycles
+sta $2007        ; 4 cycles
+
+https://www.nesdev.org/wiki/6502_cycle_times
+
+We get 10 CPU-cycles per byte.  With 300 cycles to spare, that means we can
+write about 30 bytes per VBlank.  With about 60 VBlanks per second, we can get
+maybe 1800b/s R/W speed out of the PPU without too much effort.
+
+This can be significantly improved if we throttle down the screen buffer dump
+code when there's nothing to write to the screen.  Currently the screen buffer
+dump takes about 1200 CPU cycles.
+
+That gives us potentially 1500 CPU cycles, which puts us at more like 150 bytes
+per VBlank, or about 9000b/s, which is significantly better.  If we have to have
+an 8KB process code limit to begin with, that will at least allow a program load
+in about a second.
+
 # Stash area
 
 This is a place for stuff I know I wanted to save, but don't remember why.
