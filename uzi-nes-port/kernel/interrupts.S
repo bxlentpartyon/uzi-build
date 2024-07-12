@@ -54,7 +54,7 @@ zpsave_loop:
 	pha
 
 	lda #$00
-	ldx #$06
+	ldx #$04
 	sta sp
 	stx sp+1
 .endmacro
