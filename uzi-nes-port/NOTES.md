@@ -81,6 +81,20 @@ per VBlank, or about 9000b/s, which is significantly better.  If we have to have
 an 8KB process code limit to begin with, that will at least allow a program load
 in about a second.
 
+# How will syscalls work?
+
+I've had to think about this a number of times, so I want to get it written down
+before I forget.  In the UZI180 kernel that I've looked at, a syscall is
+triggered by a 'rst 30h' instruction.  We don't have that instruction, so I
+think the best thing to do is to have a set address in the kernel memory page
+that we jump to in order to start kernel entry, i.e. set everything up to call
+unix().
+
+The syscall address will have to be at a known location in the kernel memory
+page, so I'll need to explicitly place it with .org.  The actual address can be
+wherever, because we can use an indirect jump through the fixed address pointer
+to reach it, if that makes sense.
+
 # Stash area
 
 This is a place for stuff I know I wanted to save, but don't remember why.
