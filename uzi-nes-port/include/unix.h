@@ -111,8 +111,7 @@ typedef struct blkbuf {
 
 
 typedef struct dinode {
-    uint16 i_mode_lo;	/* low 16 bits of mode */
-    uint16 i_mode_hi;	/* high 16 bits of mode */
+    uint16 i_mode;
     uint16 i_nlink;
     uint16 i_uid;
     uint16 i_gid;
@@ -163,7 +162,7 @@ struct  stat    /* Really only used by users */
 #define F_BDEV	06
 #define F_CDEV	02
 
-#define F_MASK	017
+#define F_MASK	0170000
 
 
 
