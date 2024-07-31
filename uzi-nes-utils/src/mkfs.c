@@ -19,6 +19,9 @@ UZI (Unix Z80 Implementation) Utilities:  mkfs.c
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include <unix.h>
 #include <config.h>		/* 1.4.98 - HFB */
 #include <extern.h>
@@ -29,10 +32,11 @@ int dev;
 direct dirbuf[32] = { ROOTINODE, ".", ROOTINODE, ".." };
 struct dinode inode[8];
 
+#define BLOCKSIZE	512
 
-main(argc, argv)
-int argc;
-char *argv[];
+void mkfs(uint16 fsize, uint16 isize);
+
+int main(int argc, char *argv[])
 {
     uint16 fsize, isize;
     int atoi(), yes(), d_open();
@@ -62,19 +66,16 @@ char *argv[];
     if (!yes())
 	exit(-1);
 
-    bufinit();
     if (d_open(dev)) {
 	printf("Can't open device\n");
 	exit(-1);
     }
     mkfs(fsize, isize);
-    bufsync();
     exit(0);
 }
 
 
-mkfs(fsize, isize)
-uint16 fsize, isize;
+void mkfs(uint16 fsize, uint16 isize)
 {
     uint16 j;
     char *zeros;
@@ -82,7 +83,13 @@ uint16 fsize, isize;
 
     /* Zero out the blocks */
     printf("Zeroizing i-blocks...\n");
-    zeros = zerobuf();		/* Allocate a block, zero filled */
+
+    /*
+     * I left the "zeroizing" stuff for posterity.  We really just malloc/zero
+     * the whole fs all at once
+     */
+    fs_buffer = malloc(fsize * BLOCKSIZE);
+    memset(, 0 , 512);
 #ifdef CPM
     for (j = 0; j < isize; ++j)	/* Don't waste time in CP/M */
 	dwrite(j, zeros);
@@ -90,7 +97,6 @@ uint16 fsize, isize;
     for (j = 0; j < fsize; ++j)
 	dwrite(j, zeros);
 #endif
-    brelse(zeros);		/* Free the zeroized buffer */
 
     /* Initialize the super-block */
     fs_tab[dev].s_mounted = SMOUNTED;	/* Magic number */
@@ -129,15 +135,12 @@ uint16 fsize, isize;
 
     printf("Writing initial inode and superblock...\n");
 
-    bufsync();
     dwrite(2, (char *) inode);
     dwrite(isize, (char *) dirbuf);
 
-    bufsync();
     /* Write out super block */
     dwrite(1, (char *) &fs_tab[dev]);
 
-/*==    bufsync();==*/
     printf("Done.\n");
 }
 
