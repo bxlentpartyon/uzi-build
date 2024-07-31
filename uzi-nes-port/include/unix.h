@@ -5,10 +5,6 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 #ifndef __UNIX_H__
 #define __UNIX_H__
 
-#ifndef vax
-#define CPM
-#endif
-
 #ifdef UZI
 #define OFF_T	off_t
 #define TIME_T	time_t
