@@ -44,7 +44,7 @@ all: $(TARGET)
 # headers are changed.
 %.s: %.c $(HEADER_DEPS)
 	@echo "Building .c to .s $<"
-	$(CC) --target $(PLATFORM) -I$(CC65_DIR)/include/ -I$(PWD)/include/ -O $<
+	$(CC) --target $(PLATFORM) -DUZI -I$(CC65_DIR)/include/ -I$(PWD)/include/ -O $<
 
 %.o: %.S
 	@echo "Building .S $<"

@@ -9,6 +9,14 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 #define CPM
 #endif
 
+#ifdef UZI
+#define OFF_T	off_t
+#define TIME_T	time_t
+#else
+#define OFF_T	uzi_off_t
+#define TIME_T	uzi_time_t
+#endif
+
 #define UFTSIZE 10    /* Number of user files */
 #define OFTSIZE 15    /* Open file table size */
 #define ITABSIZE 20   /* Inode table size */
@@ -63,17 +71,17 @@ typedef struct s_queue {
 typedef struct time_s {
     uint16 t_time;
     uint16 t_date;
-} time_t;
+} TIME_T;
 
 
 /* User's structure for times() system call */
 
 struct tms {
-	time_t  tms_utime;
-	time_t  tms_stime;
-	time_t  tms_cutime;
-	time_t  tms_cstime;
-	time_t  tms_etime;      /* Elapsed real time */
+	TIME_T  tms_utime;
+	TIME_T  tms_stime;
+	TIME_T  tms_cutime;
+	TIME_T  tms_cstime;
+	TIME_T  tms_etime;      /* Elapsed real time */
 } ;
 
 
@@ -83,10 +91,10 @@ struct tms {
 #define C_TIME 4
 
 
-typedef struct off_t {
+typedef struct OFF_T {
     uint16 o_blkno;  /* Block number */
     int16 o_offset;     /* Offset within block 0-511 */
-} off_t;
+} OFF_T;
 
 
 typedef uint16 blkno_t;  /* Can have 65536 512-byte blocks in filesystem */
@@ -110,10 +118,10 @@ typedef struct dinode {
     uint16 i_nlink;
     uint16 i_uid;
     uint16 i_gid;
-    off_t    i_size;
-    time_t   i_atime;
-    time_t   i_mtime;
-    time_t   i_ctime;
+    OFF_T    i_size;
+    TIME_T   i_atime;
+    TIME_T   i_mtime;
+    TIME_T   i_ctime;
     blkno_t  i_addr[20];
 } dinode;               /* Exactly 64 bytes long! */
 
@@ -127,10 +135,10 @@ struct  stat    /* Really only used by users */
 	uint16  st_uid;
 	uint16  st_gid;
 	uint16  st_rdev;
-	off_t   st_size;
-	time_t  st_atime;
-	time_t  st_mtime;
-	time_t  st_ctime;
+	OFF_T   st_size;
+	TIME_T  st_atime;
+	TIME_T  st_mtime;
+	TIME_T  st_ctime;
 };
 
 /* Bit masks for i_mode and st_mode */
@@ -190,14 +198,14 @@ typedef struct filesys {
     int16       s_ninode;
     uint16      s_inode[50];
     int16       s_fmod;
-    time_t      s_time;
+    TIME_T      s_time;
     blkno_t     s_tfree;
     uint16      s_tinode;
     inoptr      s_mntpt; /* Mount point */
 } filesys, *fsptr;
 
 typedef struct oft {
-    off_t       o_ptr;   /* File position point16er */
+    OFF_T       o_ptr;   /* File position point16er */
     inoptr      o_inode; /* Pointer into in-core inode table */
     char        o_access; /* O_RDONLY, O_WRONLY, or O_RDWR */
     char        o_refs;  /* Reference count: depends on # of active children*/
@@ -285,14 +293,14 @@ typedef struct u_data {
 
     char *      u_base;         /* Source or dest for I/O */
     unsigned    u_count;        /* Amount for I/O */
-    off_t       u_offset;       /* Place in file for I/O */
+    OFF_T       u_offset;       /* Place in file for I/O */
     struct blkbuf *u_buf;
 
     int         u_gid;
     int         u_euid;
     int         u_egid;
     int         u_mask;         /* umask: file creation mode mask */
-    time_t      u_time;         /* Start time */
+    TIME_T      u_time;         /* Start time */
     char        u_files[UFTSIZE];       /* Process file table:
 	                        contains indexes into open file table. */
     inoptr      u_cwd;          /* Index into inode table of cwd. */
@@ -304,10 +312,10 @@ typedef struct u_data {
     int         (*u_sigvec[NSIGS])();   /* Array of signal vectors */
     int         u_cursig;       /* Signal currently being caught */
     char        u_name[8];      /* Name invoked with */
-    time_t      u_utime;        /* Elapsed ticks in user mode */
-    time_t      u_stime;        /* Ticks in system mode */
-    time_t      u_cutime;       /* Total childrens ticks */
-    time_t      u_cstime;
+    TIME_T      u_utime;        /* Elapsed ticks in user mode */
+    TIME_T      u_stime;        /* Ticks in system mode */
+    TIME_T      u_cutime;       /* Total childrens ticks */
+    TIME_T      u_cstime;
 
 } u_data;
 
