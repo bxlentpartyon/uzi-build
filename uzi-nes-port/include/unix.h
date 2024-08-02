@@ -6,11 +6,11 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 #define __UNIX_H__
 
 #ifdef UZI
-#define OFF_T	off_t
-#define TIME_T	time_t
+#define UZI_TYPE(x)	x
+#define UZI_TYPE_T(x)	x##_t
 #else
-#define OFF_T	uzi_off_t
-#define TIME_T	uzi_time_t
+#define UZI_TYPE(x)	uzi_##x
+#define UZI_TYPE_T(x)	uzi_##x##_t
 #endif
 
 #define UFTSIZE 10    /* Number of user files */
@@ -66,20 +66,20 @@ typedef struct s_queue {
 
 
 
-typedef struct time_s {
+typedef struct UZI_TYPE_T(time) {
     uint16 t_time;
     uint16 t_date;
-} TIME_T;
+} UZI_TYPE_T(time);
 
 
 /* User's structure for times() system call */
 
 struct tms {
-	TIME_T  tms_utime;
-	TIME_T  tms_stime;
-	TIME_T  tms_cutime;
-	TIME_T  tms_cstime;
-	TIME_T  tms_etime;      /* Elapsed real time */
+	UZI_TYPE_T(time)  tms_utime;
+	UZI_TYPE_T(time)  tms_stime;
+	UZI_TYPE_T(time)  tms_cutime;
+	UZI_TYPE_T(time)  tms_cstime;
+	UZI_TYPE_T(time)  tms_etime;      /* Elapsed real time */
 } ;
 
 
@@ -89,10 +89,10 @@ struct tms {
 #define C_TIME 4
 
 
-typedef struct OFF_T {
+typedef struct UZI_TYPE_T(off) {
     uint16 o_blkno;  /* Block number */
     int16 o_offset;     /* Offset within block 0-511 */
-} OFF_T;
+} UZI_TYPE_T(off);
 
 
 typedef uint16 blkno_t;  /* Can have 65536 512-byte blocks in filesystem */
@@ -115,15 +115,15 @@ typedef struct dinode {
     uint16 i_nlink;
     uint16 i_uid;
     uint16 i_gid;
-    OFF_T    i_size;
-    TIME_T   i_atime;
-    TIME_T   i_mtime;
-    TIME_T   i_ctime;
+    UZI_TYPE_T(off)	i_size;
+    UZI_TYPE_T(time)	i_atime;
+    UZI_TYPE_T(time)	i_mtime;
+    UZI_TYPE_T(time)	i_ctime;
     blkno_t  i_addr[20];
 } dinode;               /* Exactly 64 bytes long! */
 
 
-struct  stat    /* Really only used by users */
+struct  UZI_TYPE(stat)    /* Really only used by users */
 {
 	int16   st_dev;
 	uint16  st_ino;
@@ -132,10 +132,16 @@ struct  stat    /* Really only used by users */
 	uint16  st_uid;
 	uint16  st_gid;
 	uint16  st_rdev;
-	OFF_T   st_size;
-	TIME_T  st_atime;
-	TIME_T  st_mtime;
-	TIME_T  st_ctime;
+	UZI_TYPE_T(off)		st_size;
+#ifdef UZI
+	UZI_TYPE_T(time)	st_atime;
+	UZI_TYPE_T(time)	st_mtime;
+	UZI_TYPE_T(time)	st_ctime;
+#else
+	UZI_TYPE_T(time)	uzi_st_atime;
+	UZI_TYPE_T(time)	uzi_st_mtime;
+	UZI_TYPE_T(time)	uzi_st_ctime;
+#endif
 };
 
 /* Bit masks for i_mode and st_mode */
@@ -195,14 +201,14 @@ typedef struct filesys {
     int16       s_ninode;
     uint16      s_inode[50];
     int16       s_fmod;
-    TIME_T      s_time;
+    UZI_TYPE_T(time)	s_time;
     blkno_t     s_tfree;
     uint16      s_tinode;
     inoptr      s_mntpt; /* Mount point */
 } filesys, *fsptr;
 
 typedef struct oft {
-    OFF_T       o_ptr;   /* File position point16er */
+    UZI_TYPE_T(off)	o_ptr;   /* File position point16er */
     inoptr      o_inode; /* Pointer into in-core inode table */
     char        o_access; /* O_RDONLY, O_WRONLY, or O_RDWR */
     char        o_refs;  /* Reference count: depends on # of active children*/
@@ -290,14 +296,14 @@ typedef struct u_data {
 
     char *      u_base;         /* Source or dest for I/O */
     unsigned    u_count;        /* Amount for I/O */
-    OFF_T       u_offset;       /* Place in file for I/O */
+    UZI_TYPE_T(off)	u_offset;       /* Place in file for I/O */
     struct blkbuf *u_buf;
 
     int         u_gid;
     int         u_euid;
     int         u_egid;
     int         u_mask;         /* umask: file creation mode mask */
-    TIME_T      u_time;         /* Start time */
+    UZI_TYPE_T(time)	u_time;         /* Start time */
     char        u_files[UFTSIZE];       /* Process file table:
 	                        contains indexes into open file table. */
     inoptr      u_cwd;          /* Index into inode table of cwd. */
@@ -309,10 +315,10 @@ typedef struct u_data {
     int         (*u_sigvec[NSIGS])();   /* Array of signal vectors */
     int         u_cursig;       /* Signal currently being caught */
     char        u_name[8];      /* Name invoked with */
-    TIME_T      u_utime;        /* Elapsed ticks in user mode */
-    TIME_T      u_stime;        /* Ticks in system mode */
-    TIME_T      u_cutime;       /* Total childrens ticks */
-    TIME_T      u_cstime;
+    UZI_TYPE_T(time)	u_utime;        /* Elapsed ticks in user mode */
+    UZI_TYPE_T(time)	u_stime;        /* Ticks in system mode */
+    UZI_TYPE_T(time)	u_cutime;       /* Total childrens ticks */
+    UZI_TYPE_T(time)	u_cstime;
 
 } u_data;
 
@@ -341,9 +347,11 @@ struct devsw {
 
 /* Open() parameters. */
 
+#ifdef UZI
 #define O_RDONLY        0
 #define O_WRONLY        1
 #define O_RDWR          2
+#endif
 
 /*
  * Error codes
