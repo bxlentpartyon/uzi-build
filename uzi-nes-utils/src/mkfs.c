@@ -18,15 +18,15 @@ UZI (Unix Z80 Implementation) Utilities:  mkfs.c
  *   Based on UZI280 version (minor changes from original UZI.  HFB
  */
 
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <unix.h>
 #include <config.h>		/* 1.4.98 - HFB */
 #include <extern.h>
-
-int dev;
 
 /*extern char zerobuf(); */
 direct dirbuf[32] = { ROOTINODE, ".", ROOTINODE, ".." };
@@ -34,90 +34,91 @@ struct dinode inode[8];
 
 #define BLOCKSIZE	512
 
-void mkfs(uint16 fsize, uint16 isize);
+void *mkfs(uint16 fsize, uint16 isize);
+void dwrite(char *buf, uint16 blk, char *addr);
+int yes(void);
 
 int main(int argc, char *argv[])
 {
+    char *filename;
+    void *fs_buffer;
+    int fd;
     uint16 fsize, isize;
-    int atoi(), yes(), d_open();
 
     if (argc != 4) {
-	printf("Usage: mkfs device isize fsize\n");
+	printf("Usage: mkfs filename isize fsize\n");
 	exit(-1);
     }
-    dev = atoi(argv[1]);
+    filename = argv[1];
     isize = (uint16) atoi(argv[2]);
     fsize = (uint16) atoi(argv[3]);
 
-    if (dev == 0 && argv[1][0] != '0') {
-	printf("Invalid device\n");
-	exit(-1);
-    }
-    if (dev < 0 || dev >= NDEVS) {
-	printf("Invalid device\n");
-	exit(-1);
-    }
     if (fsize < 3 || isize < 2 || isize >= fsize) {
 	printf("Bad parameter values\n");
 	exit(-1);
     }
-    printf("Making filesystem on device %d with isize %u fsize %u. Confirm? ",
-	   dev, isize, fsize);
+    printf("Making filesystem in file %s with isize %u fsize %u. Confirm? ",
+	   filename, isize, fsize);
     if (!yes())
 	exit(-1);
 
-    if (d_open(dev)) {
-	printf("Can't open device\n");
+    fd = open(filename, O_RDWR | O_CREAT | O_TRUNC,
+              S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    if (fd < 0) {
+	printf("Can't open file\n");
 	exit(-1);
     }
-    mkfs(fsize, isize);
+    printf("Opened: %s fd %d\n", filename, fd);
+    fs_buffer = mkfs(fsize, isize);
+    if (write(fd, fs_buffer, fsize * BLOCKSIZE) < 0) {
+        printf("Couldn't write buffer\n");
+        free(fs_buffer);
+        close(fd);
+        exit(-1);
+    }
+
+    close(fd);
+    free(fs_buffer);
     exit(0);
 }
 
 
-void mkfs(uint16 fsize, uint16 isize)
+void *mkfs(uint16 fsize, uint16 isize)
 {
     uint16 j;
-    char *zeros;
-    char *zerobuf();
+    filesys sb;
+    char *fs_buffer;
 
     /* Zero out the blocks */
-    printf("Zeroizing i-blocks...\n");
-
     /*
      * I left the "zeroizing" stuff for posterity.  We really just malloc/zero
      * the whole fs all at once
      */
+    printf("Zeroizing i-blocks...\n");
+
     fs_buffer = malloc(fsize * BLOCKSIZE);
-    memset(, 0 , 512);
-#ifdef CPM
-    for (j = 0; j < isize; ++j)	/* Don't waste time in CP/M */
-	dwrite(j, zeros);
-#else
-    for (j = 0; j < fsize; ++j)
-	dwrite(j, zeros);
-#endif
+    memset(fs_buffer, 0 , BLOCKSIZE);
 
     /* Initialize the super-block */
-    fs_tab[dev].s_mounted = SMOUNTED;	/* Magic number */
-    fs_tab[dev].s_isize = isize;
-    fs_tab[dev].s_fsize = fsize;
-    fs_tab[dev].s_nfree = 1;
-    fs_tab[dev].s_free[0] = 0;
-    fs_tab[dev].s_tfree = 0;
-    fs_tab[dev].s_ninode = 0;
-    fs_tab[dev].s_tinode = (8 * (isize - 2)) - 2;
+    sb.s_mounted = SMOUNTED;	/* Magic number */
+    sb.s_isize = isize;
+    sb.s_fsize = fsize;
+    sb.s_nfree = 1;
+    sb.s_free[0] = 0;
+    sb.s_tfree = 0;
+    sb.s_ninode = 0;
+    sb.s_tinode = (8 * (isize - 2)) - 2;
 
     /* Free each block, building the free list */
 
     printf("Building free list...\n");
     for (j = fsize - 1; j > isize; --j) {
-	if (fs_tab[dev].s_nfree == 50) {
-	    dwrite(j, (char *) &fs_tab[dev].s_nfree);
-	    fs_tab[dev].s_nfree = 0;
+	if (sb.s_nfree == 50) {
+	    dwrite(fs_buffer, j, (char *) &sb.s_nfree);
+	    sb.s_nfree = 0;
 	}
-	++fs_tab[dev].s_tfree;
-	fs_tab[dev].s_free[(fs_tab[dev].s_nfree)++] = j;
+	++sb.s_tfree;
+	sb.s_free[(sb.s_nfree)++] = j;
     }
 
     /* The inodes are already zeroed out */
@@ -135,30 +136,25 @@ void mkfs(uint16 fsize, uint16 isize)
 
     printf("Writing initial inode and superblock...\n");
 
-    dwrite(2, (char *) inode);
-    dwrite(isize, (char *) dirbuf);
+    dwrite(fs_buffer, 2, (char *) inode);
+    dwrite(fs_buffer, isize, (char *) dirbuf);
 
     /* Write out super block */
-    dwrite(1, (char *) &fs_tab[dev]);
+    dwrite(fs_buffer, 1, (char *) &sb);
 
     printf("Done.\n");
+
+    return fs_buffer;
 }
 
 
-dwrite(blk, addr)
-uint16 blk;
-char *addr;
+void dwrite(char* buf, uint16 blk, char *addr)
 {
-    char *buf;
-    char *bread();
-
-    buf = bread(dev, blk, 1);
-    bcopy(addr, buf, 512);
-    bfree(buf, 1);
+    bcopy(addr, buf + (blk * BLOCKSIZE), BLOCKSIZE);
 }
 
 
-int yes()
+int yes(void)
 {
     char line[20];
     /* int  fgets(); - HP */
