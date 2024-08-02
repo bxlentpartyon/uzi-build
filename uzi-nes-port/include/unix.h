@@ -133,9 +133,15 @@ struct  UZI_TYPE(stat)    /* Really only used by users */
 	uint16  st_gid;
 	uint16  st_rdev;
 	UZI_TYPE_T(off)		st_size;
+#ifdef UZI
 	UZI_TYPE_T(time)	st_atime;
 	UZI_TYPE_T(time)	st_mtime;
 	UZI_TYPE_T(time)	st_ctime;
+#else
+	UZI_TYPE_T(time)	uzi_st_atime;
+	UZI_TYPE_T(time)	uzi_st_mtime;
+	UZI_TYPE_T(time)	uzi_st_ctime;
+#endif
 };
 
 /* Bit masks for i_mode and st_mode */
