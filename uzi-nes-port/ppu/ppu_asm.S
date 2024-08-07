@@ -129,6 +129,8 @@ font_load_loop:
 	rts
 .endproc
 
+; This is some experimental code for writing to PPU RAM.
+; Keeping it here for now.
 .proc ppu_spray
 	ldy #$10
 	sty PPU_ADDR
@@ -147,7 +149,6 @@ spray_loop:
 
 .proc handle_vblank
 	jsr dump_screenbuf
-	jsr ppu_spray
 	jsr ppu_reset
 
 	rts
