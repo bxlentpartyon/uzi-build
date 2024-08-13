@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "unix.h"
 #include "extern.h"
@@ -14,9 +16,7 @@ char *bitmap;
 int16 *linkmap;
 
 
-char *strcpy(), *strcat(), *sprintf();
 char *daread();
-char *calloc();
 char *da_read();
 
 main(argc,argv)
