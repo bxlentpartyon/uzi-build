@@ -162,11 +162,11 @@ struct  UZI_TYPE(stat)    /* Really only used by users */
 
 #define MODE_MASK 07777
 
-#define F_REG	10
-#define F_DIR	04
-#define F_PIPE	01
-#define F_BDEV	06
-#define F_CDEV	02
+#define F_REG	0100000
+#define F_DIR	 040000
+#define F_PIPE	 010000
+#define F_BDEV	 060000
+#define F_CDEV	 020000
 
 #define F_MASK	0170000
 
