@@ -7,8 +7,11 @@ endif
 
 all: mkfs fsck
 
-mkfs: mkfs.c
-	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $<
+fs.o: fs.c
+	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -c -o $@ $<
 
-fsck: fsck.c
-	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $<
+mkfs: mkfs.c fs.o
+	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< fs.o
+
+fsck: fsck.c fs.o
+	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< fs.o

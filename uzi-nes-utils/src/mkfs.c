@@ -27,12 +27,11 @@ UZI (Unix Z80 Implementation) Utilities:  mkfs.c
 #include <unix.h>
 #include <config.h>		/* 1.4.98 - HFB */
 #include <extern.h>
+#include "fs.h"
 
 /*extern char zerobuf(); */
 direct dirbuf[32] = { ROOTINODE, ".", ROOTINODE, ".." };
 struct dinode inode[8];
-
-#define BLOCKSIZE	512
 
 void *mkfs(uint16 fsize, uint16 isize);
 void dwrite(char *buf, uint16 blk, char *addr);
@@ -151,16 +150,4 @@ void *mkfs(uint16 fsize, uint16 isize)
 void dwrite(char* buf, uint16 blk, char *addr)
 {
     bcopy(addr, buf + (blk * BLOCKSIZE), BLOCKSIZE);
-}
-
-
-int yes(void)
-{
-    char line[20];
-    /* int  fgets(); - HP */
-
-    if (!fgets(line, sizeof(line), stdin) || (*line != 'y' && *line != 'Y'))
-	return (0);
-
-    return (1);
 }
