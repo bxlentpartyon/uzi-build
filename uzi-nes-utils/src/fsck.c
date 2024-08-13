@@ -1,70 +1,92 @@
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "unix.h"
 #include "extern.h"
+#include "fs.h"
 
 #define MAXDEPTH 20   /* Maximum depth of directory tree to search */
 
 /* This checks a filesystem */
 
-int dev;
-struct filesys filsys;
+int fd;
+struct filesys *filsys;
+char fs_buf[DUMMY_BLOCKSIZE] = { 0 };
 
 char *bitmap;
 int16 *linkmap;
 
 
-char *daread();
-char *da_read();
+char *daread(uint16 blk);
+void dwrite(uint16 blk, char *addr);
+void iread(uint16 ino, struct dinode *buf);
+void iwrite(uint16 ino, struct dinode *buf);
+void dirread(struct dinode *ino, uint16 j, struct direct *dentry);
+void dirwrite(struct dinode *ino, uint16 j, struct direct *dentry);
+blkno_t getblkno(struct dinode *ino, blkno_t num);
+void setblkno(struct dinode *ino, blkno_t num, blkno_t dnum);
+blkno_t blk_alloc(struct filesys *filsys);
+void ckdir(uint16 inum, uint16 pnum, char *name);
+void mkentry(uint16 inum);
 
-main(argc,argv)
-int argc;
-char *argv[];
+void panic(char *msg);
+
+void pass1(void);
+void pass2(void);
+void pass3(void);
+void pass4(void);
+void pass5(void);
+
+int main(int argc, char **argv)
 {
+    char *buf, *filename;
 
-    char *buf;
-
-    if (argc != 2 || argv[1][0] < '0' || argv[1][0] > '9')
+    if (argc != 2)
     {
-	fprintf(stderr,"Usage: fsck device#\n");
+	fprintf(stderr,"Usage: fsck filename\n");
 	exit(-1);
     }
 
-    bufinit();
-    dev = atoi(argv[1]);
 
-    if (d_open(dev))
+    filename = argv[1];
+    printf("Running check on file %s\n", filename);
+
+    fd = open(filename, O_RDWR);
+    if (fd < 0)
     {
-	fprintf(stderr,"Can't open device number %d\n",dev);
+	fprintf(stderr,"Can't open file %s\n", filename);
 	exit(-1);
     }
 
     /* Read in the super block. */
 
     buf = daread(1);
-    bcopy(buf, (char *)&filsys, sizeof(struct filesys));
+    filsys = (filesys *) fs_buf;
+    bcopy(buf, (char *) filsys, sizeof(struct filesys));
 
     /* Verify the fsize and isize parameters */
 
-    if (filsys.s_mounted != SMOUNTED)
+    if (filsys->s_mounted != SMOUNTED)
     {
-	printf("Device %d has invalid magic number %d. Fix? ",
-	       dev, filsys.s_mounted);
+	printf("File %s has invalid magic number %d. Fix? ",
+	       filename, filsys->s_mounted);
 	if (!yes())
 	    exit(-1);
-	filsys.s_mounted = SMOUNTED;
-	dwrite((blkno_t)1,(char *)&filsys);
+	filsys->s_mounted = SMOUNTED;
+	dwrite((blkno_t)1,(char *) filsys);
     }
 
-    printf("Device %d has fsize = %d and isize = %d. Continue? ",
-		dev, filsys.s_fsize, filsys.s_isize);
+    printf("File %s has fsize = %d and isize = %d. Continue? ",
+		filename, filsys->s_fsize, filsys->s_isize);
     if (!yes())
 	exit(-1);
 
-    bitmap = calloc(filsys.s_fsize,sizeof(char));
-    linkmap = (int16 *)calloc(8 * filsys.s_isize, sizeof(int16));
+    bitmap = calloc(filsys->s_fsize,sizeof(char));
+    linkmap = (int16 *)calloc(8 * filsys->s_isize, sizeof(int16));
 
     if (!bitmap || !linkmap)
     {
@@ -87,7 +109,6 @@ char *argv[];
     printf("Pass 5: Checking link counts.\n");
     pass5();
 
-    bufsync();
     printf("Done.\n");
 
     exit(0);
@@ -98,7 +119,7 @@ char *argv[];
 /* Pass 1 checks each inode independently for validity, zaps bad block
 numbers in the inodes, and builds the block allocation map. */
 
-pass1()
+void pass1()
 {
     uint16 n;
     struct dinode ino;
@@ -108,11 +129,9 @@ pass1()
     uint16 icount;
     blkno_t *buf;
 
-    blkno_t getblkno();
-
     icount = 0;
 
-    for (n = ROOTINODE; n < 8*(filsys.s_isize-2); ++n)
+    for (n = ROOTINODE; n < 8*(filsys->s_isize-2); ++n)
     {
 	iread(n, &ino);
 	linkmap[n] = -1;
@@ -175,8 +194,8 @@ pass1()
 
 	    for (b=18; b < 20; ++b)
 	    {
-		if (ino.i_addr[b] != 0 && (ino.i_addr[b] < filsys.s_isize ||
-			ino.i_addr[b] >= filsys.s_fsize))
+		if (ino.i_addr[b] != 0 && (ino.i_addr[b] < filsys->s_isize ||
+			ino.i_addr[b] >= filsys->s_fsize))
 		{
 		    printf("Inode %d singly indirect block %d is out of range with value of %u. Zap? ",
 			    n, b, ino.i_addr[b]);
@@ -207,8 +226,8 @@ pass1()
 		buf = (blkno_t *)daread(ino.i_addr[19]);
 		for (b=0; b < 256; ++b)
 		{
-		    if (buf[b] != 0 && (buf[b] < filsys.s_isize ||
-			    buf[b] >= filsys.s_fsize))
+		    if (buf[b] != 0 && (buf[b] < filsys->s_isize ||
+			    buf[b] >= filsys->s_fsize))
 		    {
 			printf("Inode %d doubly indirect block %d is out of range with value of %u. Zap? ",
 				n, b, buf[b]);
@@ -230,8 +249,8 @@ pass1()
 	    {
 		b = getblkno(&ino, bno);
 
-	        if (b != 0 && (b < filsys.s_isize ||
-			b >= filsys.s_fsize))
+	        if (b != 0 && (b < filsys->s_isize ||
+			b >= filsys->s_fsize))
 		{
 		    printf("Inode %d block %d is out of range with value of %u. Zap? ",
 			    n, bno, b);
@@ -250,15 +269,15 @@ pass1()
     }
 
     /* Fix free inode count in super block */
-    if (filsys.s_tinode != 8*(filsys.s_isize-2) - ROOTINODE - icount)
+    if (filsys->s_tinode != 8*(filsys->s_isize-2) - ROOTINODE - icount)
     {
 	printf("Free inode count in super block is %u should be %u. Fix? ",
-	    filsys.s_tinode, 8*(filsys.s_isize-2) - ROOTINODE - icount);
+	    filsys->s_tinode, 8*(filsys->s_isize-2) - ROOTINODE - icount);
 	
 	if (yes())
 	{
-	    filsys.s_tinode = 8*(filsys.s_isize-2) - ROOTINODE - icount;
-	    dwrite((blkno_t)1,(char *)&filsys);
+	    filsys->s_tinode = 8*(filsys->s_isize-2) - ROOTINODE - icount;
+	    dwrite((blkno_t)1,(char *) filsys);
 	}
     }
 }
@@ -267,7 +286,7 @@ pass1()
 
 /* Clear inode free list, rebuild block free list using bit map. */
 
-pass2()
+void pass2()
 {
     blkno_t j;
     blkno_t oldtfree;
@@ -276,44 +295,44 @@ pass2()
     if (!yes())
 	return;
 
-    oldtfree = filsys.s_tfree;
+    oldtfree = filsys->s_tfree;
 
     /* Initialize the super-block */
 
-    filsys.s_ninode =  0;
-    filsys.s_nfree =  1;
-    filsys.s_free[0] =  0;
-    filsys.s_tfree =  0;
+    filsys->s_ninode =  0;
+    filsys->s_nfree =  1;
+    filsys->s_free[0] =  0;
+    filsys->s_tfree =  0;
 
     /* Free each block, building the free list */
 
-    for (j= filsys.s_fsize-1; j >= filsys.s_isize; --j)
+    for (j= filsys->s_fsize-1; j >= filsys->s_isize; --j)
     {
 	if (bitmap[j] == 0)
 	{
-	    if (filsys.s_nfree == 50)
+	    if (filsys->s_nfree == 50)
 	    {
-		dwrite(j, (char *)&filsys.s_nfree);
-		filsys.s_nfree = 0;
+		dwrite(j, (char *)&filsys->s_nfree);
+		filsys->s_nfree = 0;
 	    }
 
-	    ++filsys.s_tfree;
-	    filsys.s_free[(filsys.s_nfree)++] = j;
+	    ++(filsys->s_tfree);
+	    filsys->s_free[(filsys->s_nfree)++] = j;
 	}
     }
 
-    dwrite((blkno_t)1,(char *)&filsys);
+    dwrite((blkno_t)1,(char *) filsys);
 
-    if (oldtfree != filsys.s_tfree)
+    if (oldtfree != filsys->s_tfree)
 	printf("During free list regeneration s_tfree was changed to %d from %d.\n",
-		filsys.s_tfree, oldtfree);
+		filsys->s_tfree, oldtfree);
 
 }
 
 
 
 /* Pass 3 finds and fixes multiply allocated blocks. */
-pass3()
+void pass3()
 {
     uint16 n;
     struct dinode ino;
@@ -321,13 +340,11 @@ pass3()
     blkno_t b;
     blkno_t bno;
     blkno_t newno;
-    blkno_t blk_alloc();
-    blkno_t getblkno();
 
-    for (b = filsys.s_isize; b < filsys.s_fsize; ++b)
+    for (b = filsys->s_isize; b < filsys->s_fsize; ++b)
 	bitmap[b] = 0;
 
-    for (n = ROOTINODE; n < 8*(filsys.s_isize-2); ++n)
+    for (n = ROOTINODE; n < 8*(filsys->s_isize-2); ++n)
     {
 	iread(n, &ino);
 
@@ -346,7 +363,7 @@ pass3()
 		    printf("Indirect block %d in inode %u value %u multiply allocated. Fix? ", b, n, ino.i_addr[b]);
 		    if (yes())
 		    {
-			newno = blk_alloc(&filsys);
+			newno = blk_alloc(filsys);
 			if (newno == 0)
 			    printf("Sorry... No more free blocks.\n");
 			else
@@ -375,7 +392,7 @@ pass3()
 		    	    bno, n, b);
 		    if (yes())
 		    {
-			newno = blk_alloc(&filsys);
+			newno = blk_alloc(filsys);
 			if (newno == 0)
 			    printf("Sorry... No more free blocks.\n");
 			else
@@ -400,7 +417,7 @@ int depth;
 /* Pass 4 traverses the directory tree, fixing bad directory entries
 and finding the actual number of references to each inode. */
 
-pass4()
+void pass4()
 {
     depth = 0;
     linkmap[ROOTINODE] = 1;
@@ -412,10 +429,7 @@ pass4()
 
 
 /* This recursively checks the directories */
-ckdir(inum, pnum, name)
-uint16 inum;
-uint16 pnum;
-char *name;
+void ckdir(uint16 inum, uint16 pnum, char *name)
 {
     struct dinode ino;
     struct direct dentry;
@@ -449,7 +463,7 @@ char *name;
 	if (dentry.d_ino == 0)
 	    continue;
 
-	if (dentry.d_ino < ROOTINODE || dentry.d_ino >= 8*filsys.s_isize)
+	if (dentry.d_ino < ROOTINODE || dentry.d_ino >= 8*filsys->s_isize)
 	{
 	    printf("Directory entry %s%-1.14s has out-of-range inode %u. Zap? ",
 		   name, dentry.d_name, dentry.d_ino);
@@ -527,12 +541,12 @@ char *name;
 
 /* Pass 5 compares the link counts found in pass 4 with the inodes. */
 
-pass5()
+void pass5()
 {
     uint16 n;
     struct dinode ino;
 
-    for (n = ROOTINODE; n < 8*(filsys.s_isize-2); ++n)
+    for (n = ROOTINODE; n < 8*(filsys->s_isize-2); ++n)
     {
 	iread(n, &ino);
 
@@ -570,8 +584,8 @@ pass5()
 		    ino.i_nlink = 0;
 		    ino.i_mode = 0;
 		    iwrite(n, &ino);
-		    ++filsys.s_tinode;
-		    dwrite((blkno_t)1,(char *)&filsys);
+		    ++filsys->s_tinode;
+		    dwrite((blkno_t)1,(char *) filsys);
 		}
 	    }
 	    else
@@ -592,8 +606,7 @@ pass5()
 
 /* This makes an entry in "lost+found" for inode n */
 
-mkentry(inum)
-uint16 inum;
+void mkentry(uint16 inum)
 {
     struct dinode rootino;
     struct direct dentry;
@@ -620,12 +633,7 @@ uint16 inum;
 It returns the number of the block on the disk.  A value of zero
 means an unallocated block. */
 
-char *daread();
-
-blkno_t 
-getblkno(ino,num)
-struct dinode *ino;
-blkno_t num;
+blkno_t getblkno(struct dinode *ino, blkno_t num)
 {
 
     blkno_t indb;
@@ -666,17 +674,12 @@ A return of zero means there were no blocks available to create an
 indirect block. This should never happen in fsck. */
 
 
-setblkno(ino,num,dnum)
-struct dinode *ino;
-blkno_t num;
-blkno_t dnum;
+void setblkno(struct dinode *ino, blkno_t num, blkno_t dnum)
 {
 
     blkno_t indb;
     blkno_t dindb;
     blkno_t *buf;
-    char *zerobuf();
-
 
     if (num < 18) /* Direct block */
     {
@@ -714,9 +717,7 @@ blkno_t dnum;
 /* Blk_alloc allocates an unused block.
 A returned block number of zero means no more blocks. */
 
-blkno_t
-blk_alloc(filsys)
-struct filesys *filsys;
+blkno_t blk_alloc(struct filesys *filsys)
 {
 
     blkno_t newno;
@@ -750,43 +751,74 @@ struct filesys *filsys;
 	return(0);
     }
 
-    dwrite((blkno_t)1,(char *)filsys);
+    dwrite((blkno_t)1,(char *) filsys);
     return(newno);
 }
 
 
-
-char *
-daread(blk)
-uint16 blk;
+void fsck_abort(void)
 {
-    char *buf;
-    if (da_read(dev,blk,&buf) != 512)
+	close(fd);
+	exit(1);
+}
+
+void panic(char *msg)
+{
+	fprintf(stderr, msg);
+	fsck_abort();
+}
+
+void seek_block(int fd, uint16 blk)
+{
+    int blkoff = blk * BLOCKSIZE;
+    off_t ret = lseek(fd, blkoff, SEEK_SET);
+
+    if (ret != blkoff)
     {
-        fprintf(stderr,"Read of block %d failed.\n",blk);
-        abort();
+        fprintf(stderr,"Seek to block %d failed.\n",blk);
+        fsck_abort();
     }
-    return(buf);
+}
+
+char readbuf[BLOCKSIZE];
+
+char *daread(uint16 blk)
+{
+    int ret;
+
+    seek_block(fd, blk);
+
+    ret = read(fd, readbuf, BLOCKSIZE);
+    if (ret < 0)
+    {
+	fprintf(stderr,"Read of block %d failed: %s\n", blk, strerror(errno));
+        fsck_abort();
+    }
+
+    return readbuf;
 }
 
 
-
-dwrite(blk, addr)
-uint16 blk;
-char *addr;
+/*
+ * We need a different dwrite from mkfs, since we're operating on an fd, instead
+ * of reading in the whole file up front and examining chunks of it.
+ */
+void dwrite(uint16 blk, char *addr)
 {
-    if (d_write(dev,blk,addr) != 512)
+    ssize_t ret;
+
+    seek_block(fd, blk);
+
+    ret = write(fd, addr, BLOCKSIZE);
+    if (ret != BLOCKSIZE)
     {
         fprintf(stderr,"Write of block %d failed.\n",blk);
-        abort();
+        fsck_abort();
     }
 }
-    
-    
 
-iread(ino, buf)
-uint16 ino;
-struct dinode *buf;
+
+void iread(uint16 ino, struct dinode *buf)
 {
     struct dinode *addr;
 
@@ -795,9 +827,7 @@ struct dinode *buf;
 }
 
 
-iwrite(ino, buf)
-uint16 ino;
-struct dinode *buf;
+void iwrite(uint16 ino, struct dinode *buf)
 {
     struct dinode *addr;
 
@@ -807,10 +837,7 @@ struct dinode *buf;
 }
 
 
-dirread(ino, j, dentry)
-struct dinode *ino;
-uint16 j;
-struct direct *dentry;
+void dirread(struct dinode *ino, uint16 j, struct direct *dentry)
 {
     blkno_t blkno;
     char *buf;
@@ -823,10 +850,7 @@ struct direct *dentry;
 }
 
 
-dirwrite(ino, j, dentry)
-struct dinode *ino;
-uint16 j;
-struct direct *dentry;
+void dirwrite(struct dinode *ino, uint16 j, struct direct *dentry)
 {
     blkno_t blkno;
     char *buf;
@@ -837,17 +861,6 @@ struct direct *dentry;
     buf = daread(blkno);
     bcopy((char *)dentry, buf+(16*j), 16);
     dwrite(blkno,buf);
-}
-
-
-yes()
-{
-    char line[20];
-
-    if (!fgets(line,sizeof(line),stdin) || (*line != 'y' && *line != 'Y'))
-	return(0);
-
-    return(1);
 }
 
 
