@@ -34,8 +34,8 @@ extern int16 sec;	/* Tick counter for counting off one second */
 extern int16 runticks;	/* Number of ticks current process has been
 			   swapped in */
 
-extern time_t tod;	/* Time of day */
-extern time_t ticks;	/* Cumulative tick counter, in minutes and ticks  */
+extern UZI_TYPE_T(time) tod;	/* Time of day */
+extern UZI_TYPE_T(time) ticks;	/* Cumulative tick counter, in minutes and ticks  */
 
 extern char *swapbase;	/* Used by device driver for swapping */
 extern unsigned swapcnt;
