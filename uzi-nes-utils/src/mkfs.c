@@ -30,8 +30,9 @@ UZI (Unix Z80 Implementation) Utilities:  mkfs.c
 #include "fs.h"
 
 /*extern char zerobuf(); */
-direct dirbuf[32] = { ROOTINODE, ".", ROOTINODE, ".." };
+direct dirbuf[32] = { 0 };
 struct dinode inode[8];
+char sb_buf[DUMMY_BLOCKSIZE] = { 0 };
 
 void *mkfs(uint16 fsize, uint16 isize);
 void dwrite(char *buf, uint16 blk, char *addr);
@@ -85,7 +86,8 @@ int main(int argc, char *argv[])
 void *mkfs(uint16 fsize, uint16 isize)
 {
     uint16 j;
-    filesys sb;
+    filesys *sb = (filesys *) sb_buf;
+    struct direct tempdir = { 0 };
     char *fs_buffer;
 
     /* Zero out the blocks */
@@ -96,28 +98,35 @@ void *mkfs(uint16 fsize, uint16 isize)
     printf("Zeroizing i-blocks...\n");
 
     fs_buffer = malloc(fsize * BLOCKSIZE);
-    memset(fs_buffer, 0 , BLOCKSIZE);
+    memset(fs_buffer, 0, fsize * BLOCKSIZE);
+
+    /* Set up the dirbuf */
+    tempdir.d_ino = ROOTINODE;
+    sprintf(tempdir.d_name, ".");
+    dirbuf[0] = tempdir;
+    sprintf(tempdir.d_name, "..");
+    dirbuf[1] = tempdir;
 
     /* Initialize the super-block */
-    sb.s_mounted = SMOUNTED;	/* Magic number */
-    sb.s_isize = isize;
-    sb.s_fsize = fsize;
-    sb.s_nfree = 1;
-    sb.s_free[0] = 0;
-    sb.s_tfree = 0;
-    sb.s_ninode = 0;
-    sb.s_tinode = (8 * (isize - 2)) - 2;
+    sb->s_mounted = SMOUNTED;	/* Magic number */
+    sb->s_isize = isize;
+    sb->s_fsize = fsize;
+    sb->s_nfree = 1;
+    sb->s_free[0] = 0;
+    sb->s_tfree = 0;
+    sb->s_ninode = 0;
+    sb->s_tinode = (8 * (isize - 2)) - 2;
 
     /* Free each block, building the free list */
 
     printf("Building free list...\n");
     for (j = fsize - 1; j > isize; --j) {
-	if (sb.s_nfree == 50) {
-	    dwrite(fs_buffer, j, (char *) &sb.s_nfree);
-	    sb.s_nfree = 0;
+	if (sb->s_nfree == 50) {
+	    dwrite(fs_buffer, j, (char *) &sb->s_nfree);
+	    sb->s_nfree = 0;
 	}
-	++sb.s_tfree;
-	sb.s_free[(sb.s_nfree)++] = j;
+	++sb->s_tfree;
+	sb->s_free[(sb->s_nfree)++] = j;
     }
 
     /* The inodes are already zeroed out */
@@ -139,7 +148,7 @@ void *mkfs(uint16 fsize, uint16 isize)
     dwrite(fs_buffer, isize, (char *) dirbuf);
 
     /* Write out super block */
-    dwrite(fs_buffer, 1, (char *) &sb);
+    dwrite(fs_buffer, 1, sb_buf);
 
     printf("Done.\n");
 
