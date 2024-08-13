@@ -169,14 +169,14 @@ stub_entry:
 	ldx #$01		;
 	stx MMC5_CHR_MODE	; CHR bank mode 1 (4K banks)
 
-	ldx #$00		;
-	stx MMC5_CHR_4K_SEG0	; Select CHR bank 0 for segment 0
-
-	ldx #$01		;
-	stx MMC5_CHR_4K_SEG1	; Select CHR bank 1 for segment 1
+	ldx #$02		;
+	stx MMC5_CHR_UPPER	; Set high bits of CHR bank to 10
 
 	ldx #$00
+	stx MMC5_CHR_4K_SEG0	; Select first non-battery-backed bank for segment 0
+
 	stx MMC5_CHR_UPPER	; Set high bits of CHR bank to 00
+	stx MMC5_CHR_4K_SEG1	; Select CHR bank 0 for segment 1
 	stx MMC5_NAMETABLE	; Set all nametables to 00
 
 	ldx #$01		;
