@@ -15,3 +15,6 @@ mkfs: mkfs.c fs.o fs.h
 
 fsck: fsck.c fs.o fs.h
 	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< fs.o
+
+clean:
+	rm mkfs fsck fs.o
