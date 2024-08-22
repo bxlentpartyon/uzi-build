@@ -27,7 +27,7 @@ UZI (Unix Z80 Implementation) Utilities:  mkfs.c
 #include <unix.h>
 #include <config.h>		/* 1.4.98 - HFB */
 #include <extern.h>
-#include "fs.h"
+#include "linux_fs.h"
 
 /*extern char zerobuf(); */
 direct dirbuf[32] = { 0 };

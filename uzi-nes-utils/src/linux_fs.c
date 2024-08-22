@@ -2,7 +2,7 @@
 #include <strings.h>
 
 #include <unix.h>
-#include "fs.h"
+#include "linux_fs.h"
 
 int yes(void)
 {

@@ -7,7 +7,7 @@
 
 #include "unix.h"
 #include "extern.h"
-#include "fs.h"
+#include "linux_fs.h"
 
 #define MAXDEPTH 20   /* Maximum depth of directory tree to search */
 
