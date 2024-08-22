@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include <unix.h>
+
 #define BLOCKSIZE	512
 
 /*
