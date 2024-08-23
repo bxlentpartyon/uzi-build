@@ -100,7 +100,7 @@ typedef uint16 blkno_t;  /* Can have 65536 512-byte blocks in filesystem */
 
 
 typedef struct blkbuf {
-    char        bf_data[64];    /* This MUST be first ! */
+    char        bf_data[512];    /* This MUST be first ! */
     char        bf_dev;
     blkno_t     bf_blk;
     char        bf_dirty;
