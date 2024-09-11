@@ -1,5 +1,6 @@
 	.export		_ppu_load_font
 	.export		handle_vblank
+	.export		_wait_frame, _frame_wait_sleep
 	.import		dump_screenbuf
 
 	.include "uzi_nes.inc"
@@ -11,6 +12,10 @@ font_load_ptr:
 
 .segment "FONTDATA"
 	fontdata: .incbin "font/newfont.chr"
+
+.segment "DATA"
+_frame_wait_sleep:
+	.byte $00
 
 .segment "CODE"
 
@@ -77,6 +82,21 @@ spray_loop:
 .proc handle_vblank
 	jsr dump_screenbuf
 	jsr ppu_reset
+
+	; wake up processes sleeping in wait_frame
+	lda #0
+	sta _frame_wait_sleep
+
+	rts
+.endproc
+
+.proc _wait_frame
+	lda #1
+	sta _frame_wait_sleep
+
+wait_frame_loop:
+	lda _frame_wait_sleep
+	bne wait_frame_loop
 
 	rts
 .endproc

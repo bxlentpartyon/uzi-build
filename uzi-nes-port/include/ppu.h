@@ -16,5 +16,11 @@ void panic(char *s);
 		}				\
 	} while (0)
 
+struct ppu_desc {
+	char size;
+	char *target;
+	char flags;
+	char data;
+};
 
 #endif /* __PPU_H__ */
