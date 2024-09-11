@@ -13,7 +13,7 @@ KERNEL_OBJS := head.o interrupts.o clock.o machdep.o process.o kdata.o scall1.o 
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS))
 
-PPU_OBJS := ppu.o ppu_screenbuf.o asm/ppu.o asm/ppu_screenbuf.o
+PPU_OBJS := ppu.o ppu_databuf.o asm/ppu.o asm/ppu_databuf.o
 PPU_OBJ_DIR := ppu
 PPU_DEPS := $(patsubst %, $(PPU_OBJ_DIR)/%, $(PPU_OBJS))
 

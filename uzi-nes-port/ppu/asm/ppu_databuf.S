@@ -1,22 +1,30 @@
 	.export _ppu_databuf
 	.export _databuf_pos
+	.export write_ppubuf
+
+	.include "uzi_nes.inc"
 
 .segment "DATA"
 .define	PPU_MAX_WRITE	64	; Max number of bytes we can write to the PPU in one VBlank
 .define PPU_BUF_BYTE	5	; Write buffer entry size for a single byte
 .define PPU_BUF_SIZE	PPU_MAX_WRITE * PPU_BUF_BYTE
 .define SCREENBUF_SIZE	896
-.define FIRST_VIS_ROW	$2020
 
 _ppu_databuf:
 	.align 16
-	.res	PPU_MAX_WRITE * PPU_BUF_BYTE	; Worst-case scenario is 64 single-byte writes
+	.res $200, $00	; this is more than we can actually write in one
+			; vblank, but it simplifies the logic to assume that
+			; we have 2 full pages, but know that we will hit a \0
+			; before we get past 64-bytes-worth of buffer entries
 _databuf_pos:
 	.addr $0000
 _databuf_maxbytes:
 	.byte $40
-_cur_screen_ptr:
-	.addr FIRST_VIS_ROW
+tmp_num_bytes:
+	.byte $00
+; current address corresponding to our position in the data buffer
+cur_databuf_ptr:
+	.addr _ppu_databuf
 
 ; Write buffer layout
 ;  byte    0 = length of data (0 = no more data)
@@ -27,25 +35,53 @@ _cur_screen_ptr:
 ;
 ;  https://www.nesdev.org/wiki/The_frame_and_NMIs#Buffer_Formats
 
-.segment "ZEROPAGE"
-; current address corresponding to our position in the data buffer
-cur_databuf_ptr:
-	.addr _ppu_databuf
-
 .segment "CODE"
 
 .proc write_ppubuf
+buf_write_loop_reset:
+	; Y is the index in the current data buffer page
+	ldy #0
 buf_write_loop:
+	lda cur_databuf_ptr, y
+	tax
+
+	; we've encountered the \0 entry in the buffer
+	beq out_reset_counters 
+
+	; store off number of bytes 
+	stx tmp_num_bytes
+	iny
+
+	; load address to PPU
+	lda cur_databuf_ptr, y
+	tax
+	iny
+	lda cur_databuf_ptr, y
+	iny
+	sta PPU_ADDR
+	stx PPU_ADDR
+
+	; skip over unused byte for now
+	iny
+
 	ldx #0
-	lda (cur_databuf_ptr), x
+write_bytes_loop:
+	lda cur_databuf_ptr, y
+	sta PPU_DATA
 
-	beq loop_out
+	inx
+	; if x != tmp_num_bytes, loop
+	cpx tmp_num_bytes
+	bne write_bytes_loop
+; end write_bytes_loop
 
-	;
-	lda _cur_screen_ptr+1
-	sta PPU_ADDR
-	lda _cur_screen_ptr
-	sta PPU_ADDR
+	; increment cur_databuf_ptr if necessary
+	iny				; iny from the byte read is delay until here
+					; to avoid polluting the carry flag early
+	bcc buf_write_loop
+	inc cur_databuf_ptr+1
+	jmp buf_write_loop_reset
+; end buf_write_loop
 
 out_reset_counters:
 	; reset data buffer position to 0

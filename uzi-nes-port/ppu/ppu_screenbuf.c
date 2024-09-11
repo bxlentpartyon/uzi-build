@@ -7,12 +7,7 @@ extern char *ppu_dump_pos;
 
 extern char screenbuf[];
 
-#define SCREEN_VIS_ROWS		28
-#define SCREEN_COLS		32
-#define SCREEN_BUF_SIZE		SCREEN_VIS_ROWS * SCREEN_COLS
 #define SCREEN_BUF_START	(char *) &screenbuf
-
-#define PPU_FIRST_VIS_ROW	(char *) 0x2020;
 
 int cursor_pos = 0;
 int in_panic = 0;
