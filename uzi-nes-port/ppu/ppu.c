@@ -1,14 +1,18 @@
 #include <ppu.h>
 
 extern void ppu_load_font(void);
+#ifdef PPU_SCREENBUF
 extern void ppu_init_screenbuf(void);
+#endif
 
 int in_panic = 0;
 
 void init_ppu(void)
 {
 	ppu_load_font();
+#ifdef PPU_SCREENBUF
 	ppu_init_screenbuf();
+#endif
 }
 
 void ppu_puts(char *s)
@@ -27,7 +31,9 @@ void panic(char *msg)
 	/* prevent recursion from ppu_put* functions */
 	if (!in_panic) {
 		in_panic = 1;
+#ifdef PPU_SCREENBUF
 		cursor_pos = 0;
+#endif
 		ppu_puts("PANIC: ");
 		ppu_puts(msg);
 		while(1);
