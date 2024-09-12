@@ -179,6 +179,8 @@ stub_entry:
 	stx MMC5_CHR_4K_SEG1	; Select CHR bank 0 for segment 1
 	stx MMC5_NAMETABLE	; Set all nametables to 00
 
+	stx MMC5_SCAN_IRQ_STATUS; Disable scanline IRQ
+
 	ldx #$01		;
 	stx MMC5_PRG_MODE	; PRG bank mode 01 (2 16K banks)
 
