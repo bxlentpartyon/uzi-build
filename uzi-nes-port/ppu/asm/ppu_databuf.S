@@ -107,6 +107,7 @@ out_reset_counters:
 	; reset data buffer position to 0
 	lda #0
 	sta _databuf_pos
+	sta _databuf_pos+1
 
 	; reset data buffer pointer to beginning of data buffer
 	lda #<_ppu_databuf
