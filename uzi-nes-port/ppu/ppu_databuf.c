@@ -7,7 +7,7 @@
 #define PPU_BUF_BYTE	5	// Write buffer entry size for a single byte
 #define PPU_BUF_SIZE	PPU_MAX_WRITE * PPU_BUF_BYTE
 
-extern char *ppu_databuf;
+extern char ppu_databuf[];
 extern int databuf_pos;
 extern void wait_frame(void);
 
@@ -30,7 +30,7 @@ void ppu_putc(char c)
 	 */
 	di();
 
-	bcopy(&desc, &ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
+	bcopy(&desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
 	ppu_databuf[databuf_pos] = 0;
 
