@@ -10,7 +10,6 @@ extern char screenbuf[];
 #define SCREEN_BUF_START	(char *) &screenbuf
 
 int cursor_pos = 0;
-int in_panic = 0;
 
 void next_line(void)
 {
@@ -36,29 +35,6 @@ void ppu_putc(char c)
 		cursor_pos = 0;
 
 	return;
-}
-
-void ppu_puts(char *s)
-{
-	int pos = 0;
-	char cur_char = *s;
-
-	while (cur_char != 0x00) {
-		ppu_putc(cur_char);
-		cur_char = s[++pos];
-	}
-}
-
-void panic(char *msg)
-{
-	/* prevent recursion from ppu_put* functions */
-	if (!in_panic) {
-		in_panic = 1;
-		cursor_pos = 0;
-		ppu_puts("PANIC: ");
-		ppu_puts(msg);
-		while(1);
-	}
 }
 
 void ppu_init_screenbuf(void)
