@@ -33,7 +33,6 @@ void ppu_putc(char c)
 	bcopy(&desc, &ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
 	ppu_databuf[databuf_pos] = 0;
-	databuf_pos++;
 
 	if (++cur_screen_ptr > PPU_FIRST_VIS_ROW + SCREEN_BUF_SIZE)
 		cur_screen_ptr = PPU_FIRST_VIS_ROW;
