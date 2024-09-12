@@ -1,6 +1,7 @@
 	.export _ppu_databuf
 	.export _databuf_pos
 	.export write_ppubuf
+	.export _ppu_init_databuf
 
 	.include "uzi_nes.inc"
 
@@ -22,6 +23,9 @@ _databuf_maxbytes:
 	.byte $40
 tmp_num_bytes:
 	.byte $00
+databuf_ready:
+	.byte $00
+
 ; current address corresponding to our position in the data buffer
 cur_databuf_ptr:
 	.addr _ppu_databuf
@@ -37,7 +41,22 @@ cur_databuf_ptr:
 
 .segment "CODE"
 
+.proc _ppu_init_databuf
+	lda #<_ppu_databuf
+	sta cur_databuf_ptr
+	lda #>_ppu_databuf
+	sta cur_databuf_ptr+1
+
+	inc databuf_ready
+
+	rts
+.endproc
+
 .proc write_ppubuf
+	; don't do anything until we've actually initialized cur_databuf_ptr
+	lda databuf_ready
+	beq out
+
 buf_write_loop_reset:
 	; Y is the index in the current data buffer page
 	ldy #0
@@ -94,5 +113,6 @@ out_reset_counters:
 	lda #>_ppu_databuf
 	sta cur_databuf_ptr+1
 
+out:
 	rts
 .endproc

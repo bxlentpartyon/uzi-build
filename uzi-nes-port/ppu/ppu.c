@@ -1,6 +1,7 @@
 #include <ppu.h>
 
 extern void ppu_load_font(void);
+extern void ppu_init_databuf(void);
 #ifdef PPU_SCREENBUF
 extern void ppu_init_screenbuf(void);
 #endif
@@ -10,6 +11,7 @@ int in_panic = 0;
 void init_ppu(void)
 {
 	ppu_load_font();
+	ppu_init_databuf();
 #ifdef PPU_SCREENBUF
 	ppu_init_screenbuf();
 #endif
