@@ -26,9 +26,10 @@ tmp_num_bytes:
 databuf_ready:
 	.byte $00
 
+.segment "ZEROPAGE"
 ; current address corresponding to our position in the data buffer
 cur_databuf_ptr:
-	.addr _ppu_databuf
+	.addr $0000
 
 ; Write buffer layout
 ;  byte    0 = length of data (0 = no more data)
@@ -61,7 +62,7 @@ buf_write_loop_reset:
 	; Y is the index in the current data buffer page
 	ldy #0
 buf_write_loop:
-	lda cur_databuf_ptr, y
+	lda (cur_databuf_ptr), y
 	tax
 
 	; we've encountered the \0 entry in the buffer
@@ -72,10 +73,10 @@ buf_write_loop:
 	iny
 
 	; load address to PPU
-	lda cur_databuf_ptr, y
+	lda (cur_databuf_ptr), y
 	tax
 	iny
-	lda cur_databuf_ptr, y
+	lda (cur_databuf_ptr), y
 	iny
 	sta PPU_ADDR
 	stx PPU_ADDR
@@ -85,7 +86,7 @@ buf_write_loop:
 
 	ldx #0
 write_bytes_loop:
-	lda cur_databuf_ptr, y
+	lda (cur_databuf_ptr), y
 	sta PPU_DATA
 
 	inx
