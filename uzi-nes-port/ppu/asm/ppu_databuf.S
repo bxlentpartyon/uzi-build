@@ -11,7 +11,7 @@
 .define SCREENBUF_SIZE	896
 
 _ppu_databuf:
-	.align 16
+	.align $100
 	.res $200, $00	; this is more than we can actually write in one
 			; vblank, but it simplifies the logic to assume that
 			; we have 2 full pages, but know that we will hit a \0
