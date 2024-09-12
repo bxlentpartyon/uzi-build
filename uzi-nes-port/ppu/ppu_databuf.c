@@ -21,14 +21,14 @@ void ppu_putc(char c)
 	desc.flags = 0;
 	desc.data = c;
 
+	if (databuf_pos + sizeof(struct ppu_desc) + 1 > PPU_BUF_SIZE)
+		wait_frame();
+
 	/*
 	 * We need to disable interrupts to avoid having a vblank occur with a
 	 * partially-written descriptor in the data buffer
 	 */
 	di();
-
-	if (databuf_pos + sizeof(struct ppu_desc) + 1 > PPU_BUF_SIZE)
-		wait_frame();
 
 	bcopy(&desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
