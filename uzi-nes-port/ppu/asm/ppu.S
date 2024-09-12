@@ -7,7 +7,7 @@
 	.include "uzi_nes.inc"
 	.include "mmc5.inc"
 
-.segment "ZEROPAGE"
+.segment "USR_ZEROPAGE": zeropage
 font_load_ptr:
 	.addr $0000
 

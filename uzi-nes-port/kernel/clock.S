@@ -3,7 +3,7 @@
 
 	.include	"uzi_nes.inc"
 
-.segment "ZEROPAGE"
+.segment "USR_ZEROPAGE": zeropage
 _apu_status_byte:
 	.byte $00
 

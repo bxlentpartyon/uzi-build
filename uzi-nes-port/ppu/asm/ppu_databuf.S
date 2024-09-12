@@ -26,7 +26,7 @@ tmp_num_bytes:
 databuf_ready:
 	.byte $00
 
-.segment "ZEROPAGE"
+.segment "USR_ZEROPAGE": zeropage
 ; current address corresponding to our position in the data buffer
 cur_databuf_ptr:
 	.addr $0000
