@@ -30,7 +30,7 @@ void ppu_putc(char c)
 	 */
 	di();
 
-	bcopy(&desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
+	bcopy(&desc, &ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
 	ppu_databuf[databuf_pos] = 0;
 	databuf_pos++;
