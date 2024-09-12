@@ -12,8 +12,8 @@ UZI (Unix Z80 Implementation) Kernel:  machdep.c
 #include <stdarg.h>
 
 extern void ei(void);
-extern char printbuf[];
 
+char printbuf[SCREEN_BUF_SIZE];
 void kputchar(char c);
 
 void puts(char *s)

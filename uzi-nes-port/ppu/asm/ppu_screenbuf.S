@@ -1,5 +1,4 @@
 	.export		_screenbuf
-	.export		_printbuf
 	.export		_buffer_dump_pos
 	.export		_ppu_dump_pos
 	.export		dump_screenbuf
@@ -15,8 +14,6 @@ screenbuf_end:
 	.word _screenbuf + SCREENBUF_SIZE
 screenbuf_advance:
 	.byte $40
-_printbuf:
-	.res SCREENBUF_SIZE, $00
 ppu_dump_start:
 	.addr $2020
 
