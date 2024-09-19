@@ -102,12 +102,16 @@ out_reset_counters:
 	sta _databuf_pos
 	sta _databuf_pos+1
 
+	; write null byte to beginning of buffer to avoid re-writing a
+	; stale buffer
+	ldy #0
+	sta (cur_databuf_ptr), y
+
 	; reset data buffer pointer to beginning of data buffer
 	lda #<_ppu_databuf
 	sta cur_databuf_ptr
 	lda #>_ppu_databuf
 	sta cur_databuf_ptr+1
-
 out:
 	rts
 .endproc
