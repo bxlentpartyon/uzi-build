@@ -63,12 +63,12 @@ buf_write_loop_reset:
 	ldy #0
 buf_write_loop:
 	lda (cur_databuf_ptr), y
-	tax
 
 	; we've encountered the \0 entry in the buffer
 	beq out_reset_counters 
 
 	; store off number of bytes 
+	tax
 	stx tmp_num_bytes
 	iny
 
