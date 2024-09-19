@@ -19,8 +19,6 @@ _ppu_databuf:
 			; before we get past 64-bytes-worth of buffer entries
 _databuf_pos:
 	.addr $0000
-_databuf_maxbytes:
-	.byte $40
 tmp_num_bytes:
 	.byte $00
 databuf_ready:
