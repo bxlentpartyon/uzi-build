@@ -6,11 +6,6 @@
 	.include "uzi_nes.inc"
 
 .segment "DATA"
-.define	PPU_MAX_WRITE	64	; Max number of bytes we can write to the PPU in one VBlank
-.define PPU_BUF_BYTE	5	; Write buffer entry size for a single byte
-.define PPU_BUF_SIZE	PPU_MAX_WRITE * PPU_BUF_BYTE
-.define SCREENBUF_SIZE	896
-
 _ppu_databuf:
 	.align $100
 	.res $200, $00	; this is more than we can actually write in one
