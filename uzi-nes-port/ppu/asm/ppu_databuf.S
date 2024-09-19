@@ -98,7 +98,7 @@ write_bytes_loop:
 	; increment cur_databuf_ptr if necessary
 	iny				; iny from the byte read is delay until here
 					; to avoid polluting the carry flag early
-	bcc buf_write_loop
+	bne buf_write_loop
 	inc cur_databuf_ptr+1
 	jmp buf_write_loop_reset
 ; end buf_write_loop
