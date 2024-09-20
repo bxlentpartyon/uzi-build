@@ -2,7 +2,6 @@
 #include <ppu.h>
 #include <lib/string.h>
 
-// FIXME duplicates of stuff in asm/ppu_databuf.S
 #define	PPU_MAX_WRITE	16	// Max number of bytes we can write to the PPU in one VBlank
 #define PPU_BUF_BYTE	5	// Write buffer entry size for a single byte
 #define PPU_BUF_SIZE	PPU_MAX_WRITE * PPU_BUF_BYTE
