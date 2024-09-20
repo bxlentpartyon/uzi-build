@@ -13,9 +13,23 @@ extern void wait_frame(void);
 
 char *cur_screen_ptr = PPU_FIRST_VIS_ROW;
 
+void next_line(void)
+{
+	int chars_left;
+
+	chars_left = SCREEN_COLS - ((unsigned int) cur_screen_ptr % SCREEN_COLS);
+	cur_screen_ptr += chars_left;
+}
+
 void ppu_putc(char c)
 {
 	struct ppu_desc desc;
+
+	if (c == '\r') {
+		next_line();
+		return;
+	}
+
 	desc.size = 1;
 	desc.target = cur_screen_ptr;
 	desc.flags = 0;
