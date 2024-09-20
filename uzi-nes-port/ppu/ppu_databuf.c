@@ -52,3 +52,14 @@ void ppu_putc(char c)
 
 	ei();
 }
+
+/*
+ * 1698 CPU cycles for fully loaded buffer NMI
+ * 1019 CPU cycles for fully loaded buffer write_ppubuf (15 bytes)
+ * 788 CPU cycles for single byte write NMI
+ * 109 CPU cycles for single byte write_ppubuf
+ *
+ * NMI overhead is 679 CPU cycles
+ *
+ * 1019 cycles - 109 cycles = 15 byte write - 1 byte write = 910 cycles for 14 byte write => 65 cycles/descriptor min
+ */
