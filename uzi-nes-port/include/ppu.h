@@ -20,6 +20,7 @@ struct ppu_desc {
 	char size;
 	char *target;
 	char flags;
+	char data;
 };
 
 #define SCREEN_VIS_ROWS		28
@@ -27,6 +28,5 @@ struct ppu_desc {
 #define SCREEN_BUF_SIZE		SCREEN_VIS_ROWS * SCREEN_COLS
 
 #define PPU_FIRST_VIS_ROW	(char *) 0x2020
-#define PPU_VIS_END		PPU_FIRST_VIS_ROW + SCREEN_BUF_SIZE
 
 #endif /* __PPU_H__ */
