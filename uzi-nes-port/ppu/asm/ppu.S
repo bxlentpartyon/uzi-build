@@ -21,6 +21,8 @@ _frame_wait_sleep:
 .segment "CODE"
 
 .proc ppu_reset
+; A few VBlank cycles could probably be saved here, as I don't think it's really
+; necessary to write this stuff every VBlank.
 	lda #$20	; reset ppu read address
 	sta PPU_ADDR
 	lda #$00
