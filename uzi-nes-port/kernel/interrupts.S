@@ -2,6 +2,7 @@
 	.import		jmpvec
 	.importzp	_apu_status_byte
 	.import		_handle_irq, handle_vblank
+	.import		ppu_ctrl_val
 	.export		_ei, _di, nmi, irq
 
 	.include	"uzi_nes.inc"
@@ -16,12 +17,16 @@ zpsave:		.res zpsavespace
 
 .macro enable_vblank_nmi
 	bit PPU_STATUS  ; read PPU_STATUS to clear vblank bit
-	lda #%10000000
+	lda ppu_ctrl_val
+	ora #%10000000
+	sta ppu_ctrl_val
 	sta PPU_CTRL	; enable vblank NMI
 .endmacro
 
 .macro disable_vblank_nmi
-	lda #$00
+	lda ppu_ctrl_val
+	and #%01111111
+	sta ppu_ctrl_val
 	sta PPU_CTRL	; disable vblank NMI
 .endmacro
 

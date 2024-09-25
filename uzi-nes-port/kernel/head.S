@@ -1,6 +1,7 @@
 	.importzp	sp
 	.import 	_start_kernel, _stop_clock
 	.import		nmi, irq
+	.import		ppu_ctrl_val
 
 	.include	"uzi_nes.inc"
 	.include	"mmc5.inc"
@@ -36,7 +37,7 @@
 	ldx #$ff 	; set stack pointer to 0x01ff
 	txs
 
-	lda #%00000000
+	lda ppu_ctrl_val
 	sta PPU_CTRL	; disable vblank NMI
 
 	jsr _stop_clock
