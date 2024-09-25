@@ -1,5 +1,5 @@
 	.export		_ppu_load_font
-	.export		handle_vblank
+	.export		handle_vblank, ppu_ctrl_val
 	.export		_wait_frame, _frame_wait_sleep
 	.import		dump_screenbuf
 	.import		write_ppubuf
@@ -16,6 +16,8 @@ font_load_ptr:
 
 .segment "DATA"
 _frame_wait_sleep:
+	.byte $00
+ppu_ctrl_val:
 	.byte $00
 
 .segment "CODE"
