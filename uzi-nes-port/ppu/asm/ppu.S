@@ -30,7 +30,13 @@ ppu_ctrl_val:
 	lda #$00
 	sta PPU_ADDR
 
+	lda ppu_ctrl_val
+	sta PPU_CTRL	; store off "buffered" changes to PPU_CTRL (i.e. high scroll bits)
+
+	bit PPU_STATUS	; reset w flag before scroll register writes
+	lda #0
 	sta PPU_SCROLL	; reset scrolling
+	lda #$01	; there's apparently a 1-pixel offset that I don't understand...
 	sta PPU_SCROLL
 
 	ldx #$0a	; enable BG rendering
