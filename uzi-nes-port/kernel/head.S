@@ -9,7 +9,7 @@
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
 	.byte 4				; 4	PRG-ROM Banks
 	.byte 0				; 5	CHR-ROM Banks
-	.byte $52			; 6	Horizontal mirroring, mapper 5, battery-backed
+	.byte $52			; 6	Mapper 5, battery-backed, mapper-controlled mirroring
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
 	.byte 0				; 8	Even more mapper bits
 	.byte 0				; 9	Repeat of PRG/CHR banks
@@ -200,6 +200,9 @@ stub_entry:
 
 	ldx #$02		;
 	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
+
+	ldx #$44		;
+	stx MMC5_NAMETABLE	; Vertical mirroring
 
 	jmp reset
 	.addr nmi, stub_entry, irq
