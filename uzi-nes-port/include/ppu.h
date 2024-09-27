@@ -24,9 +24,13 @@ struct ppu_desc {
 };
 
 #define SCREEN_VIS_ROWS		28
+#define SCREEN_ROWS		30
 #define SCREEN_COLS		32
-#define SCREEN_BUF_SIZE		SCREEN_VIS_ROWS * SCREEN_COLS
+#define SCREEN_SIZE		SCREEN_ROWS * SCREEN_COLS
+#define SCREEN_VIS_SIZE		SCREEN_VIS_ROWS * SCREEN_COLS
 
 #define PPU_FIRST_VIS_ROW	(char *) 0x2020
+#define	PPU_TABLE0_ADDR		(char *) 0x2000
+#define	PPU_TABLE1_ADDR		(char *) 0x2800
 
 #endif /* __PPU_H__ */

@@ -202,7 +202,7 @@ stub_entry:
 	ldx #$02		;
 	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
 
-	ldx #$44		;
+	ldx #$50		;
 	stx MMC5_NAMETABLE	; Vertical mirroring
 
 	jmp reset
