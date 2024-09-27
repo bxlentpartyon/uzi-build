@@ -9,15 +9,51 @@
 extern char ppu_databuf[];
 extern int databuf_pos;
 extern void wait_frame(void);
+extern int y_scroll_pos;
 
 char *cur_screen_ptr = PPU_FIRST_VIS_ROW;
+int cur_nametable_pos = 0;
+char scroll_started = 0;
+char cur_nametable = 0;
+
+void swap_nametable(void)
+{
+	scroll_started = 1;
+	cur_nametable_pos = 0;
+	if (cur_nametable == 0) {
+		y_scroll_pos = (y_scroll_pos + 8) % 480;
+		cur_nametable = 1;
+		cur_screen_ptr = PPU_TABLE1_ADDR;
+	} else {
+		y_scroll_pos = (y_scroll_pos + 8) % 480;
+		cur_nametable = 0;
+		cur_screen_ptr = PPU_TABLE0_ADDR;
+	}
+}
+
+void update_screen_ptrs(short dist)
+{
+	int orig_nametable_pos = cur_nametable_pos;
+	cur_screen_ptr += dist;
+	cur_nametable_pos += dist;
+
+	if (cur_nametable_pos >= SCREEN_VIS_SIZE) {
+		swap_nametable();
+	}
+
+	if (scroll_started) {
+		if ((cur_nametable_pos % SCREEN_COLS) < (orig_nametable_pos % SCREEN_COLS)) {
+			y_scroll_pos = (y_scroll_pos + 8) % 448;
+		}
+	}
+}
 
 void next_line(void)
 {
 	int chars_left;
 
 	chars_left = SCREEN_COLS - ((unsigned int) cur_screen_ptr % SCREEN_COLS);
-	cur_screen_ptr += chars_left;
+	update_screen_ptrs(chars_left);
 }
 
 void ppu_putc(char c)
@@ -47,8 +83,7 @@ void ppu_putc(char c)
 	databuf_pos += sizeof(struct ppu_desc);
 	ppu_databuf[databuf_pos] = 0;
 
-	if (++cur_screen_ptr > PPU_FIRST_VIS_ROW + SCREEN_BUF_SIZE)
-		cur_screen_ptr = PPU_FIRST_VIS_ROW;
+	update_screen_ptrs(1);
 
 	ei();
 }
