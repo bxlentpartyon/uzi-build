@@ -12,7 +12,7 @@ extern void wait_frame(void);
 extern int y_scroll_pos;
 
 char *cur_screen_ptr = PPU_FIRST_VIS_ROW;
-int cur_nametable_pos = 0;
+int cur_nametable_pos = SCREEN_COLS;
 char scroll_started = 0;
 char cur_nametable = 0;
 
