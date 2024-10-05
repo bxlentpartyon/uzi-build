@@ -28,9 +28,19 @@ void swap_nametable(void)
 	}
 }
 
+void scroll_one_row(void)
+{
+	y_scroll_pos = (y_scroll_pos + SCREEN_ROW_PX) % SCREEN_BUF_PX;
+}
+
 void update_screen_ptrs(short dist)
 {
 	int orig_nametable_pos = cur_nametable_pos;
+	char cur_x, orig_x;
+
+	if (!dist)
+		return;
+
 	cur_screen_ptr += dist;
 	cur_nametable_pos += dist;
 
@@ -46,9 +56,18 @@ void update_screen_ptrs(short dist)
 		scroll_started = 1;
 
 	if (scroll_started) {
-		if ((cur_nametable_pos % SCREEN_COLS) < (orig_nametable_pos % SCREEN_COLS)) {
-			y_scroll_pos = (y_scroll_pos + SCREEN_ROW_PX) % SCREEN_BUF_PX;
-		}
+		cur_x = cur_nametable_pos % SCREEN_COLS;
+		orig_x = orig_nametable_pos % SCREEN_COLS;
+		/* Check if we wrapped off the end of the line */
+		if (cur_x < orig_x)
+			scroll_one_row();
+		/*
+		 * Detect the case where we got a newline on a currently empty
+		 * line.  Note that we don't need to check if dist > 0 because
+		 * we can't reach this point with a 0 dist.
+		 */
+		else if (cur_x == orig_x && cur_x == 0)
+			scroll_one_row();
 	}
 }
 
