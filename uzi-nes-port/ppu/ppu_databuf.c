@@ -9,7 +9,8 @@
 extern char ppu_databuf[];
 extern int databuf_pos;
 extern void wait_frame(void);
-extern int y_scroll_pos;
+extern char y_scroll_coarse;
+extern int y_scroll_fine;
 
 char *cur_screen_ptr = PPU_FIRST_VIS_ROW;
 int cur_nametable_pos = SCREEN_COLS;
@@ -30,7 +31,11 @@ void swap_nametable(void)
 
 void scroll_one_row(void)
 {
-	y_scroll_pos = (y_scroll_pos + SCREEN_ROW_PX) % SCREEN_BUF_PX;
+	y_scroll_fine += SCREEN_ROW_PX;
+	if (y_scroll_fine >= SCREEN_ROW_PX * SCREEN_ROWS) {
+		y_scroll_coarse = (y_scroll_coarse ? 0 : 1);
+		y_scroll_fine = 1;
+	}
 }
 
 void update_screen_ptrs(short dist)

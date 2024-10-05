@@ -1,6 +1,6 @@
 	.export		_ppu_load_font
 	.export		handle_vblank, ppu_ctrl_val
-	.export		_wait_frame, _frame_wait_sleep, _y_scroll_pos
+	.export		_wait_frame, _frame_wait_sleep, _y_scroll_coarse, _y_scroll_fine
 	.import		dump_screenbuf
 	.import		write_ppubuf
 
@@ -19,7 +19,9 @@ _frame_wait_sleep:
 	.byte $00
 ppu_ctrl_val:
 	.byte $00
-_y_scroll_pos:
+_y_scroll_coarse:
+	.byte $00
+_y_scroll_fine:
 	; there's apparently a 1-pixel offset that I don't understand...
 	.addr $0001
 
@@ -34,7 +36,7 @@ _y_scroll_pos:
 	sta PPU_ADDR
 
 	lda ppu_ctrl_val
-	ldx _y_scroll_pos+1
+	ldx _y_scroll_coarse
 	beq clear_high_bit
 set_high_bit:
 	ora #%00000010
@@ -48,7 +50,7 @@ set_ppu_ctrl:
 	bit PPU_STATUS		; reset w flag before scroll register writes
 	lda #0			;
 	sta PPU_SCROLL		; set X scroll to 0
-	lda _y_scroll_pos	;
+	lda _y_scroll_fine	;
 	sta PPU_SCROLL		; write Y scroll value
 
 	ldx #$0a	; enable BG rendering
