@@ -21,11 +21,9 @@ void swap_nametable(void)
 	scroll_started = 1;
 	cur_nametable_pos = 0;
 	if (cur_nametable == 0) {
-		y_scroll_pos = (y_scroll_pos + 8) % 480;
 		cur_nametable = 1;
 		cur_screen_ptr = PPU_TABLE1_ADDR;
 	} else {
-		y_scroll_pos = (y_scroll_pos + 8) % 480;
 		cur_nametable = 0;
 		cur_screen_ptr = PPU_TABLE0_ADDR;
 	}
@@ -42,7 +40,7 @@ void update_screen_ptrs(short dist)
 
 	if (scroll_started) {
 		if ((cur_nametable_pos % SCREEN_COLS) < (orig_nametable_pos % SCREEN_COLS)) {
-			y_scroll_pos = (y_scroll_pos + 8) % 448;
+			y_scroll_pos = (y_scroll_pos + SCREEN_ROW_PX) % SCREEN_BUF_PX;
 		}
 	}
 }
