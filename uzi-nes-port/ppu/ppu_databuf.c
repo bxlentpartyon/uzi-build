@@ -37,9 +37,8 @@ void update_screen_ptrs(short dist)
 	cur_screen_ptr += dist;
 	cur_nametable_pos += dist;
 
-	if (cur_nametable_pos >= SCREEN_VIS_SIZE) {
+	if (cur_nametable_pos >= SCREEN_SIZE)
 		swap_nametable();
-	}
 
 	if (scroll_started) {
 		if ((cur_nametable_pos % SCREEN_COLS) < (orig_nametable_pos % SCREEN_COLS)) {
