@@ -45,11 +45,11 @@ set_ppu_ctrl:
 	sta ppu_ctrl_val
 	sta PPU_CTRL	; store off "buffered" changes to PPU_CTRL (i.e. high scroll bits)
 
-	bit PPU_STATUS	; reset w flag before scroll register writes
-	lda #0
-	sta PPU_SCROLL	; reset scrolling
-	lda _y_scroll_pos
-	sta PPU_SCROLL
+	bit PPU_STATUS		; reset w flag before scroll register writes
+	lda #0			;
+	sta PPU_SCROLL		; set X scroll to 0
+	lda _y_scroll_pos	;
+	sta PPU_SCROLL		; write Y scroll value
 
 	ldx #$0a	; enable BG rendering
 	stx PPU_MASK
