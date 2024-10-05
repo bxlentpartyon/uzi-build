@@ -65,7 +65,10 @@ void ppu_putc(char c)
 	struct ppu_desc desc;
 
 	if (c == '\r') {
+		di();
 		next_line();
+		ei();
+
 		return;
 	}
 
