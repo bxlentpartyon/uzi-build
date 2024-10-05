@@ -18,7 +18,6 @@ char cur_nametable = 0;
 
 void swap_nametable(void)
 {
-	scroll_started = 1;
 	cur_nametable_pos = 0;
 	if (cur_nametable == 0) {
 		cur_nametable = 1;
@@ -37,6 +36,14 @@ void update_screen_ptrs(short dist)
 
 	if (cur_nametable_pos >= SCREEN_SIZE)
 		swap_nametable();
+
+	/*
+	 * The math for starting the scroll is a bit cryptic.  We have to add
+	 * an extra row here (i.e. SCREEN_COLS) to account for the initially
+	 * non-visible first row.
+	 */
+	if (!scroll_started && cur_nametable_pos >= SCREEN_VIS_SIZE + SCREEN_COLS)
+		scroll_started = 1;
 
 	if (scroll_started) {
 		if ((cur_nametable_pos % SCREEN_COLS) < (orig_nametable_pos % SCREEN_COLS)) {
