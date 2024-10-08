@@ -148,6 +148,8 @@ void ppu_putc(char c)
  *
  * 1100 CPU cycles for a 32-byte NULL descriptor NMI
  * 754 CPU cycles for a 32-byte NULL descriptor handle_vblank
+ * 1388 CPU cycles for a 64-byte NULL descriptor NMI
+ * 1964 CPU cycles for a 128-byte NULL descriptor NMI
  *
  * 788 CPU cycles for single byte write NMI
  * 109 CPU cycles for single byte write_ppubuf
