@@ -55,6 +55,9 @@ void scroll_one_row(void)
 	wait_frame();
 	di();
 	write_blank_line_desc();
+	ei();
+	wait_frame();
+	di();
 
 	y_scroll_fine += SCREEN_ROW_PX;
 	if (y_scroll_fine >= SCREEN_ROW_PX * SCREEN_ROWS) {
