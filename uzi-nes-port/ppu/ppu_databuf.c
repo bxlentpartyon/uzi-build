@@ -29,8 +29,33 @@ void swap_nametable(void)
 	}
 }
 
+void queue_descriptor(struct ppu_desc *desc)
+{
+	bcopy((char *) desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
+	databuf_pos += sizeof(struct ppu_desc);
+	ppu_databuf[databuf_pos] = 0;
+}
+
+void write_blank_line_desc(void)
+{
+	struct ppu_desc desc;
+
+	desc.size = SCREEN_COLS;
+	desc.target = cur_screen_ptr;
+	desc.flags = PPU_DESC_FLAG_NULL;
+	desc.data = 0;
+
+	queue_descriptor(&desc);
+}
+
 void scroll_one_row(void)
 {
+	/* Blank out the next line before scrolling */
+	ei();
+	wait_frame();
+	di();
+	write_blank_line_desc();
+
 	y_scroll_fine += SCREEN_ROW_PX;
 	if (y_scroll_fine >= SCREEN_ROW_PX * SCREEN_ROWS) {
 		y_scroll_coarse = (y_scroll_coarse ? 0 : 1);
@@ -98,7 +123,7 @@ void ppu_putc(char c)
 
 	desc.size = 1;
 	desc.target = cur_screen_ptr;
-	desc.flags = 0;
+	desc.flags = PPU_DESC_FLAGS_EMPTY;
 	desc.data = c;
 
 	if (databuf_pos + sizeof(struct ppu_desc) + 1 > PPU_BUF_SIZE)
@@ -109,13 +134,8 @@ void ppu_putc(char c)
 	 * partially-written descriptor in the data buffer
 	 */
 	di();
-
-	bcopy(&desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
-	databuf_pos += sizeof(struct ppu_desc);
-	ppu_databuf[databuf_pos] = 0;
-
+	queue_descriptor(&desc);
 	update_screen_ptrs(1);
-
 	ei();
 }
 

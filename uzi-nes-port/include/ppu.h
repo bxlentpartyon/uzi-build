@@ -37,4 +37,7 @@ struct ppu_desc {
 #define	PPU_TABLE0_ADDR		(char *) 0x2000
 #define	PPU_TABLE1_ADDR		(char *) 0x2800
 
+#define PPU_DESC_FLAGS_EMPTY	0x00
+#define PPU_DESC_FLAG_NULL	0x01
+
 #endif /* __PPU_H__ */

@@ -28,7 +28,9 @@ cur_databuf_ptr:
 ;  byte    0 = length of data (0 = no more data)
 ;  byte    1 = high byte of target PPU address
 ;  byte    2 = low byte of target PPU address
-;  byte    3 = unused (for future expansion)
+;  byte    3 = 0000 0000
+;		       |
+;		       \- NULL descriptor (write len bytes of 0x00)
 ;  bytes 4-X = the data to draw (number of bytes determined by the length)
 ;
 ;  https://www.nesdev.org/wiki/The_frame_and_NMIs#Buffer_Formats
@@ -74,9 +76,20 @@ buf_write_loop:
 	sta PPU_ADDR
 	stx PPU_ADDR
 
-	; skip over unused byte for now
+	; Handle NULL descriptor
+	lda (cur_databuf_ptr), y
 	iny
+	tax
+	beq out_options_byte
+	ldx tmp_num_bytes
+	lda #$00
+write_null_desc_loop:
+	sta PPU_DATA
+	dex
+	bne write_null_desc_loop
+	jmp buf_write_loop
 
+out_options_byte:
 	ldx #0
 write_bytes_loop:
 	lda (cur_databuf_ptr), y
