@@ -143,8 +143,12 @@ void ppu_putc(char c)
 }
 
 /*
- * 1698 CPU cycles for fully loaded buffer NMI
+ * 1698 CPU cycles for fully loaded buffer NMI (i.e. fully loaded with 1-byte descriptors)
  * 1019 CPU cycles for fully loaded buffer write_ppubuf (15 bytes)
+ *
+ * 1100 CPU cycles for a 32-byte NULL descriptor NMI
+ * 754 CPU cycles for a 32-byte NULL descriptor handle_vblank
+ *
  * 788 CPU cycles for single byte write NMI
  * 109 CPU cycles for single byte write_ppubuf
  *
