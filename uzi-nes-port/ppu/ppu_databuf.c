@@ -29,8 +29,18 @@ void swap_nametable(void)
 	}
 }
 
+void wait_frame_ei(void)
+{
+	ei();
+	wait_frame();
+	di();
+}
+
 void queue_descriptor(struct ppu_desc *desc)
 {
+	if (databuf_pos + sizeof(struct ppu_desc) + 1 > PPU_BUF_SIZE)
+		wait_frame_ei();
+
 	bcopy((char *) desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
 	ppu_databuf[databuf_pos] = 0;
@@ -46,13 +56,6 @@ void write_blank_line_desc(void)
 	desc.data = 0;
 
 	queue_descriptor(&desc);
-}
-
-void wait_frame_ei(void)
-{
-	ei();
-	wait_frame();
-	di();
 }
 
 void scroll_one_row(void)
@@ -131,9 +134,6 @@ void ppu_putc(char c)
 	desc.target = cur_screen_ptr;
 	desc.flags = PPU_DESC_FLAGS_EMPTY;
 	desc.data = c;
-
-	if (databuf_pos + sizeof(struct ppu_desc) + 1 > PPU_BUF_SIZE)
-		wait_frame();
 
 	/*
 	 * We need to disable interrupts to avoid having a vblank occur with a
