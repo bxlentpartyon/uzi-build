@@ -20,7 +20,6 @@ struct ppu_desc {
 	char size;
 	char *target;
 	char flags;
-	char data;
 };
 
 #define SCREEN_VIS_ROWS		28

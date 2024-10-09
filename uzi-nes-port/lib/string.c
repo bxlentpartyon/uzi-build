@@ -28,6 +28,9 @@ int strlen(char *s)
 	char *curpos = s;
 	int curlen = 0;
 
+	if (!curpos)
+		return 0;
+
 	while (*curpos != '\0') {
 		curlen++;
 		curpos++;

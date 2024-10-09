@@ -3,7 +3,7 @@
 #include <lib/string.h>
 
 #define	PPU_MAX_WRITE	16	// Max number of bytes we can write to the PPU in one VBlank
-#define PPU_BUF_BYTE	5	// Write buffer entry size for a single byte
+#define PPU_BUF_BYTE	4	// Write buffer entry size for a single byte
 #define PPU_BUF_SIZE	PPU_MAX_WRITE * PPU_BUF_BYTE
 
 extern char ppu_databuf[];
@@ -36,13 +36,19 @@ void wait_frame_ei(void)
 	di();
 }
 
-void queue_descriptor(struct ppu_desc *desc)
+void queue_descriptor(struct ppu_desc *desc, char *data)
 {
-	if (databuf_pos + sizeof(struct ppu_desc) + 1 > PPU_BUF_SIZE)
+	if (databuf_pos + sizeof(struct ppu_desc) + strlen(data) + 1 > PPU_BUF_SIZE)
 		wait_frame_ei();
 
 	bcopy((char *) desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
+
+	if (data) {
+		bcopy(data, ppu_databuf + databuf_pos, desc->size);
+		databuf_pos += desc->size;
+	}
+
 	ppu_databuf[databuf_pos] = 0;
 }
 
@@ -53,9 +59,8 @@ void write_blank_line_desc(void)
 	desc.size = SCREEN_COLS;
 	desc.target = cur_screen_ptr;
 	desc.flags = PPU_DESC_FLAG_NULL;
-	desc.data = 0;
 
-	queue_descriptor(&desc);
+	queue_descriptor(&desc, NULL);
 }
 
 void scroll_one_row(void)
@@ -121,6 +126,7 @@ void next_line(void)
 void ppu_putc(char c)
 {
 	struct ppu_desc desc;
+	char data;
 
 	if (c == '\r') {
 		di();
@@ -133,14 +139,14 @@ void ppu_putc(char c)
 	desc.size = 1;
 	desc.target = cur_screen_ptr;
 	desc.flags = PPU_DESC_FLAGS_EMPTY;
-	desc.data = c;
+	data = c;
 
 	/*
 	 * We need to disable interrupts to avoid having a vblank occur with a
 	 * partially-written descriptor in the data buffer
 	 */
 	di();
-	queue_descriptor(&desc);
+	queue_descriptor(&desc, &data);
 	update_screen_ptrs(1);
 	ei();
 }
