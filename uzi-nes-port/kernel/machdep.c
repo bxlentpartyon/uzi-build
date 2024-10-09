@@ -113,8 +113,7 @@ void kprintf(char *fmt, ...)
 {
 	va_list ap;
 
-	/* TODO: size shouldn't be hard-coded here */
-	bzero(&printbuf, 896);
+	bzero(&printbuf, SCREEN_VIS_SIZE);
 
 	va_start(ap, fmt);
 	vsprintf(printbuf, fmt, ap);
