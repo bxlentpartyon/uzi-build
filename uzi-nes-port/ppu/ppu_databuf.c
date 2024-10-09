@@ -48,16 +48,19 @@ void write_blank_line_desc(void)
 	queue_descriptor(&desc);
 }
 
+void wait_frame_ei(void)
+{
+	ei();
+	wait_frame();
+	di();
+}
+
 void scroll_one_row(void)
 {
 	/* Blank out the next line before scrolling */
-	ei();
-	wait_frame();
-	di();
+	wait_frame_ei();
 	write_blank_line_desc();
-	ei();
-	wait_frame();
-	di();
+	wait_frame_ei();
 
 	y_scroll_fine += SCREEN_ROW_PX;
 	if (y_scroll_fine >= SCREEN_ROW_PX * SCREEN_ROWS) {
