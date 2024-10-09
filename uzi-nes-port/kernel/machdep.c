@@ -94,7 +94,10 @@ void vsprintf(char *str, char *fmt, va_list ap)
                         strcpy_idx(str + idx, va_arg(ap, char *), &idx);
                         continue;
                 default:
-                        panic("bad char");
+			bzero(s, KPRINTF_BUF_SIZE);
+			s[0] = '%';
+			s[1] = c;
+			strcpy_idx(str + idx, s, &idx);
                         continue;
                         }
                 }
