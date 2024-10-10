@@ -10,6 +10,9 @@
 #include <lib/string.h>
 #include <kb.h>
 
+extern char ppu_readbuf_dirty;
+extern char ppu_readbuf[];
+
 int swapout(void);
 
 /* Newproc fixes up the tables for the child of a fork */
@@ -156,8 +159,12 @@ void init2(void)
 
 	dump_proc(initproc);
 
-	while(1)
+	test_ppu_read();
+	kprintf("char %c\n", ppu_readbuf[0]);
+	while(1) {
+		ppu_readbuf_dirty = 0;
 		dump_keyboard();
+	}
 }
 
 /* psleep() puts a process to sleep on the given event.

@@ -38,18 +38,45 @@ void wait_frame_ei(void)
 
 void queue_descriptor(struct ppu_desc *desc, char *data)
 {
-	if (databuf_pos + sizeof(struct ppu_desc) + strlen(data) + 1 > PPU_BUF_SIZE)
+	char datalen = 0;
+
+	if (desc->flags & PPU_DESC_FLAG_READ)
+		datalen = 1;
+	else if (desc->flags & PPU_DESC_FLAG_NULL)
+		datalen = 0;
+	else
+		datalen = desc->size;
+		
+	if (databuf_pos + sizeof(struct ppu_desc) + datalen + 1 > PPU_BUF_SIZE)
 		wait_frame_ei();
 
 	bcopy((char *) desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
 
-	if (data) {
-		bcopy(data, ppu_databuf + databuf_pos, desc->size);
-		databuf_pos += desc->size;
+	if (datalen) {
+		bcopy(data, ppu_databuf + databuf_pos, datalen);
+		databuf_pos += datalen;
 	}
 
 	ppu_databuf[databuf_pos] = 0;
+}
+
+void test_ppu_read(void)
+{
+	struct ppu_desc desc;
+	char data[2];
+	data[0] = 0;
+	data[1] = 0;
+
+	desc.size = 16;
+	desc.target = 0x1200;
+	desc.flags = PPU_DESC_FLAG_READ;
+
+	wait_frame();
+	di();
+	queue_descriptor(&desc, &data);
+	wait_frame_ei();
+	ei();
 }
 
 void write_blank_line_desc(void)

@@ -1,0 +1,7 @@
+.ifndef	_PPU_INC__
+.define	_PPU_INC__
+
+PPUBUF_NULL_DESC_MASK	= %00000001
+PPUBUF_READ_DESC_MASK	= %00000010
+
+.endif

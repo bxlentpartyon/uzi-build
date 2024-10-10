@@ -5,6 +5,7 @@ void init_ppu(void);
 void ppu_puts(char *s);
 void ppu_putc(char c);
 void ppu_spray(void);
+void test_ppu_read(void);
 
 /* This doesn't really belong here... */
 void panic(char *s);
@@ -38,5 +39,6 @@ struct ppu_desc {
 
 #define PPU_DESC_FLAGS_EMPTY	0x00
 #define PPU_DESC_FLAG_NULL	0x01
+#define PPU_DESC_FLAG_READ	0x02
 
 #endif /* __PPU_H__ */
