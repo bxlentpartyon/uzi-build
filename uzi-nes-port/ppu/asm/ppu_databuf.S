@@ -34,18 +34,21 @@ databuf_ready:
 cur_databuf_ptr:
 	.addr $0000
 
-; Write buffer layout
-;  byte    0 = length of data (0 = no more data)
-;  byte    1 = high byte of target PPU address
-;  byte    2 = low byte of target PPU address
-;  byte    3 = 00xx 00RN
-;	         ||   ||
-;	         \|   |\- NULL descriptor (write len bytes of 0x00)
-;		  |   \-- Read descriptor
-;		  \------ PPU upper CHR bank bits (currently used for reads only)
-;  byte	   4 = PPU lower CHR bank bits (currently used for reads only)
-;  bytes 5-X = the data to draw (number of bytes determined by the length)
+; PPU buffer layout
 ;
+;  byte 0:	write descriptor:	length of data (0 = no more data)
+;		 read descriotor:	number of bytes to read
+;  byte 1:	high byte of target PPU address
+;  byte	2:	low byte of target PPU address
+;  byte	3:	00xx 00RN
+;		  ||   ||
+;		  \|   |\- NULL descriptor (write len bytes of 0x00)
+;		   |   \-- Read descriptor
+;		   \------ PPU upper CHR bank bits (currently used for reads only)
+; bytes 5-X:	write descriptor:	the data to draw (number of bytes determined by the length)
+;		 read descriptor:	PPU lower CHR bank bits (always a single byte)
+;
+;  Original idea borrowed from:
 ;  https://www.nesdev.org/wiki/The_frame_and_NMIs#Buffer_Formats
 
 .segment "CODE"
