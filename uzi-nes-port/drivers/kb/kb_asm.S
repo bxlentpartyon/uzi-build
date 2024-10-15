@@ -7,6 +7,7 @@
 _kb_rows:	.res	 9
 kb_tmp:		.byte	$00
 kb_enabled:	.byte	$00
+kb_key_pressed:	.byte	$00
 
 ; TODO fix this table.  It's copied directly from the nesdev wiki,
 ; so it's correct, the bits just aren't in the right order to make
@@ -66,6 +67,9 @@ kb_enabled_out:
 	lda #$05
 	sta $4016	; reset keyboard reader to row 0
 
+	lda #0			; this needs to be reset early so that we
+	sta kb_key_pressed	; return something sane, even when we bail out
+
 	lda kb_enabled		; if kb_enabled is set, jump to the loop
 	bne kb_is_enabled	;
 
@@ -94,6 +98,12 @@ kb_read_loop:
 	asl		; shift left for HHHH xxxx
 	ora kb_tmp	; OR with the lower bits to get the full column byte in A
 
+	; check if anything was pressed
+	beq store_computed_row
+	ldy #01
+	sty kb_key_pressed
+
+store_computed_row:
 	sta _kb_rows, x	; store the computed row byte
 
 	inx
@@ -105,6 +115,8 @@ kb_read_loop:
 	sta _kb_checked
 
 read_keyboard_out:
+	tax			; high byte of return is always 0 here
+	lda kb_key_pressed	; low byte of return is key_pressed bit
 	rts
 .endproc
 

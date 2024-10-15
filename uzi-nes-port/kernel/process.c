@@ -161,10 +161,8 @@ void init2(void)
 
 	test_ppu_read();
 	kprintf("char %c\n", ppu_readbuf[0]);
-	while(1) {
+	while(1)
 		ppu_readbuf_dirty = 0;
-		dump_keyboard();
-	}
 }
 
 /* psleep() puts a process to sleep on the given event.
@@ -294,7 +292,10 @@ int clk_int(void)
 #define INTS_PER_TICK	6
 	if (clk_int_count < INTS_PER_TICK) {
 		clk_int_count++;
-		read_keyboard();
+
+		if (read_keyboard())
+			dump_keyboard();
+
 		start_clock();
 		return 0;
 	} else {
