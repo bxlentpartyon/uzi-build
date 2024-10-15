@@ -27,8 +27,8 @@ void dump_keyboard(void)
 			 * we only print the char if the key was "freshly" pressed
 			 * on this frame
 			 */
-			if ((kb_rows[i] >> bit & 0x1) == 0 &&
-			    (prev_kb_rows[i] >> bit & 0x1) == 1)
+			if ((kb_rows[i] >> bit & 0x1) &&
+			    !(prev_kb_rows[i] >> bit & 0x1))
 				ppu_putc(kb_map[overall]);
 			overall++;
 		}

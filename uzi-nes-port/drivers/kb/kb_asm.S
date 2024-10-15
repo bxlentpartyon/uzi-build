@@ -3,6 +3,8 @@
 
 	.linecont
 
+.define KB_ROW_FLIP_MASK	%11111111
+
 .segment "DATA"
 _kb_rows:	.res	 9
 kb_tmp:		.byte	$00
@@ -96,7 +98,9 @@ kb_read_loop:
 	asl
 	asl
 	asl		; shift left for HHHH xxxx
-	ora kb_tmp	; OR with the lower bits to get the full column byte in A
+	ora kb_tmp		; OR with the lower bits to get the full column byte in A
+	eor #KB_ROW_FLIP_MASK	; XOR the row bits with 0xFF to invert them (i.e. bit set
+				; means key held)
 
 	; check if anything was pressed
 	beq store_computed_row
@@ -115,7 +119,7 @@ store_computed_row:
 	sta _kb_checked
 
 read_keyboard_out:
-	tax			; high byte of return is always 0 here
+	ldx #0			; high byte of return is always 0 here
 	lda kb_key_pressed	; low byte of return is key_pressed bit
 	rts
 .endproc
