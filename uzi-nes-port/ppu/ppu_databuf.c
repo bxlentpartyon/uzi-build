@@ -64,12 +64,10 @@ void queue_descriptor(struct ppu_desc *desc, char *data)
 void test_ppu_read(void)
 {
 	struct ppu_desc desc;
-	char data[2];
-	data[0] = 0;
-	data[1] = 0;
+	char data = 0x12;
 
-	desc.size = 16;
-	desc.target = 0x1200;
+	desc.size = 64;
+	desc.target = 0x1400;
 	desc.flags = PPU_DESC_FLAG_READ;
 
 	wait_frame();
@@ -193,4 +191,6 @@ void ppu_putc(char c)
  * NMI overhead is 679 CPU cycles
  *
  * 1019 cycles - 109 cycles = 15 byte write - 1 byte write = 910 cycles for 14 byte write => 65 cycles/descriptor min
+ *
+ * 2000 CPU cycles for a 64-byte read descriptor
  */
