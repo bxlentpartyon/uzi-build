@@ -11,19 +11,16 @@ kb_tmp:		.byte	$00
 kb_enabled:	.byte	$00
 kb_key_pressed:	.byte	$00
 
-; TODO fix this table.  It's copied directly from the nesdev wiki,
-; so it's correct, the bits just aren't in the right order to make
-; sense above my actual table definition below.
-;$4017	bit	4	3	2	1	4	3	2	1
-;Row 0		]	[	RETURN	F8	STOP	¥	RSHIFT	KANA
-;Row 1		;	:	@	F7	^	-	/	_
-;Row 2		K	L	O	F6	0	P	,	.
-;Row 3		J	U	I	F5	8	9	N	M
-;Row 4		H	G	Y	F4	6	7	V	B
-;Row 5		D	R	T	F3	4	5	C	F
-;Row 6		A	S	W	F2	3	E	Z	X
-;Row 7		CTR	Q	ESC	F1	2	1	GRPH	LSHIFT
-;Row 8		LEFT	RIGHT	UP	CLR	HOME	INS	DEL	SPACE	DOWN
+;$4017	bit	1	2	3	4	1	2	3	4
+;Row 0		F8	RETURN	[	]	KANA	RSHIFT	¥	STOP
+;Row 1		F7	@	:	;	_	/	-	^
+;Row 2		F6	O	L	K	.	,	P	0
+;Row 3		F5	I	U	J	M	N	9	8
+;Row 4		F4	Y	G	H	B	V	7	6
+;Row 5		F3	T	R	D	F	C	5	4
+;Row 6		F2	W	S	A	X	Z	E	3
+;Row 7		F1	ESC	Q	CTR	LSHIFT	GRPH	1	2
+;Row 8		CLRHOME	UP	RIGHT	LEFT	DOWN	SPACE	DEL	INS
 _kb_map: .byte		$00, $0d, '[', ']', $02, $03, '\', $04,		\
 			$05, '@', ':', ';', '_', '/', '-', '^',		\
 			$06, 'O', 'L', 'K', '.', ',', 'P', '0',		\
