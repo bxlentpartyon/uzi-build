@@ -5,7 +5,7 @@ ifeq ($(origin UZIBUILD_ROOT), undefined)
 $(error uzibuild environment is not set up)
 endif
 
-all: mkfs fsck fsutil
+all: mkfs fsck fsutil test
 
 linux_fs.o: linux_fs.c linux_fs.h
 	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -c -o $@ $<
@@ -18,6 +18,9 @@ fsck: fsck.c linux_fs.o linux_fs.h
 
 fsutil: fsutil.c linux_fs.o linux_fs.h
 	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< linux_fs.o
+
+test: test.c
+	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $<
 
 clean:
 	rm mkfs fsck fsutil linux_fs.o
