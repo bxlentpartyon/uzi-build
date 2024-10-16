@@ -1,9 +1,6 @@
 [submodule "cc65"]
 	path = cc65
 	url = https://github.com/cc65/cc65.git
-[submodule "uzics-nes"]
-	path = archive/uzics-nes
-	url = https://github.com/chettrick/uzics.git
 [submodule "uzi-nes"]
 	path = uzi-nes
 	url = https://github.com/paulie-g/uzi.git
