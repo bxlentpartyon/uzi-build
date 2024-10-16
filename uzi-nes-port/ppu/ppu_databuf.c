@@ -91,6 +91,15 @@ void write_blank_line_desc(void)
 void scroll_one_row(void)
 {
 	/* Blank out the next line before scrolling */
+
+	/*
+	 * Right now, if you hold a key and then press enter, the following
+	 * line will not get blanked for some reason.  If you continue to hold
+	 * the same key, and press enter again, the next line, and all subsequent
+	 * lines will get blanked as expected.  I'm not sure where the bug is
+	 * here.  Writing this into a comment to check in, in case I fall asleep.
+	 */
+
 	wait_frame_ei();
 	write_blank_line_desc();
 	wait_frame_ei();
