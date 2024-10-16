@@ -295,6 +295,8 @@ int clk_int(void)
 
 		if (read_keyboard())
 			dump_keyboard();
+		else
+			reset_prev_kb_rows();
 
 		start_clock();
 		return 0;

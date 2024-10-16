@@ -11,6 +11,14 @@ extern char kb_checked;
 
 unsigned char prev_kb_rows[KB_ROW_COUNT];
 
+void reset_prev_kb_rows(void)
+{
+	int i;
+
+	for (i = 0; i < KB_ROW_COUNT; i++)
+		prev_kb_rows[i] = 0x00;
+}
+
 void dump_keyboard(void)
 {
 	int i, bit;
