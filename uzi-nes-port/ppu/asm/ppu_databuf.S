@@ -1,6 +1,6 @@
 	.export _ppu_databuf
 	.export _databuf_pos
-	.export write_ppubuf
+	.export process_ppubuf
 	.export _ppu_init_databuf, _ppu_readbuf, _ppu_readbuf_dirty
 
 	.include "mmc5.inc"
@@ -64,7 +64,7 @@ cur_databuf_ptr:
 	rts
 .endproc
 
-.proc write_ppubuf
+.proc process_ppubuf
 	; don't do anything until we've actually initialized cur_databuf_ptr
 	lda databuf_ready
 	bne check_dirty_bit 

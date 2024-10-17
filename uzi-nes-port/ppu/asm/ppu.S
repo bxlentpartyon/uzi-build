@@ -2,7 +2,7 @@
 	.export		handle_vblank, ppu_ctrl_val
 	.export		_wait_frame, _frame_wait_sleep, _y_scroll_coarse, _y_scroll_fine
 	.import		dump_screenbuf
-	.import		write_ppubuf
+	.import		process_ppubuf
 
 	.include "uzi_nes.inc"
 	.include "mmc5.inc"
@@ -105,7 +105,7 @@ spray_loop:
 .endproc
 
 .proc handle_vblank
-	jsr write_ppubuf
+	jsr process_ppubuf
 	jsr ppu_reset
 
 	; wake up processes sleeping in wait_frame
