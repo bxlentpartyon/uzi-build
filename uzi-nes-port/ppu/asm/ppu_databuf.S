@@ -104,7 +104,8 @@ buf_write_loop:
 	sta tmp_options_byte
 
 ; first check for a read descriptor
-	bit PPUBUF_READ_DESC_MASK	; check for a read descriptor
+	lda #PPUBUF_READ_DESC_MASK
+	and tmp_options_byte
 	beq check_null_desc
 
 ; handle read descriptor
@@ -129,9 +130,10 @@ read_desc_loop:
 	jmp buf_write_loop
 ; end handle read descriptor
 
-; handle NULL descriptor
+; check for NULL descriptor
 check_null_desc:
-	bit PPUBUF_NULL_DESC_MASK	; >tmp_options_byte is still in A
+	lda #PPUBUF_NULL_DESC_MASK
+	and tmp_options_byte
 	beq out_options_byte
 
 ; handle NULL descriptor
