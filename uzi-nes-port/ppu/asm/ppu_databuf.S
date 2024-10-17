@@ -84,9 +84,8 @@ buf_write_loop:
 	; we've encountered the \0 entry in the buffer
 	beq out_reset_counters 
 
-	; store off number of bytes 
-	tax
-	stx tmp_num_bytes
+	; store off number of bytes
+	sta tmp_num_bytes
 	iny
 
 	; load address to PPU
