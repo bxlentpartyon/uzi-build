@@ -6,3 +6,14 @@
     * Probably should have more safety checks for C<->ASM types like this.
 
 7/8/24 - Move read_keyboard out of NMI to make more room for data transfers.
+
+10/17/24
+- di()/ei() should _not_ disable VBlank NMI - this should be handled separately.
+  Currently we're enabling interrupts during interrupts, which is stupid and could
+  cause problems.  I don't think it _has_ yet, but this definitely needs to be fixed.
+- wait_frame_ei should probably only enable the VBlank NMI and not regular interrupts?
+- Currently in the middle of changing PPU data buffer over to using locking instead
+  of disabling VBlank NMIs.
+- I think that I should be able to allow NMIs during IRQ if all of this other stuff
+  is fixed correctly.  I know I explicitly forbade that forever ago, but I understood
+  a lot less then.
