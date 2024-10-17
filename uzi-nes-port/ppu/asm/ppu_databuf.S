@@ -26,8 +26,8 @@ tmp_num_bytes:
 	.byte $00
 tmp_options_byte:
 	.byte $00
-databuf_ready:
-	.byte $00
+databuf_lock:
+	.byte $01	; starts out locked, must be unlocked by init code
 
 .segment "USR_ZEROPAGE": zeropage
 ; current address corresponding to our position in the data buffer
@@ -53,21 +53,31 @@ cur_databuf_ptr:
 
 .segment "CODE"
 
+.macro lock_databuf
+	lda #1
+	sta databuf_lock
+.endmacro
+
+.macro unlock_databuf
+	lda #0
+	sta databuf_lock
+.endmacro
+
 .proc _ppu_init_databuf
 	lda #<_ppu_databuf
 	sta cur_databuf_ptr
 	lda #>_ppu_databuf
 	sta cur_databuf_ptr+1
 
-	inc databuf_ready
+	unlock_databuf
 
 	rts
 .endproc
 
 .proc process_ppubuf
 	; don't do anything until we've actually initialized cur_databuf_ptr
-	lda databuf_ready
-	bne check_dirty_bit 
+	lda databuf_lock
+	beq check_dirty_bit
 	jmp out
 
 check_dirty_bit:
