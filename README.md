@@ -26,8 +26,10 @@ python3-tkinter
 
 # Builing prototype
 
-# Running fceux in userspace (Fedora 37)
+# Running fceux in userspace (OL9)
 
 Requires:
 
-minizip
+qt5-devel
+SDL2-devel
+minizip-devel
