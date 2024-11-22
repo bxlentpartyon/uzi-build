@@ -4,6 +4,7 @@
 	.import		_handle_irq, handle_vblank
 	.import		ppu_ctrl_val
 	.export		_ei, _di, nmi, irq
+	.export		_enable_vblank_nmi, _disable_vblank_nmi
 
 	.include	"uzi_nes.inc"
 	.include	"zeropage.inc"
@@ -30,17 +31,25 @@ zpsave:		.res zpsavespace
 	sta PPU_CTRL	; disable vblank NMI
 .endmacro
 
+.proc _enable_vblank_nmi
+	enable_vblank_nmi
+	rts
+.endproc
+
+.proc _disable_vblank_nmi
+	disable_vblank_nmi
+	rts
+.endproc
+
 ; enable interrupts
 .proc _ei
 	cli
-	enable_vblank_nmi
 	rts
 .endproc
 
 ; disable interrupts
 .proc _di
 	sei
-	disable_vblank_nmi
 	rts
 .endproc
 
@@ -112,8 +121,7 @@ zprestore_loop:
 .endproc
 
 .proc irq
-	pha	; broken up register to save to disable vblank NMI ASAP
-	disable_vblank_nmi
+	pha
 	tya
 	pha
 	txa
@@ -125,7 +133,6 @@ zprestore_loop:
 	activate_irq_stack
 	jsr _handle_irq
 	deacivate_irq_stack
-	enable_vblank_nmi
 	restore_regs
 
 	rti

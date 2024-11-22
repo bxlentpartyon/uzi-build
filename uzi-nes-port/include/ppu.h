@@ -7,6 +7,9 @@ void ppu_putc(char c);
 void ppu_spray(void);
 void test_ppu_read(void);
 
+void lock_databuf(void);
+void unlock_databuf(void);
+
 /* This doesn't really belong here... */
 void panic(char *s);
 
