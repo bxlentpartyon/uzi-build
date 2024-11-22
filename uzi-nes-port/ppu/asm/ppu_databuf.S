@@ -2,6 +2,7 @@
 	.export _databuf_pos
 	.export process_ppubuf
 	.export _ppu_init_databuf, _ppu_readbuf, _ppu_readbuf_dirty
+	.export _lock_databuf, _unlock_databuf
 
 	.include "mmc5.inc"
 	.include "ppu.inc"
@@ -62,6 +63,20 @@ cur_databuf_ptr:
 	lda #0
 	sta databuf_lock
 .endmacro
+
+.proc _lock_databuf
+	pha
+	lock_databuf
+	pla
+	rts
+.endproc
+
+.proc _unlock_databuf
+	pha
+	unlock_databuf
+	pla
+	rts
+.endproc
 
 .proc _ppu_init_databuf
 	lda #<_ppu_databuf

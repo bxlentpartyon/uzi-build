@@ -2,6 +2,7 @@
 
 extern void ppu_load_font(void);
 extern void ppu_init_databuf(void);
+extern void enable_vblank_nmi();
 #ifdef PPU_SCREENBUF
 extern void ppu_init_screenbuf(void);
 #endif
@@ -12,6 +13,7 @@ void init_ppu(void)
 {
 	ppu_load_font();
 	ppu_init_databuf();
+	enable_vblank_nmi();
 #ifdef PPU_SCREENBUF
 	ppu_init_screenbuf();
 #endif
