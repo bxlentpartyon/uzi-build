@@ -17,3 +17,16 @@
 - I think that I should be able to allow NMIs during IRQ if all of this other stuff
   is fixed correctly.  I know I explicitly forbade that forever ago, but I understood
   a lot less then.
+
+11/25/24
+- My curent WIP branch (67fb9625c0d924d89d27873ab378821d020f0c9b) is currently having
+  problems with blowing past the NMI cycle limit.
+- The issue is, now that I've change over to using locking instead of fully disabling
+  the VBlank NMI, doing wait_frame doesn't actually ensure that the current buffer
+  gets written out, since we might hold the databuf_lock when it is called.
+- With things as they are, I either need to drop the lock before doing wait_frame, or
+  just do things a bit differently all around, in order to avoid queueing up more than
+  the data buffer dump routine can handle.
+- This also further exposes known flaws in the data buffer stuff.  We have to be really
+  sure we don't feed the buffer more than it can handle outside of interrupt context,
+  because it will eat whatever we feed it.
