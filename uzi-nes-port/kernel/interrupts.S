@@ -3,7 +3,7 @@
 	.importzp	_apu_status_byte
 	.import		_handle_irq, handle_vblank
 	.import		ppu_ctrl_val
-	.export		_ei, _di, nmi, irq
+	.export		_ei, _di, nmi, irq, _in_interrupt
 	.export		_enable_vblank_nmi, _disable_vblank_nmi
 
 	.include	"uzi_nes.inc"
@@ -13,6 +13,7 @@
 
 .segment "DATA"
 zpsave:		.res zpsavespace
+_in_interrupt:	.byte 0
 
 .segment "CODE"
 
@@ -103,6 +104,19 @@ zprestore_loop:
 	pla
 .endmacro
 
+.macro begin_interrupt
+	lda _in_interrupt
+	pha
+
+	lda #1
+	sta _in_interrupt
+.endmacro
+
+.macro end_interrupt
+	pla
+	sta _in_interrupt
+.endmacro
+
 ; The NMI routine, or at least the portion of it that manipulates the PPU,
 ; needs to be shorter than VBlank, which is ~2273 CPU cycles.  Otherwise, we'll
 ; see totally unpredictable behavior.
@@ -110,22 +124,21 @@ zprestore_loop:
 ; https://forums.nesdev.org/viewtopic.php?t=7878
 .proc nmi
 	save_regs
+	begin_interrupt
 	activate_irq_stack
 
 	jsr handle_vblank
 
 	deacivate_irq_stack
+	end_interrupt
 	restore_regs
 
 	rti
 .endproc
 
 .proc irq
-	pha
-	tya
-	pha
-	txa
-	pha
+	save_regs
+	begin_interrupt
 
 	lda APU_STATUS
 	sta _apu_status_byte
@@ -133,6 +146,8 @@ zprestore_loop:
 	activate_irq_stack
 	jsr _handle_irq
 	deacivate_irq_stack
+
+	end_interrupt
 	restore_regs
 
 	rti
