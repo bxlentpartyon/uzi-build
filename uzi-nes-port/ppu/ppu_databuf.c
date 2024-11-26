@@ -1,3 +1,4 @@
+#include <interrupts.h>
 #include <machdep.h>
 #include <ppu.h>
 #include <lib/string.h>
@@ -16,6 +17,25 @@ char *cur_screen_ptr = PPU_FIRST_VIS_ROW;
 int cur_nametable_pos = SCREEN_COLS;
 char scroll_started = 0;
 char cur_nametable = 0;
+
+void lock_databuf(void)
+{
+	/*
+	 * We can't take the lock during an interrupt, as user
+	 * context might hold it.
+	 */
+	if (in_interrupt)
+		panic("lock databuf in interrupt");
+
+	while (databuf_lock) { /* spin */ };
+
+	databuf_lock = 1;
+}
+
+void unlock_databuf(void)
+{
+	databuf_lock = 0;
+}
 
 void swap_nametable(void)
 {
@@ -163,10 +183,6 @@ void ppu_putc(char c)
 	desc.flags = PPU_DESC_FLAGS_EMPTY;
 	data = c;
 
-	/*
-	 * We need to disable interrupts to avoid having a vblank occur with a
-	 * partially-written descriptor in the data buffer
-	 */
 	di();
 	lock_databuf();
 	queue_descriptor(&desc, &data);
