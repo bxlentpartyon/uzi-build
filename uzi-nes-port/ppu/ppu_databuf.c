@@ -30,7 +30,7 @@ void swap_nametable(void)
 	}
 }
 
-void queue_descriptor(struct ppu_desc *desc, char *data)
+int __queue_descriptor(struct ppu_desc *desc, char *data)
 {
 	char datalen = 0;
 
@@ -40,11 +40,13 @@ void queue_descriptor(struct ppu_desc *desc, char *data)
 		datalen = 0;
 	else
 		datalen = desc->size;
-		
-	if (databuf_pos + sizeof(struct ppu_desc) + datalen + 1 > PPU_BUF_SIZE)
-		wait_frame();
 
 	ppu_lock();
+
+	if (databuf_pos + sizeof(struct ppu_desc) + datalen + 1 > PPU_BUF_SIZE) {
+		ppu_unlock();
+		return -EAGAIN;
+	}
 
 	bcopy((char *) desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
@@ -57,6 +59,21 @@ void queue_descriptor(struct ppu_desc *desc, char *data)
 	ppu_databuf[databuf_pos] = 0;
 
 	ppu_unlock();
+
+	return 0;
+}
+
+void queue_descriptor(struct ppu_desc *desc, char *data)
+{
+	int ret = 0;
+
+queue_again:
+	ret = __queue_descriptor(desc, data);
+
+	if (ret == -EAGAIN) {
+		wait_frame();
+		goto queue_again;
+	}
 }
 
 void test_ppu_read(void)
