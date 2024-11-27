@@ -3,6 +3,7 @@
 	.export		_wait_frame, _frame_wait_sleep, _y_scroll_coarse, _y_scroll_fine
 	.import		dump_screenbuf
 	.import		process_ppubuf
+	.export		_ppu_locked
 
 	.include "uzi_nes.inc"
 	.include "mmc5.inc"
@@ -24,6 +25,8 @@ _y_scroll_coarse:
 _y_scroll_fine:
 	; there's apparently a 1-pixel offset that I don't understand...
 	.addr $0001
+_ppu_locked:
+	.byte $01	; starts out locked, must be unlocked by init code
 
 .segment "CODE"
 
@@ -105,6 +108,9 @@ spray_loop:
 .endproc
 
 .proc handle_vblank
+	lda _ppu_locked
+	bne vblank_out
+
 	jsr process_ppubuf
 	jsr ppu_reset
 
@@ -112,6 +118,7 @@ spray_loop:
 	lda #0
 	sta _frame_wait_sleep
 
+vblank_out:
 	rts
 .endproc
 

@@ -2,7 +2,6 @@
 	.export _databuf_pos
 	.export process_ppubuf
 	.export _ppu_init_databuf, _ppu_readbuf, _ppu_readbuf_dirty
-	.export _ppu_locked
 
 	.include "mmc5.inc"
 	.include "ppu.inc"
@@ -27,8 +26,6 @@ tmp_num_bytes:
 	.byte $00
 tmp_options_byte:
 	.byte $00
-_ppu_locked:
-	.byte $01	; starts out locked, must be unlocked by init code
 
 .segment "USR_ZEROPAGE": zeropage
 ; current address corresponding to our position in the data buffer
@@ -60,19 +57,10 @@ cur_databuf_ptr:
 	lda #>_ppu_databuf
 	sta cur_databuf_ptr+1
 
-	; unlock the ppu
-	lda #0
-	sta _ppu_locked
-
 	rts
 .endproc
 
 .proc process_ppubuf
-	; don't do anything until we've actually initialized cur_databuf_ptr
-	lda _ppu_locked
-	beq check_dirty_bit
-	jmp out
-
 check_dirty_bit:
 	lda _ppu_readbuf_dirty
 	beq buf_write_loop_reset
