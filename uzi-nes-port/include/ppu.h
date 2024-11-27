@@ -7,6 +7,8 @@ void ppu_putc(char c);
 void ppu_spray(void);
 void test_ppu_read(void);
 
+void ppu_lock(void);
+void ppu_unlock(void);
 extern char ppu_locked;
 
 /* This doesn't really belong here... */

@@ -18,25 +18,6 @@ int cur_nametable_pos = SCREEN_COLS;
 char scroll_started = 0;
 char cur_nametable = 0;
 
-void ppu_lock(void)
-{
-	/*
-	 * We can't take the lock during an interrupt, as user
-	 * context might hold it.
-	 */
-	if (in_interrupt)
-		panic("lock databuf in interrupt");
-
-	while (ppu_locked) { /* spin */ };
-
-	ppu_locked = 1;
-}
-
-void ppu_unlock(void)
-{
-	ppu_locked = 0;
-}
-
 void swap_nametable(void)
 {
 	cur_nametable_pos = 0;
