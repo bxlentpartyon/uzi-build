@@ -2,7 +2,7 @@
 	.export _databuf_pos
 	.export process_ppubuf
 	.export _ppu_init_databuf, _ppu_readbuf, _ppu_readbuf_dirty
-	.export _databuf_lock
+	.export _ppu_locked
 
 	.include "mmc5.inc"
 	.include "ppu.inc"
@@ -27,7 +27,7 @@ tmp_num_bytes:
 	.byte $00
 tmp_options_byte:
 	.byte $00
-_databuf_lock:
+_ppu_locked:
 	.byte $01	; starts out locked, must be unlocked by init code
 
 .segment "USR_ZEROPAGE": zeropage
@@ -54,25 +54,22 @@ cur_databuf_ptr:
 
 .segment "CODE"
 
-.macro unlock_databuf
-	lda #0
-	sta _databuf_lock
-.endmacro
-
 .proc _ppu_init_databuf
 	lda #<_ppu_databuf
 	sta cur_databuf_ptr
 	lda #>_ppu_databuf
 	sta cur_databuf_ptr+1
 
-	unlock_databuf
+	; unlock the ppu
+	lda #0
+	sta _ppu_locked
 
 	rts
 .endproc
 
 .proc process_ppubuf
 	; don't do anything until we've actually initialized cur_databuf_ptr
-	lda _databuf_lock
+	lda _ppu_locked
 	beq check_dirty_bit
 	jmp out
 

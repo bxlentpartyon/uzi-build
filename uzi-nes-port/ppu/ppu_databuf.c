@@ -18,7 +18,7 @@ int cur_nametable_pos = SCREEN_COLS;
 char scroll_started = 0;
 char cur_nametable = 0;
 
-void lock_databuf(void)
+void ppu_lock(void)
 {
 	/*
 	 * We can't take the lock during an interrupt, as user
@@ -27,14 +27,14 @@ void lock_databuf(void)
 	if (in_interrupt)
 		panic("lock databuf in interrupt");
 
-	while (databuf_lock) { /* spin */ };
+	while (ppu_locked) { /* spin */ };
 
-	databuf_lock = 1;
+	ppu_locked = 1;
 }
 
-void unlock_databuf(void)
+void ppu_unlock(void)
 {
-	databuf_lock = 0;
+	ppu_locked = 0;
 }
 
 void swap_nametable(void)
@@ -85,10 +85,10 @@ void test_ppu_read(void)
 
 	wait_frame();
 	di();
-	lock_databuf();
+	ppu_lock();
 	queue_descriptor(&desc, &data);
 	wait_frame();
-	unlock_databuf();
+	ppu_unlock();
 	ei();
 }
 
@@ -170,9 +170,9 @@ void ppu_putc(char c)
 
 	if (c == '\r') {
 		di();
-		lock_databuf();
+		ppu_lock();
 		next_line();
-		unlock_databuf();
+		ppu_unlock();
 		ei();
 
 		return;
@@ -184,10 +184,10 @@ void ppu_putc(char c)
 	data = c;
 
 	di();
-	lock_databuf();
+	ppu_lock();
 	queue_descriptor(&desc, &data);
 	update_screen_ptrs(1);
-	unlock_databuf();
+	ppu_unlock();
 	ei();
 }
 
