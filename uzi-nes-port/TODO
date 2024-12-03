@@ -30,3 +30,22 @@
 - This also further exposes known flaws in the data buffer stuff.  We have to be really
   sure we don't feed the buffer more than it can handle outside of interrupt context,
   because it will eat whatever we feed it.
+
+12/3/24
+- I've discovered that my issues with blowing past the NMI cycle limit are a bit more
+  complex than I initially realized.  What appears to be going on is that the "normal"
+  stack is blowing up past 0x400, so when we switch to the interrupt stack, which starts
+  at 0x400, we end up scribbling all over normal context stack data.  Since descriptors
+  are stored on the stack prior to being dumped into the PPU data buffer, this means
+  that we can end up writing out a garbage descriptor, which is what appears to be
+  happening.
+- The descriptor causing the problem is a very large read descriptor, but I've commented
+  out the only PPU read, so it's clearly getting magicked in from somewhere.  I don't
+  have 100% proof that the stack size is what's causing the odd output behavior, but the
+  code that I wrote to detect the "bad stack" condition definitely triggers after enabling
+  the clock interrupt, and I know that this can make a mess, so it needs to be fixed no
+  matter what.
+- Unfortunately, this means that we have to get more complex with our MMC5 paging stuff,
+  as the ~0x600 bytes that we can currently use for either stack just isn't going to be
+  sufficient.  If we move this stuff to an 8K PRG-RAM page, we can allocate a full 4K to
+  each stack, which should _hopefully_ be sufficient...
