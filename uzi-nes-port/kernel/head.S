@@ -191,13 +191,13 @@ stub_entry:
 	stx MMC5_RAM_PROT2	;
 
 	ldx #$08		;
-	stx MMC5_PRG_RAM_P0	; PRG-RAM Page 8 (first non-battery-backed page)
+	stx MMC5_PRG_RAM_PM	; PRG-RAM Page 8 (first non-battery-backed page)
 
 	ldx #$82		;
-	stx MMC5_PRG_16x2_P0	; PRG-ROM low bank to 1
+	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 1
 
 	ldx #$06		;
-	stx MMC5_PRG_16x2_P1	; PRG-ROM high bank to 3
+	stx MMC5_PRG_ROM_PM	; PRG-ROM high bank to 3
 
 	ldx #$02		;
 	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
