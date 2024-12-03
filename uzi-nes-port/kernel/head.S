@@ -2,6 +2,7 @@
 	.import 	_start_kernel, _stop_clock
 	.import		nmi, irq
 	.import		ppu_ctrl_val
+	.export		stack_setup
 
 	.include	"uzi_nes.inc"
 	.include	"mmc5.inc"
@@ -25,6 +26,10 @@
 
 .segment "BANK01"
 	.byte $00, $00
+
+.segment "DATA"
+stack_setup:
+	.byte $00
 
 .segment "CODE"
 
@@ -153,6 +158,9 @@ set_palette:
 	ldx #$08
 	sta sp
 	stx sp+1
+
+	lda #01
+	sta stack_setup
 
 	cli
 

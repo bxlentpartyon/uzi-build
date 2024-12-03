@@ -3,6 +3,7 @@
 	.importzp	_apu_status_byte
 	.import		_handle_irq, handle_vblank
 	.import		ppu_ctrl_val
+	.import		stack_setup
 	.export		_ei, _di, nmi, irq, _in_interrupt
 	.export		_enable_vblank_nmi, _disable_vblank_nmi
 
@@ -14,6 +15,7 @@
 .segment "DATA"
 zpsave:		.res zpsavespace
 _in_interrupt:	.byte 0
+irq_stack_start: .addr $0400
 
 .segment "CODE"
 
@@ -55,6 +57,15 @@ _in_interrupt:	.byte 0
 .endproc
 
 .macro activate_irq_stack
+	lda stack_setup
+	beq skip_stack_check
+; make sure current stack pointer is above 0x400
+	lda sp+1
+	cmp irq_stack_start+1
+; if the carry is clear then sp+1 <= 0x04, which is to low in memory
+	bcc bad_stack
+
+skip_stack_check:
 	; zpsave borrowed from libsrc/common/interrupt.s in cc65
 	ldx #.sizeof(::zpsave)-1
 zpsave_loop:
@@ -68,10 +79,17 @@ zpsave_loop:
 	lda jmpvec+2
 	pha
 
-	lda #$00
-	ldx #$04
+	lda irq_stack_start
+	ldx irq_stack_start+1
 	sta sp
 	stx sp+1
+	jmp out
+
+bad_stack:
+	jmp bad_stack
+
+out:
+	nop
 .endmacro
 
 .macro deacivate_irq_stack
