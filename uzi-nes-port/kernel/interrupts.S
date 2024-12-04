@@ -123,9 +123,16 @@ zprestore_loop:
 .endmacro
 
 .macro begin_interrupt
+; If I've done everything right, we shouldn't be able to get overlapped interrupts
+; any more.  However, just to be safe, I've added this code to drop us into an infinite
+; loop if that ever happens.
 	lda _in_interrupt
-	pha
+	beq storeoff
+forever:
+	jmp forever
 
+storeoff:
+	pha
 	lda #1
 	sta _in_interrupt
 .endmacro
