@@ -15,7 +15,7 @@
 .segment "DATA"
 zpsave:		.res zpsavespace
 _in_interrupt:	.byte 0
-irq_stack_start: .addr $0400
+irq_stack_start: .addr $9f00
 
 .segment "CODE"
 
@@ -62,7 +62,7 @@ irq_stack_start: .addr $0400
 ; make sure current stack pointer is above 0x400
 	lda sp+1
 	cmp irq_stack_start+1
-; if the carry is clear then sp+1 <= 0x04, which is to low in memory
+; if the carry is clear then sp+1 <= 0x9f, which is to low in memory
 	bcc bad_stack
 
 skip_stack_check:

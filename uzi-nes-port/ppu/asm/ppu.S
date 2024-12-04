@@ -86,6 +86,10 @@ font_load_loop:
 	inc font_load_ptr+1
 	dex
 	bne font_load_loop
+
+	ldx #$0a		;
+	stx MMC5_PRG_MODE1_P0	; PRG-RAM low bank to 10
+
 	rts
 .endproc
 

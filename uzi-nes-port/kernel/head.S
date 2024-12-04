@@ -154,8 +154,83 @@ set_palette:
 	lda #$30
 	sta PPU_DATA
 
+	ldx #$0a		;
+	stx MMC5_PRG_MODE1_P0	; PRG-RAM low bank to 10
+
+	ldx #$00
+clrmem2:
 	lda #$00
-	ldx #$08
+	sta $8000, x
+	sta $8100, x
+	sta $8200, x
+	sta $8300, x
+	sta $8400, x
+	sta $8500, x
+	sta $8600, x
+	sta $8700, x
+	sta $8800, x
+	sta $8900, x
+	sta $8a00, x
+	sta $8b00, x
+	sta $8c00, x
+	sta $8d00, x
+	sta $8e00, x
+	sta $8f00, x
+	sta $9000, x
+	sta $9100, x
+	sta $9200, x
+	sta $9300, x
+	sta $9400, x
+	sta $9500, x
+	sta $9600, x
+	sta $9700, x
+	sta $9800, x
+	sta $9900, x
+	sta $9a00, x
+	sta $9b00, x
+	sta $9c00, x
+	sta $9d00, x
+	sta $9e00, x
+	sta $9f00, x
+	sta $a000, x
+	sta $a100, x
+	sta $a200, x
+	sta $a300, x
+	sta $a400, x
+	sta $a500, x
+	sta $a600, x
+	sta $a700, x
+	sta $a800, x
+	sta $a900, x
+	sta $aa00, x
+	sta $ab00, x
+	sta $ac00, x
+	sta $ad00, x
+	sta $ae00, x
+	sta $af00, x
+	sta $b000, x
+	sta $b100, x
+	sta $b200, x
+	sta $b300, x
+	sta $b400, x
+	sta $b500, x
+	sta $b600, x
+	sta $b700, x
+	sta $b800, x
+	sta $b900, x
+	sta $ba00, x
+	sta $bb00, x
+	sta $bc00, x
+	sta $bd00, x
+	sta $be00, x
+	sta $bf00, x
+	inx
+	beq init_stack
+	jmp clrmem2
+
+init_stack:
+	lda #$00
+	ldx #$bf
 	sta sp
 	stx sp+1
 
