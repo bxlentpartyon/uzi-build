@@ -9,7 +9,7 @@
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
-	.byte 4				; 4	PRG-ROM Banks
+	.byte 3				; 4	PRG-ROM Banks
 	.byte 0				; 5	CHR-ROM Banks
 	.byte $52			; 6	Mapper 5, battery-backed, mapper-controlled mirroring
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
@@ -74,69 +74,69 @@ clrmem:
 	; copy data from bank 3 to ram
 	ldx #$00
 copy_to_ram:
-	lda $8000, x
+	lda $e000, x
 	sta $6000, x
-	lda $8100, x
+	lda $e100, x
 	sta $6100, x
-	lda $8200, x
+	lda $e200, x
 	sta $6200, x
-	lda $8300, x
+	lda $e300, x
 	sta $6300, x
-	lda $8400, x
+	lda $e400, x
 	sta $6400, x
-	lda $8500, x
+	lda $e500, x
 	sta $6500, x
-	lda $8600, x
+	lda $e600, x
 	sta $6600, x
-	lda $8700, x
+	lda $e700, x
 	sta $6700, x
-	lda $8800, x
+	lda $e800, x
 	sta $6800, x
-	lda $8900, x
+	lda $e900, x
 	sta $6900, x
-	lda $8a00, x
+	lda $ea00, x
 	sta $6a00, x
-	lda $8b00, x
+	lda $eb00, x
 	sta $6b00, x
-	lda $8c00, x
+	lda $ec00, x
 	sta $6c00, x
-	lda $8d00, x
+	lda $ed00, x
 	sta $6d00, x
-	lda $8e00, x
+	lda $ee00, x
 	sta $6e00, x
-	lda $8f00, x
+	lda $ef00, x
 	sta $6f00, x
-	lda $9000, x
+	lda $f000, x
 	sta $7000, x
-	lda $9100, x
+	lda $f100, x
 	sta $7100, x
-	lda $9200, x
+	lda $f200, x
 	sta $7200, x
-	lda $9300, x
+	lda $f300, x
 	sta $7300, x
-	lda $9400, x
+	lda $f400, x
 	sta $7400, x
-	lda $9500, x
+	lda $f500, x
 	sta $7500, x
-	lda $9600, x
+	lda $f600, x
 	sta $7600, x
-	lda $9700, x
+	lda $f700, x
 	sta $7700, x
-	lda $9800, x
+	lda $f800, x
 	sta $7800, x
-	lda $9900, x
+	lda $f900, x
 	sta $7900, x
-	lda $9a00, x
+	lda $fa00, x
 	sta $7a00, x
-	lda $9b00, x
+	lda $fb00, x
 	sta $7b00, x
-	lda $9c00, x
+	lda $fc00, x
 	sta $7c00, x
-	lda $9d00, x
+	lda $fd00, x
 	sta $7d00, x
-	lda $9e00, x
+	lda $fe00, x
 	sta $7e00, x
-	lda $9f00, x
+	lda $ff00, x
 	sta $7f00, x
 	inx
 	beq vblankwait2
@@ -190,8 +190,8 @@ stub_entry:
 
 	stx MMC5_SCAN_IRQ_STATUS; Disable scanline IRQ
 
-	ldx #$01		;
-	stx MMC5_PRG_MODE	; PRG bank mode 01 (2 16K banks)
+	ldx #$02		;
+	stx MMC5_PRG_MODE	; PRG bank mode 02 (1 16K bank and 2 8K banks)
 
 	ldx #$02		; Set PRG RAM protect 1
 	stx MMC5_RAM_PROT1	;
@@ -201,11 +201,14 @@ stub_entry:
 	ldx #$08		;
 	stx MMC5_PRG_RAM_PM	; PRG-RAM Page 8 (first non-battery-backed page)
 
-	ldx #$82		;
-	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 1
+	ldx #$80		;
+	stx MMC5_PRG_MODE2_P0	; PRG-ROM page 0 to bank 0
 
-	ldx #$06		;
-	stx MMC5_PRG_ROM_PM	; PRG-ROM high bank to 3
+	ldx #$82		;
+	stx MMC5_PRG_MODE2_P1	; PRG-ROM page 1 to bank 1
+
+	ldx #$04		;
+	stx MMC5_PRG_ROM_PM	; PRG-ROM permanent page to bank 4
 
 	ldx #$02		;
 	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
