@@ -141,14 +141,10 @@ zprestore_loop:
 ;
 ; https://forums.nesdev.org/viewtopic.php?t=7878
 .proc nmi
+; Note that we don't need to use an IRQ stack here, as the NMI handler is written
+; entirely in assembly, so it won't touch the C stack.
 	save_regs
-	begin_interrupt
-	activate_irq_stack
-
 	jsr handle_vblank
-
-	deacivate_irq_stack
-	end_interrupt
 	restore_regs
 
 	rti
