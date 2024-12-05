@@ -13,13 +13,19 @@ int in_panic = 0;
 void ppu_lock(void)
 {
 	/*
-	 * We can't take the lock during an interrupt, as user
-	 * context might hold it.
+	 * There's no scenario where this lock should already be held.  If we're
+	 * in interrupt context, we should have already checked that it isn't held.
+	 * If we're in process context, there's a locking error somewhere, because
+	 * we don't have multiple processes yet.
+	 *
+	 * This lock will probably need to become a proper mutex later on, but this
+	 * works until something more complicated is actually needed.
 	 */
-	if (in_interrupt)
-		panic("lock databuf in interrupt");
+	if (in_interrupt && ppu_locked)
+		panic("ppu interrupt deadlock");
 
-	while (ppu_locked) { /* spin */ };
+	if (ppu_locked)
+		panic("ppu deadlock");
 
 	ppu_locked = 1;
 }
