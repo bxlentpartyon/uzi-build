@@ -117,6 +117,10 @@ read_desc_loop:
 	inx
 	cpx tmp_num_bytes	
 	bne read_desc_loop
+
+	lda #1
+	sta _ppu_readbuf_dirty
+
 	jmp buf_write_loop
 ; end handle read descriptor
 
@@ -133,9 +137,6 @@ write_null_desc_loop:
 	sta PPU_DATA
 	dex
 	bne write_null_desc_loop
-
-	lda #1
-	sta _ppu_readbuf_dirty
 
 	jmp buf_write_loop
 ; end handle NULL descriptor
