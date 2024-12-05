@@ -291,10 +291,18 @@ int clk_int(void)
 	if (clk_int_count < INTS_PER_TICK) {
 		clk_int_count++;
 
+/*
+ * Disable the keyboard for now.  Echoing pressed keys to the screen in
+ * interrupt context is problematic, since ppu_putc needs to take the ppu_lock.
+ * I have a number of potential solutions for this, but there are other, more
+ * important things to work on, before perfecting keyboard input.
+ */
+#if 0
 		if (read_keyboard())
 			dump_keyboard();
 		else
 			reset_prev_kb_rows();
+#endif
 
 		return 0;
 	} else {
