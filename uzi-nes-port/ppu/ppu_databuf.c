@@ -30,6 +30,63 @@ void swap_nametable(void)
 	}
 }
 
+enum ppu_desc_type {
+	PPU_WRITE_DESC,
+	PPU_READ_DESC,
+	PPU_NULL_DESC,
+	PPU_BAD_DESC
+};
+
+enum ppu_desc_type get_desc_type(struct ppu_desc *desc)
+{
+	char low_flag_bits = desc->flags & 0x0f;
+
+	if (!low_flag_bits) {
+		return PPU_WRITE_DESC;
+	} else if (low_flag_bits & PPU_DESC_FLAG_READ) {
+		return PPU_READ_DESC;
+	} else if (low_flag_bits & PPU_DESC_FLAG_NULL) {
+		return PPU_NULL_DESC;
+	} else {
+		return PPU_BAD_DESC;
+	}
+}
+
+#define PPU_LOOP_MAX_CYCLES		2200
+
+#define BASE_PPU_LOOP_CYCLES		171
+#define WRITE_DESC_OVERHEAD_CYCLES	74
+#define READ_DESC_OVERHEAD_CYCLES	101
+#define NULL_DESC_OVERHEAD_CYCLES	78
+
+#define WRITE_DESC_PERBYTE_CYCLES	20
+#define READ_DESC_PERBYTE_CYCLES	19
+#define NULL_DESC_PERBYTE_CYCLES	10
+
+unsigned int calc_desc_weight(struct ppu_desc *desc)
+{
+	unsigned int desc_cycles, perbyte_cycles;
+
+	switch (get_desc_type(desc)) {
+		case PPU_WRITE_DESC:
+			desc_cycles = WRITE_DESC_OVERHEAD_CYCLES;
+			perbyte_cycles = WRITE_DESC_PERBYTE_CYCLES;
+			break;
+		case PPU_READ_DESC:
+			desc_cycles = READ_DESC_OVERHEAD_CYCLES;
+			perbyte_cycles = READ_DESC_PERBYTE_CYCLES;
+			break;
+		case PPU_NULL_DESC:
+			desc_cycles = NULL_DESC_OVERHEAD_CYCLES;
+			perbyte_cycles = NULL_DESC_OVERHEAD_CYCLES;
+			break;
+		case PPU_BAD_DESC:
+			panic("bad PPU desc");
+	}
+
+	return desc_cycles + desc->size * perbyte_cycles;
+}
+
 int __queue_descriptor(struct ppu_desc *desc, char *data)
 {
 	char datalen = 0;
@@ -43,10 +100,10 @@ int __queue_descriptor(struct ppu_desc *desc, char *data)
 
 	ppu_lock();
 
-	if (databuf_pos + sizeof(struct ppu_desc) + datalen + 1 > PPU_BUF_SIZE) {
-		ppu_unlock();
-		return -EAGAIN;
-	}
+	if (databuf_pos + sizeof(struct ppu_desc) + datalen + 1 > PPU_BUF_SIZE)
+		goto unlock_again;
+	if (calc_desc_weight(desc) + BASE_PPU_LOOP_CYCLES > PPU_LOOP_MAX_CYCLES)
+		goto unlock_again;
 
 	bcopy((char *) desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
@@ -61,6 +118,10 @@ int __queue_descriptor(struct ppu_desc *desc, char *data)
 	ppu_unlock();
 
 	return 0;
+
+unlock_again:
+	ppu_unlock();
+	return -EAGAIN;
 }
 
 void queue_descriptor(struct ppu_desc *desc, char *data)
