@@ -146,7 +146,6 @@ void test_ppu_read(void)
 	desc.target = 0x1400;
 	desc.flags = PPU_DESC_FLAG_READ;
 
-	wait_frame();
 	queue_descriptor(&desc, &data);
 	wait_frame();
 }
@@ -165,9 +164,7 @@ void write_blank_line_desc(void)
 void scroll_one_row(void)
 {
 	/* Blank out the next line before scrolling */
-	wait_frame();
 	write_blank_line_desc();
-	wait_frame();
 
 	ppu_lock();
 
