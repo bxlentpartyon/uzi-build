@@ -160,7 +160,11 @@ void init2(void)
 	dump_proc(initproc);
 
 	test_ppu_read();
+
+	while (!ppu_readbuf_dirty);
+
 	kprintf("char %c\n", ppu_readbuf[0]);
+
 	while(1)
 		ppu_readbuf_dirty = 0;
 }

@@ -147,7 +147,6 @@ void test_ppu_read(void)
 	desc.flags = PPU_DESC_FLAG_READ;
 
 	queue_descriptor(&desc, &data);
-	wait_frame();
 }
 
 void write_blank_line_desc(void)
