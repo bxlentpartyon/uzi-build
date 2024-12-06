@@ -1,0 +1,288 @@
+Write descriptor:
+
+////////////
+buf_write_loop:
+	lda (cur_databuf_ptr), y				; 4 cycles
+
+	; we've encountered the \0 entry in the buffer
+	beq out_reset_counters 					; 4 to be safe
+
+	; store off number of bytes
+	sta tmp_num_bytes					; 4 cycles
+	iny							; 2 cycles 
+
+	; load address to PPU
+	lda (cur_databuf_ptr), y				; 6 cycles
+	tax							; 2 cycles
+	iny							; 2 cycles
+	lda (cur_databuf_ptr), y				; 6 cycles
+	iny							; 2 cycles
+	sta PPU_ADDR						; 4 cycles
+	stx PPU_ADDR						; 4 cycles
+
+	; Handle options byte
+	lda (cur_databuf_ptr), y				; 6 cycles
+	iny							; 2 cycles
+	sta tmp_options_byte					; 4 cycles
+
+; first check for a read descriptor
+	lda #PPUBUF_READ_DESC_MASK				; 2 cycles
+	and tmp_options_byte					; 4 cycles
+	beq check_null_desc					; 4 cycles
+
+; handle read descriptor
+	lsr	; shift off the low 4 bits of the flags to
+	lsr	; get to the upper CHR bits
+	lsr
+	lsr
+	sta MMC5_CHR_UPPER		; write upper CHR bank bits
+	lda (cur_databuf_ptr), y	; for a read descriptor, the single data byte contains the low bits
+	iny				; of the CHR bank number
+	sta MMC5_CHR_4K_SEG1		; write lower CHR bank bits
+
+	bit PPU_DATA	; throw away a PPU read to prime the data buffer
+			; see https://www.nesdev.org/wiki/PPU_registers#The_PPUDATA_read_buffer_(post-fetch)
+	ldx #0
+read_desc_loop:
+	lda PPU_DATA
+	sta _ppu_readbuf, x
+	inx
+	cpx tmp_num_bytes	
+	bne read_desc_loop
+	jmp buf_write_loop
+; end handle read descriptor
+
+; check for NULL descriptor
+check_null_desc:
+	lda #PPUBUF_NULL_DESC_MASK				; 2 cycles
+	and tmp_options_byte					; 4 cycles
+	beq out_options_byte					; 4 cycles
+
+; handle NULL descriptor
+	ldx tmp_num_bytes
+	lda #$00
+write_null_desc_loop:
+	sta PPU_DATA
+	dex
+	bne write_null_desc_loop
+
+	lda #1
+	sta _ppu_readbuf_dirty
+
+	jmp buf_write_loop
+; end handle NULL descriptor
+
+; handle write descriptor
+out_options_byte:
+	ldx #0							; 2 cycles
+write_bytes_loop:
+	lda (cur_databuf_ptr), y				; 6 cycles
+	sta PPU_DATA						; 4 cycles
+
+	inx							; 2 cycles
+	; if x != tmp_num_bytes, loop
+	cpx tmp_num_bytes					; 4 cycles
+	bne write_bytes_loop					; 4 cycles
+; end handle write descriptor
+
+	; increment cur_databuf_ptr if necessary
+	iny				; iny from the byte read is delay until here
+					; to avoid polluting the carry flag early
+	bne buf_write_loop
+	inc cur_databuf_ptr+1
+	jmp buf_write_loop_reset
+; end buf_write_loop
+\\\\\\\\\\\\
+
+Overhead: 74 cycles
+Per char: 20 cycles
+
+NULL descriptor:
+
+////////////
+buf_write_loop:
+	lda (cur_databuf_ptr), y				; 4 cycles
+
+	; we've encountered the \0 entry in the buffer
+	beq out_reset_counters 					; 4 to be safe
+
+	; store off number of bytes
+	sta tmp_num_bytes					; 4 cycles
+	iny							; 2 cycles 
+
+	; load address to PPU
+	lda (cur_databuf_ptr), y				; 6 cycles
+	tax							; 2 cycles
+	iny							; 2 cycles
+	lda (cur_databuf_ptr), y				; 6 cycles
+	iny							; 2 cycles
+	sta PPU_ADDR						; 4 cycles
+	stx PPU_ADDR						; 4 cycles
+
+	; Handle options byte
+	lda (cur_databuf_ptr), y				; 6 cycles
+	iny							; 2 cycles
+	sta tmp_options_byte					; 4 cycles
+
+; first check for a read descriptor
+	lda #PPUBUF_READ_DESC_MASK				; 2 cycles
+	and tmp_options_byte					; 4 cycles
+	beq check_null_desc					; 4 cycles
+
+; handle read descriptor
+	lsr	; shift off the low 4 bits of the flags to
+	lsr	; get to the upper CHR bits
+	lsr
+	lsr
+	sta MMC5_CHR_UPPER		; write upper CHR bank bits
+	lda (cur_databuf_ptr), y	; for a read descriptor, the single data byte contains the low bits
+	iny				; of the CHR bank number
+	sta MMC5_CHR_4K_SEG1		; write lower CHR bank bits
+
+	bit PPU_DATA	; throw away a PPU read to prime the data buffer
+			; see https://www.nesdev.org/wiki/PPU_registers#The_PPUDATA_read_buffer_(post-fetch)
+	ldx #0
+read_desc_loop:
+	lda PPU_DATA
+	sta _ppu_readbuf, x
+	inx
+	cpx tmp_num_bytes	
+	bne read_desc_loop
+
+	lda #1
+	sta _ppu_readbuf_dirty
+
+	jmp buf_write_loop
+; end handle read descriptor
+
+; check for NULL descriptor
+check_null_desc:
+	lda #PPUBUF_NULL_DESC_MASK	; 2 cycles
+	and tmp_options_byte		; 4 cycles
+	beq out_options_byte		; 4 cycles
+
+; handle NULL descriptor
+	ldx tmp_num_bytes		; 4 cycles
+	lda #$00			; 2 cycles
+write_null_desc_loop:
+	sta PPU_DATA			; 4 cycles
+	dex				; 2 cycles
+	bne write_null_desc_loop	; 4 cycles
+
+	jmp buf_write_loop
+; end handle NULL descriptor
+
+; handle write descriptor
+out_options_byte:
+	ldx #0
+write_bytes_loop:
+	lda (cur_databuf_ptr), y
+	sta PPU_DATA
+
+	inx
+	; if x != tmp_num_bytes, loop
+	cpx tmp_num_bytes
+	bne write_bytes_loop
+; end handle write descriptor
+\\\\\\\\\\\\
+
+Overhead	78 cycles
+Per byte	10 cycles
+
+Read descriptor:
+
+////////////
+buf_write_loop:
+	lda (cur_databuf_ptr), y				; 4 cycles
+
+	; we've encountered the \0 entry in the buffer
+	beq out_reset_counters 					; 4 to be safe
+
+	; store off number of bytes
+	sta tmp_num_bytes					; 4 cycles
+	iny							; 2 cycles 
+
+	; load address to PPU
+	lda (cur_databuf_ptr), y				; 6 cycles
+	tax							; 2 cycles
+	iny							; 2 cycles
+	lda (cur_databuf_ptr), y				; 6 cycles
+	iny							; 2 cycles
+	sta PPU_ADDR						; 4 cycles
+	stx PPU_ADDR						; 4 cycles
+
+	; Handle options byte
+	lda (cur_databuf_ptr), y				; 6 cycles
+	iny							; 2 cycles
+	sta tmp_options_byte					; 4 cycles
+
+; first check for a read descriptor
+	lda #PPUBUF_READ_DESC_MASK				; 2 cycles
+	and tmp_options_byte					; 4 cycles
+	beq check_null_desc					; 4 cycles
+
+; handle read descriptor
+	lsr	; shift off the low 4 bits of the flags to							; 2 cycles
+	lsr	; get to the upper CHR bits									; 2 cycles
+	lsr													; 2 cycles
+	lsr													; 2 cycles
+	sta MMC5_CHR_UPPER		; write upper CHR bank bits						; 4 cycles
+	lda (cur_databuf_ptr), y	; for a read descriptor, the single data byte contains the low bits	; 6 cycles
+	iny				; of the CHR bank number						; 2 cycles
+	sta MMC5_CHR_4K_SEG1		; write lower CHR bank bits						; 4 cycles
+
+	bit PPU_DATA	; throw away a PPU read to prime the data buffer					; 4 cycles
+			; see https://www.nesdev.org/wiki/PPU_registers#The_PPUDATA_read_buffer_(post-fetch)
+	ldx #0													; 2 cycles
+read_desc_loop:
+	lda PPU_DATA						; 4 cycles
+	sta _ppu_readbuf, x					; 5 cycles
+	inx							; 2 cycles
+	cpx tmp_num_bytes					; 4 cycles
+	bne read_desc_loop					; 4 cycles
+
+	lda #1							; 2 cycles
+	sta _ppu_readbuf_dirty					; 4 cycles
+
+	jmp buf_write_loop					; 3 cycles
+; end handle read descriptor
+
+; check for NULL descriptor
+check_null_desc:
+	lda #PPUBUF_NULL_DESC_MASK
+	and tmp_options_byte
+	beq out_options_byte
+
+; handle NULL descriptor
+	ldx tmp_num_bytes
+	lda #$00
+write_null_desc_loop:
+	sta PPU_DATA
+	dex
+	bne write_null_desc_loop
+
+	jmp buf_write_loop
+; end handle NULL descriptor
+
+; handle write descriptor
+out_options_byte:
+	ldx #0
+write_bytes_loop:
+	lda (cur_databuf_ptr), y
+	sta PPU_DATA
+
+	inx
+	; if x != tmp_num_bytes, loop
+	cpx tmp_num_bytes
+	bne write_bytes_loop
+; end handle write descriptor
+\\\\\\\\\\\\
+
+Overhead	101 cycles
+Per byte	19 cycles
+
+On the way into the loop:
+from NMI to process_ppubuf:	31 cycles
+to buf_write_loop:		9 cycles
+(middle here)
+to rti:				131 cycles
