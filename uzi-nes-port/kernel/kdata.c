@@ -30,4 +30,11 @@ struct oft of_tab[1];
 
 /* Driver stuff */
 
-struct blkbuf bufpool[NBUFS];
+/*
+ * Put this in its own section so that we can page-align the buffers.
+ * This is not strictly necessary, but some instructions perform better
+ * if we don't cross a page bounadry.
+ */
+#pragma data-name (push, "BLKDATA")
+struct blkbuf bufpool[NBUFS] = { 0 };
+#pragma data-name (pop)
