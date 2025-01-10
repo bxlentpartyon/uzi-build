@@ -19,10 +19,6 @@ void init2(void)
 
     kprintf("boot: ");
 
-    /* Mount the root device */
-    if (fmount(ROOTDEV,NULLINODE))
-	panic("no filesys");
-
     ifnot (root = i_open(ROOTDEV,ROOTINODE))
 	panic("no root");
 

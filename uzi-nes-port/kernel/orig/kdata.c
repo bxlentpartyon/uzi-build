@@ -10,7 +10,6 @@ int16 inint;	/* flag is set whenever interrupts are being serviced */
 
 inoptr root;   /* Address of root dir in inode table */
 struct cinode i_tab[1];    /* In-core inode table */
-struct filesys fs_tab[1];
 
 /* Driver stuff */
 

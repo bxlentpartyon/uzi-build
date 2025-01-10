@@ -1,9 +1,11 @@
 #include <devio.h>
+#include <devppuwd.h>
 #include <devtty.h>
 #include <unix.h>
 
 struct devsw dev_tab[] =  /* The device driver switch table */
 {
+	{ 0, ppuwd_open, ok, ok, ok, ok },
 	{ 0, tty_open, tty_close, tty_read, ok, ok /*  tty_write, ok */ },      /* tty */
 	{ 0, ok, ok, ok, ok, /* null_write, */ nogood },                      /* /dev/null */
 	{ 0, ok, ok, ok, ok, /* mem_read, mem_write, */ nogood }              /* /dev/mem */
@@ -27,6 +29,7 @@ int16 runticks;	/* Number of ticks current process has been
 
 int16 ROOTDEV;
 struct oft of_tab[1];
+struct filesys fs_tab[1];
 
 /* Driver stuff */
 

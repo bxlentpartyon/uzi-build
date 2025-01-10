@@ -977,35 +977,6 @@ int getmode(inoptr ino)
 }
 
 
-/* Fmount places the given device in the mount table with
-mount point ino */
-
-int fmount(register int dev, register inoptr ino)
-{
-    char *buf;
-    register struct filesys *fp;
-
-    if (d_open(dev) != 0)
-	panic("fmount: Cant open filesystem");
-    /* Dev 0 blk 1 */
-    fp = fs_tab + dev;
-    buf = bread(dev, 1, 0);
-    bcopy(buf, (char *)fp, sizeof(struct filesys));
-    brelse(buf);
-
-    /* See if there really is a filesystem on the device */
-    if (fp->s_mounted != SMOUNTED ||
-	 fp->s_isize >= fp->s_fsize)
-	return (-1);
-
-    fp->s_mntpt = ino;
-    if (ino)
-	++ino->c_refs;
-
-    return (0);
-}
-
-
 void magic(inoptr ino)
 {
     if (ino->c_magic != CMAGIC)

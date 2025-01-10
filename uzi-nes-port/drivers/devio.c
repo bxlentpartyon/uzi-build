@@ -8,6 +8,142 @@ UZI (Unix Z80 Implementation) Kernel:  devio.c
 #include <unix.h>
 #include <extern.h>
 
+#include <lib/string.h>
+
+int bfree(register bufptr bp, int dirty);
+
+int bdread(bufptr bp);
+int bdwrite(bufptr bp);
+
+/* Buffer pool management */
+
+/********************************************************
+The high-level interface is through bread() and bfree().
+Bread() is given a device and block number, and a rewrite flag.
+If rewrite is 0, the block is actually read if it is not already
+in the buffer pool. If rewrite is set, it is assumed that the caller
+plans to rewrite the entire contents of the block, and it will
+not be read in, but only have a buffer named after it.
+
+Bfree() is given a buffer pointer and a dirty flag.
+If the dirty flag is 0, the buffer is made available for further 
+use.  If the flag is 1, the buffer is marked "dirty", and
+it will eventually be written out to disk.  If the flag is 2,
+it will be immediately written out.
+
+Zerobuf() returns a buffer of zeroes not belonging to any
+device.  It must be bfree'd after use, and must not be
+dirty. It is used when a read() wants to read an unallocated
+block of a file.
+
+Bufsync() write outs all dirty blocks.
+
+Note that a pointer to a buffer structure is the same as a
+pointer to the data.  This is very important.
+
+********************************************************/
+
+unsigned bufclock = 0;  /* Time-stamp counter for LRU */
+
+char *bread(int dev, blkno_t blk, int rewrite)
+{
+	register bufptr bp;
+	bufptr bfind();
+	bufptr freebuf();
+
+	if (bp = bfind(dev, blk)) {
+		if (bp->bf_busy)
+			panic("want busy block");
+		goto done;
+	}
+	bp = freebuf();
+
+	bp->bf_dev = dev;
+	bp->bf_blk = blk;
+
+	/* If rewrite is set, we are about to write over the entire block,
+	so we don't need the previous contents */
+
+	ifnot (rewrite)
+		if (bdread(bp) == -1) {
+			udata.u_error = EIO;
+			return (NULL);
+		}
+
+	if (rewrite == 2)
+		bzero(bp->bf_data, 512);
+
+done:
+	bp->bf_busy = 1;
+	bp->bf_time = ++bufclock;  /* Time stamp it */
+	return (bp->bf_data);
+}
+
+void brelse(bufptr bp)
+{
+	bfree(bp, 0);
+}
+
+void bawrite(bufptr bp)
+{
+	bfree(bp, 1);
+}
+
+int bfree(register bufptr bp, int dirty)
+{
+	bp->bf_dirty |= dirty;
+	bp->bf_busy = 0;
+
+	if (dirty == 2) {  /* Extra dirty */
+		if (bdwrite(bp) == -1)
+			udata.u_error = EIO;
+		bp->bf_dirty = 0;
+		return (-1);
+	}
+	return (0);
+}
+
+bufptr bfind(int dev, blkno_t blk)
+{
+	register bufptr bp;
+
+	for (bp=bufpool; bp < bufpool+NBUFS; ++bp) {
+		if (bp->bf_dev == dev && bp->bf_blk == blk)
+			return (bp);
+	}
+
+	return (NULL);
+}
+
+bufptr freebuf()
+{
+	register bufptr bp;
+	register bufptr oldest;
+	register int oldtime;
+
+	/* Try to find a non-busy buffer 
+	and write out the data if it is dirty */
+
+	oldest = NULL;
+	oldtime = 0;
+	for (bp=bufpool; bp < bufpool+NBUFS; ++bp) {
+		if (bufclock - bp->bf_time >= oldtime && !bp->bf_busy) {
+			oldest = bp;
+			oldtime = bufclock - bp->bf_time;
+		}
+	}
+
+	ifnot (oldest)
+		panic("no free buffers");
+
+	if (oldest->bf_dirty) {
+		if (bdwrite(oldest) == -1)
+			udata.u_error = EIO;
+		oldest->bf_dirty = 0;
+	}
+	return (oldest);
+}
+
 void bufinit(void)
 {
 	register bufptr bp;
@@ -15,6 +151,35 @@ void bufinit(void)
 	for (bp = bufpool; bp < bufpool + NBUFS; ++bp) {
 		bp->bf_dev = -1;
 	}
+}
+
+/***************************************************
+Bdread() and bdwrite() are the block device interface routines.
+they are given a buffer pointer, which contains the device, block number,
+and data location.
+They basically validate the device and vector the call.
+
+Cdread() and cdwrite are the same for character (or "raw") devices,
+and are handed a device number.
+Udata.u_base, count, and offset have the rest of the data.
+****************************************************/
+
+int bdread(bufptr bp)
+{
+	ifnot (validdev(bp->bf_dev))
+		panic("bdread: invalid dev");
+
+	udata.u_buf = bp;
+	return ((*dev_tab[bp->bf_dev].dev_read)(dev_tab[bp->bf_dev].minor, 0));
+}
+
+int bdwrite(bufptr bp)
+{
+	ifnot (validdev(bp->bf_dev))
+		panic("bdwrite: invalid dev");
+
+	udata.u_buf = bp;
+	return ((*dev_tab[bp->bf_dev].dev_write)(dev_tab[bp->bf_dev].minor, 0));
 }
 
 int cdread(int dev)
@@ -43,7 +208,10 @@ int nogood(void)
 
 int validdev(int dev)
 {
-	return(dev >= 0 && dev < (sizeof(dev_tab)/sizeof(struct devsw)));
+	/* FIXME */
+	//return(dev >= 0 && dev < (sizeof(dev_tab)/sizeof(struct devsw)));
+	//return(dev >= 0 && dev < 4);
+	return 1;
 }
 
 /*************************************************************

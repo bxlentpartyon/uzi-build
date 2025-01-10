@@ -393,6 +393,6 @@ struct devsw {
 
 #include "config.h"
 
-extern struct devsw dev_tab[3];  /* The device driver switch table */
+extern struct devsw dev_tab[4];  /* The device driver switch table */
 
 #endif /* __UNIX_H__ */

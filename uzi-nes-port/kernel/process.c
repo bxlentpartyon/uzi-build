@@ -157,6 +157,10 @@ void init2(void)
 	cdread(TTYDEV);
 	ROOTDEV = bootchar - '0';
 
+	/* Mount the root device */
+	if (fmount(ROOTDEV,NULLINODE))
+		panic("no filesys");
+
 	dump_proc(initproc);
 
 	test_ppu_read();
