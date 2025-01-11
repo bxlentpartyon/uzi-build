@@ -5,6 +5,8 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 #ifndef __UNIX_H__
 #define __UNIX_H__
 
+#include <config.h>
+
 #ifdef UZI
 #define UZI_TYPE(x)	x
 #define UZI_TYPE_T(x)	x##_t
@@ -393,6 +395,6 @@ struct devsw {
 
 #include "config.h"
 
-extern struct devsw dev_tab[4];  /* The device driver switch table */
+extern struct devsw dev_tab[NDEVS];  /* The device driver switch table */
 
 #endif /* __UNIX_H__ */
