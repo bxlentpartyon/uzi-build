@@ -42,7 +42,11 @@ stack_setup:
 	ldx #$ff 	; set stack pointer to 0x01ff
 	txs
 
-	lda ppu_ctrl_val
+	; We need to explicitly write #$00 here, as ppu_ctrl_val isn't
+	; initialized until after the copy_to_ram loop below.  Note that it's
+	; not strictly necessary to initialize PPU_CTRL (at least in FCEUX).
+	; I'm just doing it to be thorough.
+	lda #$00
 	sta PPU_CTRL	; disable vblank NMI
 
 	jsr _stop_clock
