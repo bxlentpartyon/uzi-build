@@ -140,10 +140,10 @@ queue_again:
 void test_ppu_read(void)
 {
 	struct ppu_desc desc;
-	char data = 0x12;
+	char data = 0x00;
 
 	desc.size = 64;
-	desc.target = 0x1400;
+	desc.target = 0x1200;
 	desc.flags = PPU_DESC_FLAG_READ;
 
 	queue_descriptor(&desc, &data);

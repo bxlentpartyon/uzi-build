@@ -9,7 +9,10 @@ void test_ppu_read(void);
 
 void ppu_lock(void);
 void ppu_unlock(void);
+
 extern char ppu_locked;
+extern char ppu_readbuf_dirty;
+extern char ppu_readbuf[];
 
 /* This doesn't really belong here... */
 void panic(char *s);
@@ -26,6 +29,8 @@ struct ppu_desc {
 	char *target;
 	char flags;
 };
+
+void queue_descriptor(struct ppu_desc *desc, char *data);
 
 #define SCREEN_VIS_ROWS		28
 #define SCREEN_ROWS		30
@@ -44,5 +49,8 @@ struct ppu_desc {
 #define PPU_DESC_FLAGS_EMPTY	0x00
 #define PPU_DESC_FLAG_NULL	0x01
 #define PPU_DESC_FLAG_READ	0x02
+#define PPU_DESC_UPPER_SHIFT	4
+
+#define PPU_MAX_READ	64
 
 #endif /* __PPU_H__ */

@@ -10,9 +10,6 @@
 #include <lib/string.h>
 #include <kb.h>
 
-extern char ppu_readbuf_dirty;
-extern char ppu_readbuf[];
-
 int swapout(void);
 
 /* Newproc fixes up the tables for the child of a fork */
@@ -158,19 +155,15 @@ void init2(void)
 	ROOTDEV = bootchar - '0';
 
 	/* Mount the root device */
-	if (fmount(ROOTDEV,NULLINODE))
+	if (fmount(ROOTDEV,NULLINODE)) {
 		panic("no filesys");
+	} else {
+		kprintf("root fs mounted!\n");
+	}
 
 	dump_proc(initproc);
 
-	test_ppu_read();
-
-	while (!ppu_readbuf_dirty);
-
-	kprintf("char %c\n", ppu_readbuf[0]);
-
-	while(1)
-		ppu_readbuf_dirty = 0;
+	while(1);
 }
 
 /* psleep() puts a process to sleep on the given event.
