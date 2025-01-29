@@ -36,8 +36,9 @@ stack_setup:
 .proc reset
 	sei
 	cld
+
 	ldx #$40
-	stx $4017
+	stx APU_FRAME_COUNTER	; disable APU interrupt
 
 	ldx #$ff 	; set stack pointer to 0x01ff
 	txs
@@ -53,7 +54,7 @@ stack_setup:
 
 	inx		; X = 0
 	stx PPU_MASK	; disable rendering
-	stx $4010	; disable DMC IRQ
+	stx DMC_CTRL	; disable DMC IRQ
 
 	bit PPU_STATUS	; acknowledge stray vblank
 
