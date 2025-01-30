@@ -1,12 +1,12 @@
 [submodule "cc65"]
 	path = cc65
-	url = https://github.com/cc65/cc65.git
+	url = https://github.com/bxlentpartyon/cc65.git
 [submodule "uzi-nes"]
 	path = uzi-nes
-	url = https://github.com/paulie-g/uzi.git
+	url = https://github.com/bxlentpartyon/uzi.git
 [submodule "fceux"]
 	path = fceux
-	url = https://github.com/TASEmulators/fceux.git
+	url = https://github.com/bxlentpartyon/fceux.git
 [submodule "nestile"]
 	path = nestile
-	url = ./nestile
+	url = https://github.com/bxlentpartyon/nestile.git
