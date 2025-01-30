@@ -80,40 +80,40 @@ but I haven't made any modifications to it.
 
 # Building container
 
-source uzibuild_env
-uzibuild docker-build
+source uzibuild_env  
+uzibuild docker-build  
 
 # Building cc65 in the container
 
-uzibuild docker-shell
-cd ~/cc65
-make -j 4
+uzibuild docker-shell  
+cd ~/cc65  
+make -j 4  
 
 # Building fceux in the container
 
-uzibuild docker-shell
-cd ~/fceux
-mkdir build
-cd build
-cmake ..
-make -j 4
+uzibuild docker-shell  
+cd ~/fceux  
+mkdir build  
+cd build  
+cmake ..  
+make -j 4  
 
 # Building prototype
 
-source uzibuild_env
-cd uzi-nes-port
-make
+source uzibuild_env  
+cd uzi-nes-port  
+make  
 
 # Running fceux in userspace (OL9)
 
-Requires:
+## Requires
 
-qt5-devel
-SDL2-devel
-minizip-devel
+qt5-devel  
+SDL2-devel  
+minizip-devel  
 
 # Running nestile
 
-Requires:
+## Requires
 
-python3-tkinter
+python3-tkinter  
