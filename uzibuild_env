@@ -1,2 +1,2 @@
-export UZIBUILD_ROOT=/home/athorlton/code/uzics-build/
+export UZIBUILD_ROOT=/home/athorlton/code/uzi-build/
 export PATH=${UZIBUILD_ROOT}/bin:${UZIBUILD_ROOT}/cc65/bin:${UZIBUILD_ROOT}/fceux/build/src:${PATH}
