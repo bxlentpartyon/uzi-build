@@ -8,7 +8,6 @@ UZIBUILD_ROOT = os.getenv('UZIBUILD_ROOT')
 UZIBUILD_DOCKER_PATH = os.path.join(UZIBUILD_ROOT, 'build-docker')
 UZIBUILD_DOCKER_OUTPUT = os.path.join(UZIBUILD_DOCKER_PATH, 'build-output')
 CC65_PATH = os.path.join(UZIBUILD_ROOT, 'cc65')
-UZICS_PATH = os.path.join(UZIBUILD_ROOT, 'uzics-nes')
 FCEUX_PATH = os.path.join(UZIBUILD_ROOT, 'fceux')
 
 def setup_output_dir(out_dir):
@@ -25,7 +24,6 @@ def docker_shell(args):
         mounts = {
                   UZIBUILD_DOCKER_OUTPUT: '/root/output',
                   CC65_PATH: '/root/cc65',
-                  UZICS_PATH: '/root/uzics-nes',
                   FCEUX_PATH: '/root/fceux',
                  }
 
