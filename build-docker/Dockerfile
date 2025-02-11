@@ -1,8 +1,9 @@
-FROM fedora:37
+FROM oraclelinux:9
 
-RUN dnf groupinstall -y "Development Tools" "C Development Tools and Libraries"
-RUN dnf install -y vim zlib git \
-		      cmake gcc-c++ qt5-qtbase-devel minizip-devel SDL2-devel # for fceux
+RUN dnf groupinstall --with-optional -y "Development Tools"
+RUN dnf install -y oracle-epel-release-el9
+RUN dnf install -y vim zlib \
+		   qt5-qtbase-devel minizip-devel SDL2-devel # for fceux
 RUN echo "alias ls='ls --color'" >> /root/.bashrc
 RUN mkdir /root/output
 
