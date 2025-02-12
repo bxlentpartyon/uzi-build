@@ -43,7 +43,7 @@ int ppuwd_read(int minor, int rawflag)
 
 		while (!ppu_readbuf_dirty);
 
-		bcopy(&ppu_readbuf,
+		bcopy(ppu_readbuf,
 		      (char * ) &udata.u_buf->bf_data + CHUNK_SIZE * pass,
 		      CHUNK_SIZE);
 
