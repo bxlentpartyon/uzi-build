@@ -1,5 +1,6 @@
 FROM oraclelinux:9
 
+RUN dnf update -y
 RUN dnf groupinstall --with-optional -y "Development Tools"
 RUN dnf install -y oracle-epel-release-el9
 RUN dnf install -y vim zlib \

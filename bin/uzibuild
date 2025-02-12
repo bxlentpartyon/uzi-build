@@ -10,6 +10,7 @@ CC65_PATH = os.path.join(UZIBUILD_ROOT, 'cc65')
 FCEUX_PATH = os.path.join(UZIBUILD_ROOT, 'fceux')
 
 def docker_build(args):
+    subprocess.check_call(['docker', 'pull', 'oraclelinux:9'])
     subprocess.check_call(['docker', 'build', '-t', 'uzibuild', UZIBUILD_DOCKER_PATH])
 
 def docker_shell(args):
