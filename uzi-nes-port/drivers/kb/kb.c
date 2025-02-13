@@ -1,4 +1,3 @@
-//#include <ppu.h>
 
 #define KB_ROW_COUNT	9
 #define BYTE_BITS	8
