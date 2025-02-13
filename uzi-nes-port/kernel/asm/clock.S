@@ -9,6 +9,7 @@ _apu_status_byte:
 
 .segment "CODE"
 
+; start/stop_clock are void functions, so it's OK if they clobber A
 .proc _start_clock
 	lda #%00000000
 	sta APU_FRAME_COUNTER	; enable clock interrupt
