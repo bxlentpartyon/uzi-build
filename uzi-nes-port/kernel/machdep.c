@@ -126,20 +126,6 @@ void kprintf(char *fmt, ...)
 	puts(printbuf);
 }
 
-extern unsigned char kb_rows[9];
-
-void print_kb_bytes(void)
-{
-	int i;
-
-	kprintf("KB: ");
-	for (i = 0; i < 9; i++)
-		kprintf("%x ", kb_rows[i]);
-	kprintf("\n");
-
-	return;
-}
-
 void start_kernel(void)
 {
 	di();

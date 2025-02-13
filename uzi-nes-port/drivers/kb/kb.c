@@ -1,3 +1,4 @@
+#include <machdep.h>
 
 #define KB_ROW_COUNT	9
 #define BYTE_BITS	8
@@ -42,4 +43,16 @@ void dump_keyboard(void)
 
 		prev_kb_rows[i] = kb_rows[i];
 	}
+}
+
+void print_kb_bytes(void)
+{
+	int i;
+
+	kprintf("KB: ");
+	for (i = 0; i < 9; i++)
+		kprintf("%x ", kb_rows[i]);
+	kprintf("\n");
+
+	return;
 }
