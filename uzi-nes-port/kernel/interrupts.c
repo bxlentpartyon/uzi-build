@@ -2,6 +2,7 @@
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>
+#include <time.h>
 #include <unix.h>
 
 /* For now, this is the heart of how we tell time.  It only allows

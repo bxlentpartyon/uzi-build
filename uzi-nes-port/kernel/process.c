@@ -7,6 +7,7 @@
 #include <ppu.h>
 #include <process.h>
 #include <scall.h>
+#include <time.h>
 #include <lib/string.h>
 #include <kb.h>
 

@@ -5,6 +5,7 @@
 #include <ppu.h>
 #include <process.h>
 #include <scall.h>
+#include <time.h>
 #include <unix.h>
 
 void doexit(int16 val, int16 val2)
