@@ -126,10 +126,6 @@ void kprintf(char *fmt, ...)
 	puts(printbuf);
 }
 
-int nr_apu_irqs = 0;
-extern unsigned char apu_status_byte;
-#pragma zpsym ("apu_status_byte");
-
 extern unsigned char kb_rows[9];
 
 void print_kb_bytes(void)
@@ -142,16 +138,6 @@ void print_kb_bytes(void)
 	kprintf("\n");
 
 	return;
-}
-
-void handle_irq(void)
-{
-	if (apu_status_byte & 0x40) {
-		nr_apu_irqs++;
-		clk_int();
-	} else {
-		panic("spurious IRQ");
-	}
 }
 
 void rdtime(time_t *tloc)

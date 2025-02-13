@@ -1,5 +1,6 @@
 #include <extern.h>
 #include <machdep.h>
+#include <ppu.h>
 #include <process.h>
 #include <unix.h>
 
@@ -112,3 +113,16 @@ UZI-NES WIP
 #endif
 }
 
+int nr_apu_irqs = 0;
+extern unsigned char apu_status_byte;
+#pragma zpsym ("apu_status_byte");
+
+void handle_irq(void)
+{
+	if (apu_status_byte & 0x40) {
+		nr_apu_irqs++;
+		clk_int();
+	} else {
+		panic("spurious IRQ");
+	}
+}
