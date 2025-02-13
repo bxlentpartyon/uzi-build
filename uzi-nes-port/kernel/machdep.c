@@ -132,9 +132,6 @@ void start_kernel(void)
 
 	init_ppu();
 
-	/* Turn off clock */
-	stop_clock();
-
 	ei();
 
 	init2();	/* in process.c */
