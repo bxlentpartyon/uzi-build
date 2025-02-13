@@ -37,8 +37,7 @@ stack_setup:
 	sei
 	cld
 
-	ldx #$40
-	stx APU_FRAME_COUNTER	; disable APU interrupt
+	jsr _stop_clock
 
 	ldx #$ff 	; set stack pointer to 0x01ff
 	txs
@@ -49,8 +48,6 @@ stack_setup:
 	; I'm just doing it to be thorough.
 	lda #$00
 	sta PPU_CTRL	; disable vblank NMI
-
-	jsr _stop_clock
 
 	inx		; X = 0
 	stx PPU_MASK	; disable rendering
