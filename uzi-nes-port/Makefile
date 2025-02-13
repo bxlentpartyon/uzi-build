@@ -9,9 +9,10 @@ LINKER_SCRIPT := scripts/linker/uzi.cfg
 
 HEADER_DEPS := $(wildcard include/*.h)
 
-KERNEL_OBJS := head.o interrupts.o clock.o machdep.o process.o kdata.o scall1.o scall2.o
+KERNEL_ASM_OBJS := asm/head.o asm/interrupts.o asm/clock.o
+KERNEL_OBJS := machdep.o process.o kdata.o scall1.o scall2.o
 KERNEL_OBJ_DIR := kernel
-KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS))
+KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS) $(KERNEL_ASM_OBJS))
 
 PPU_OBJS := ppu.o ppu_databuf.o asm/ppu.o asm/ppu_databuf.o
 PPU_OBJ_DIR := ppu
