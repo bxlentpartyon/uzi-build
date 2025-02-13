@@ -14,9 +14,10 @@ KERNEL_OBJS := machdep.o process.o kdata.o scall1.o scall2.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS) $(KERNEL_ASM_OBJS))
 
-PPU_OBJS := ppu.o ppu_databuf.o asm/ppu.o asm/ppu_databuf.o
+PPU_ASM_OBJS := asm/ppu_asm.o asm/ppu_databuf_asm.o
+PPU_OBJS := ppu.o ppu_databuf.o
 PPU_OBJ_DIR := ppu
-PPU_DEPS := $(patsubst %, $(PPU_OBJ_DIR)/%, $(PPU_OBJS))
+PPU_DEPS := $(patsubst %, $(PPU_OBJ_DIR)/%, $(PPU_OBJS) $(PPU_ASM_OBJS))
 
 FS_OBJS := filesys.o
 FS_OBJ_DIR := fs
