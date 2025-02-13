@@ -45,6 +45,7 @@ void dump_keyboard(void)
 	}
 }
 
+#ifdef KB_DEBUG
 void print_kb_bytes(void)
 {
 	int i;
@@ -56,3 +57,4 @@ void print_kb_bytes(void)
 
 	return;
 }
+#endif
