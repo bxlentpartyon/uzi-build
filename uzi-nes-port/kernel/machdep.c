@@ -3,6 +3,7 @@ UZI (Unix Z80 Implementation) Kernel:  machdep.c
 ***************************************************/
 
 #include <extern.h>
+#include <interrupts.h>
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>
