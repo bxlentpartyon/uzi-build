@@ -15,7 +15,7 @@
 .segment "DATA"
 zpsave:		.res zpsavespace
 _in_interrupt:	.byte 0
-irq_stack_start: .addr $9f00
+irq_stack_start: .addr $8f00
 
 .segment "CODE"
 

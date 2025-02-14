@@ -232,7 +232,7 @@ clrmem2:
 
 init_stack:
 	lda #$00
-	ldx #$bf
+	ldx #$9f
 	sta sp
 	stx sp+1
 
