@@ -13,7 +13,10 @@ font_load_ptr:
 	.addr $0000
 
 .segment "FONTDATA"
-	fontdata: .incbin "font/newfont.chr"
+	; we need room for the reset stub at the end of the page, and the font
+	; data doesn't take up nearly the full 8K, so include all but the last
+	; 256 bytes
+	fontdata: .incbin "font/newfont.chr", 0, $1f00
 
 .segment "DATA"
 _frame_wait_sleep:
@@ -63,8 +66,8 @@ set_ppu_ctrl:
 
 ; Heavily inspired by https://www.nesdev.org/wiki/CHR_ROM_vs._CHR_RAM#Switching_to_CHR_RAM
 .proc _ppu_load_font
-	ldx #$82		;
-	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 1 (font data)
+	ldx #$81		;
+	stx MMC5_PRG_MODE3_P2	; PRG-ROM page 2 to bank 1 (font data)
 
 	lda #<fontdata		;
 	sta font_load_ptr	;
@@ -86,9 +89,6 @@ font_load_loop:
 	inc font_load_ptr+1
 	dex
 	bne font_load_loop
-
-	ldx #$0a		;
-	stx MMC5_PRG_MODE1_P0	; PRG-RAM low bank to 10
 
 	rts
 .endproc

@@ -12,6 +12,8 @@ void brelse(bufptr bp);
 int cdread(int dev);
 void bufinit(void);
 int validdev(int dev);
+
+int d_open(int dev);
 #pragma wrapped-call(pop)
 
 int ok(void);

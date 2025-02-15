@@ -2,6 +2,7 @@
 	.import 	_start_kernel, _stop_clock
 	.import		nmi, irq
 	.import		ppu_ctrl_val
+	.import		cur_code_bank
 	.export		stack_setup
 
 	.include	"uzi_nes.inc"
@@ -26,6 +27,10 @@ stack_setup:
 	.byte $00
 
 .segment "CODE"
+
+.proc dummy
+	lda cur_code_bank
+.endproc
 
 .proc reset
 	sei
@@ -67,72 +72,72 @@ clrmem:
 	bne clrmem
 
 
-	; copy data from bank 3 to ram
+	; copy init data from rom to ram
 	ldx #$00
 copy_to_ram:
-	lda $8000, x
+	lda $c000, x
 	sta $6000, x
-	lda $8100, x
+	lda $c100, x
 	sta $6100, x
-	lda $8200, x
+	lda $c200, x
 	sta $6200, x
-	lda $8300, x
+	lda $c300, x
 	sta $6300, x
-	lda $8400, x
+	lda $c400, x
 	sta $6400, x
-	lda $8500, x
+	lda $c500, x
 	sta $6500, x
-	lda $8600, x
+	lda $c600, x
 	sta $6600, x
-	lda $8700, x
+	lda $c700, x
 	sta $6700, x
-	lda $8800, x
+	lda $c800, x
 	sta $6800, x
-	lda $8900, x
+	lda $c900, x
 	sta $6900, x
-	lda $8a00, x
+	lda $ca00, x
 	sta $6a00, x
-	lda $8b00, x
+	lda $cb00, x
 	sta $6b00, x
-	lda $8c00, x
+	lda $cc00, x
 	sta $6c00, x
-	lda $8d00, x
+	lda $cd00, x
 	sta $6d00, x
-	lda $8e00, x
+	lda $ce00, x
 	sta $6e00, x
-	lda $8f00, x
+	lda $cf00, x
 	sta $6f00, x
-	lda $9000, x
+	lda $d000, x
 	sta $7000, x
-	lda $9100, x
+	lda $d100, x
 	sta $7100, x
-	lda $9200, x
+	lda $d200, x
 	sta $7200, x
-	lda $9300, x
+	lda $d300, x
 	sta $7300, x
-	lda $9400, x
+	lda $d400, x
 	sta $7400, x
-	lda $9500, x
+	lda $d500, x
 	sta $7500, x
-	lda $9600, x
+	lda $d600, x
 	sta $7600, x
-	lda $9700, x
+	lda $d700, x
 	sta $7700, x
-	lda $9800, x
+	lda $d800, x
 	sta $7800, x
-	lda $9900, x
+	lda $d900, x
 	sta $7900, x
-	lda $9a00, x
+	lda $da00, x
 	sta $7a00, x
-	lda $9b00, x
+	lda $db00, x
 	sta $7b00, x
-	lda $9c00, x
+	lda $dc00, x
 	sta $7c00, x
-	lda $9d00, x
+	lda $dd00, x
 	sta $7d00, x
-	lda $9e00, x
+	lda $de00, x
 	sta $7e00, x
-	lda $9f00, x
+	lda $df00, x
 	sta $7f00, x
 	inx
 	beq vblankwait2
@@ -150,8 +155,8 @@ set_palette:
 	lda #$30
 	sta PPU_DATA
 
-	ldx #$0a		;
-	stx MMC5_PRG_MODE1_P0	; PRG-RAM low bank to 10
+	ldx #$07		;
+	stx MMC5_PRG_MODE3_P0	; PRG-RAM page 0 to bank 10
 
 	ldx #$00
 clrmem2:
@@ -188,38 +193,6 @@ clrmem2:
 	sta $9d00, x
 	sta $9e00, x
 	sta $9f00, x
-	sta $a000, x
-	sta $a100, x
-	sta $a200, x
-	sta $a300, x
-	sta $a400, x
-	sta $a500, x
-	sta $a600, x
-	sta $a700, x
-	sta $a800, x
-	sta $a900, x
-	sta $aa00, x
-	sta $ab00, x
-	sta $ac00, x
-	sta $ad00, x
-	sta $ae00, x
-	sta $af00, x
-	sta $b000, x
-	sta $b100, x
-	sta $b200, x
-	sta $b300, x
-	sta $b400, x
-	sta $b500, x
-	sta $b600, x
-	sta $b700, x
-	sta $b800, x
-	sta $b900, x
-	sta $ba00, x
-	sta $bb00, x
-	sta $bc00, x
-	sta $bd00, x
-	sta $be00, x
-	sta $bf00, x
 	inx
 	beq init_stack
 	jmp clrmem2
@@ -261,8 +234,8 @@ stub_entry:
 
 	stx MMC5_SCAN_IRQ_STATUS; Disable scanline IRQ
 
-	ldx #$01		;
-	stx MMC5_PRG_MODE	; PRG bank mode 01 (2 16K banks)
+	ldx #$03		;
+	stx MMC5_PRG_MODE	; PRG bank mode 03 (5 8K banks)
 
 	ldx #$02		; Set PRG RAM protect 1
 	stx MMC5_RAM_PROT1	;
@@ -270,13 +243,15 @@ stub_entry:
 	stx MMC5_RAM_PROT2	;
 
 	ldx #$08		;
-	stx MMC5_PRG_RAM_PM	; PRG-RAM Page 8 (first non-battery-backed page)
+	stx MMC5_PRG_RAM_PM	; PRG-RAM permanent page to bank 8 (first non-battery-backed bank)
 
 	ldx #$80		;
-	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 0
+	stx MMC5_PRG_MODE3_P0	; PRG-ROM page 0 to bank 0
+	stx MMC5_PRG_MODE3_P1	; PRG-ROM page 1 to bank 0
+	stx MMC5_PRG_MODE3_P2	; PRG-ROM page 2 to bank 0
 
-	ldx #$04		;
-	stx MMC5_PRG_ROM_PM	; PRG-ROM high bank to 2
+	ldx #$07		;
+	stx MMC5_PRG_ROM_PM	; PRG-ROM permanent page to bank 7
 
 	ldx #$02		;
 	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
@@ -293,3 +268,7 @@ reset_stub "STUB00"
 reset_stub "STUB01"
 reset_stub "STUB02"
 reset_stub "STUB03"
+reset_stub "STUB04"
+reset_stub "STUB05"
+reset_stub "STUB06"
+reset_stub "STUB07"

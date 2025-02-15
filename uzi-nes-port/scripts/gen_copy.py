@@ -8,10 +8,10 @@ def main():
     print('copy_to_ram:')
 
     for page in pages:
-        print('\tlda $8{}00, x'.format(page))
+        print('\tlda $c{}00, x'.format(page))
         print('\tsta $6{}00, x'.format(page))
     for page in pages:
-        print('\tlda $9{}00, x'.format(page))
+        print('\tlda $d{}00, x'.format(page))
         print('\tsta $7{}00, x'.format(page))
 
     print('\tinx')

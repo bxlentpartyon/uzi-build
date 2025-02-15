@@ -8,6 +8,8 @@ UZI (Unix Z80 Implementation) Kernel:  devtty.c
 #include <process.h>
 #include <unix.h>
 
+#pragma code-name (push, "DEVTTY_CODE")
+
 #define TTYSIZ 132
 
 char ttyinbuf[TTYSIZ];
@@ -21,6 +23,18 @@ struct s_queue ttyinq = {
     0,
     TTYSIZ/2
 };
+
+void tty_init(void)
+{
+	insq(&ttyinq, '0');
+}
+
+#pragma code-name (pop)
+
+/*
+ * This code can be called indirectly, so it needs to go in the regular CODE
+ * section
+ */
 
 int tty_read(int16 minor, int16 rawflag)
 {
@@ -63,9 +77,4 @@ int tty_open(int minor)
 int tty_close(int minor)
 {
 	return(0);
-}
-
-void tty_init(void)
-{
-	insq(&ttyinq, '0');
 }

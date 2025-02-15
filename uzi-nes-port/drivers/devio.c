@@ -10,6 +10,8 @@ UZI (Unix Z80 Implementation) Kernel:  devio.c
 
 #include <lib/string.h>
 
+#pragma code-name (push, "DEVIO_CODE")
+
 int bfree(register bufptr bp, int dirty);
 
 int bdread(bufptr bp);
@@ -196,16 +198,6 @@ int d_open(int dev)
 	return ((*dev_tab[dev].dev_open)(dev_tab[dev].minor));
 }
 
-int ok(void)
-{
-	return(0);
-}
-
-int nogood(void)
-{
-	return(-1);
-}
-
 int validdev(int dev)
 {
 	/* FIXME */
@@ -250,4 +242,21 @@ int remq(struct s_queue *q, char *cp)
         q->q_head = q->q_base;
     ei();
     return(1);
+}
+
+#pragma code-name (pop)
+
+/*
+ * This code can be called indirectly, so it needs to go in the regular CODE
+ * section
+ */
+
+int ok(void)
+{
+	return(0);
+}
+
+int nogood(void)
+{
+	return(-1);
 }

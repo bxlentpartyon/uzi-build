@@ -11,6 +11,8 @@
 #include <lib/string.h>
 #include <kb.h>
 
+#pragma code-name (push, "PROCESS_CODE")
+
 int swapout(void);
 
 /* Newproc fixes up the tables for the child of a fork */
@@ -332,3 +334,5 @@ void ssig(register ptptr proc, int16 sig)
 done:
     ei();
 }
+
+#pragma code-name (pop)

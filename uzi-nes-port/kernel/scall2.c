@@ -8,6 +8,8 @@
 #include <time.h>
 #include <unix.h>
 
+#pragma code-name (push, "SCALL2_CODE")
+
 void doexit(int16 val, int16 val2)
 {
     register int16 j;
@@ -46,3 +48,5 @@ void doexit(int16 val, int16 val2)
     swapin(getproc());
     panic("doexit:won't exit");
 }
+
+#pragma code-name (pop)
