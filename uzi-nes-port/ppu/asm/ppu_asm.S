@@ -63,8 +63,8 @@ set_ppu_ctrl:
 
 ; Heavily inspired by https://www.nesdev.org/wiki/CHR_ROM_vs._CHR_RAM#Switching_to_CHR_RAM
 .proc _ppu_load_font
-	ldx #$84		;
-	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 2 (font data)
+	ldx #$82		;
+	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 1 (font data)
 
 	lda #<fontdata		;
 	sta font_load_ptr	;

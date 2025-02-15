@@ -21,12 +21,6 @@
 	.byte 0				; 13 	TV system (NTSC)
 	.byte 0, 0			; 14-15 Misc ROM, expansion device
 
-.segment "BANK00"
-	.byte $00, $00
-
-.segment "BANK01"
-	.byte $00, $00
-
 .segment "DATA"
 stack_setup:
 	.byte $00
@@ -278,11 +272,11 @@ stub_entry:
 	ldx #$08		;
 	stx MMC5_PRG_RAM_PM	; PRG-RAM Page 8 (first non-battery-backed page)
 
-	ldx #$82		;
-	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 1
+	ldx #$80		;
+	stx MMC5_PRG_MODE1_P0	; PRG-ROM low bank to 0
 
-	ldx #$06		;
-	stx MMC5_PRG_ROM_PM	; PRG-ROM high bank to 3
+	ldx #$04		;
+	stx MMC5_PRG_ROM_PM	; PRG-ROM high bank to 2
 
 	ldx #$02		;
 	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
