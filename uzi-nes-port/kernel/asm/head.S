@@ -26,7 +26,7 @@
 stack_setup:
 	.byte $00
 
-.segment "CODE"
+.segment "INIT_CODE"
 
 .proc dummy
 	lda cur_code_bank
@@ -75,69 +75,69 @@ clrmem:
 	; copy init data from rom to ram
 	ldx #$00
 copy_to_ram:
-	lda $c000, x
+	lda $a000, x
 	sta $6000, x
-	lda $c100, x
+	lda $a100, x
 	sta $6100, x
-	lda $c200, x
+	lda $a200, x
 	sta $6200, x
-	lda $c300, x
+	lda $a300, x
 	sta $6300, x
-	lda $c400, x
+	lda $a400, x
 	sta $6400, x
-	lda $c500, x
+	lda $a500, x
 	sta $6500, x
-	lda $c600, x
+	lda $a600, x
 	sta $6600, x
-	lda $c700, x
+	lda $a700, x
 	sta $6700, x
-	lda $c800, x
+	lda $a800, x
 	sta $6800, x
-	lda $c900, x
+	lda $a900, x
 	sta $6900, x
-	lda $ca00, x
+	lda $aa00, x
 	sta $6a00, x
-	lda $cb00, x
+	lda $ab00, x
 	sta $6b00, x
-	lda $cc00, x
+	lda $ac00, x
 	sta $6c00, x
-	lda $cd00, x
+	lda $ad00, x
 	sta $6d00, x
-	lda $ce00, x
+	lda $ae00, x
 	sta $6e00, x
-	lda $cf00, x
+	lda $af00, x
 	sta $6f00, x
-	lda $d000, x
+	lda $b000, x
 	sta $7000, x
-	lda $d100, x
+	lda $b100, x
 	sta $7100, x
-	lda $d200, x
+	lda $b200, x
 	sta $7200, x
-	lda $d300, x
+	lda $b300, x
 	sta $7300, x
-	lda $d400, x
+	lda $b400, x
 	sta $7400, x
-	lda $d500, x
+	lda $b500, x
 	sta $7500, x
-	lda $d600, x
+	lda $b600, x
 	sta $7600, x
-	lda $d700, x
+	lda $b700, x
 	sta $7700, x
-	lda $d800, x
+	lda $b800, x
 	sta $7800, x
-	lda $d900, x
+	lda $b900, x
 	sta $7900, x
-	lda $da00, x
+	lda $ba00, x
 	sta $7a00, x
-	lda $db00, x
+	lda $bb00, x
 	sta $7b00, x
-	lda $dc00, x
+	lda $bc00, x
 	sta $7c00, x
-	lda $dd00, x
+	lda $bd00, x
 	sta $7d00, x
-	lda $de00, x
+	lda $be00, x
 	sta $7e00, x
-	lda $df00, x
+	lda $bf00, x
 	sta $7f00, x
 	inx
 	beq vblankwait2

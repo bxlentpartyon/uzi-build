@@ -39,7 +39,9 @@ stub_entry:
 	ldx #$80		;
 	stx MMC5_PRG_MODE3_P0	; PRG-ROM page 0 to bank 0
 	stx MMC5_PRG_MODE3_P1	; PRG-ROM page 1 to bank 0
-	stx MMC5_PRG_MODE3_P2	; PRG-ROM page 2 to bank 0
+
+	ldx #$8e
+	stx MMC5_PRG_MODE3_P2	; PRG-ROM page 2 to bank 14 (init code)
 
 	ldx #$0f		;
 	stx MMC5_PRG_ROM_PM	; PRG-ROM permanent page to bank 15
