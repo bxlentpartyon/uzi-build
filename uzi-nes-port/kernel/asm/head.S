@@ -10,7 +10,7 @@
 
 .segment "HEADER"
 	.byte $4e, $45, $53, $1a	; 0-3	NES<EOF>
-	.byte 4				; 4	PRG-ROM Banks
+	.byte 8				; 4	PRG-ROM Banks
 	.byte 0				; 5	CHR-ROM Banks
 	.byte $52			; 6	Mapper 5, battery-backed, mapper-controlled mirroring
 	.byte $08			; 7	Remaining 4 bits of mapper, iNES 2.0, NES system
@@ -250,8 +250,8 @@ stub_entry:
 	stx MMC5_PRG_MODE3_P1	; PRG-ROM page 1 to bank 0
 	stx MMC5_PRG_MODE3_P2	; PRG-ROM page 2 to bank 0
 
-	ldx #$07		;
-	stx MMC5_PRG_ROM_PM	; PRG-ROM permanent page to bank 7
+	ldx #$0f		;
+	stx MMC5_PRG_ROM_PM	; PRG-ROM permanent page to bank 15
 
 	ldx #$02		;
 	stx MMC5_EXRAM_MODE	; Set ExRAM to read-write
@@ -272,3 +272,11 @@ reset_stub "STUB04"
 reset_stub "STUB05"
 reset_stub "STUB06"
 reset_stub "STUB07"
+reset_stub "STUB08"
+reset_stub "STUB09"
+reset_stub "STUB10"
+reset_stub "STUB11"
+reset_stub "STUB12"
+reset_stub "STUB13"
+reset_stub "STUB14"
+reset_stub "STUB15"
