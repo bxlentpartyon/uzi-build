@@ -359,6 +359,7 @@ struct devsw {
  * Error codes
  */
 
+#ifdef UZI
 #define EPERM           1               
 #define ENOENT          2               
 #define ESRCH           3               
@@ -392,6 +393,7 @@ struct devsw {
 #define EMLINK          31              
 #define EPIPE           32              
 #define ENAMETOOLONG    63              
+#endif
 
 #include "config.h"
 
