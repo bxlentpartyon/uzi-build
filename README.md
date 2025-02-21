@@ -117,3 +117,13 @@ minizip-devel
 ## Requires
 
 python3-tkinter  
+
+# Building a filesystem image for the PPU disk
+
+I usually back up any existing uzi.sav first, though I haven't actually
+written any code that _should_ modify the filesystem yet.
+
+./mkfs test.img 128 4096
+dd if=/dev/zero of=./test.sav bs=1 count=65536
+cat test.sav test.img > uzi.sav
+cp uzi.sav ~/.fceux/sav
