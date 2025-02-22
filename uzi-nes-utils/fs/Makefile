@@ -17,7 +17,7 @@ fsck: fsck.c linux_fs.o linux_fs.h
 	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< linux_fs.o
 
 fsutil: fsutil.c linux_fs.o linux_fs.h
-	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< linux_fs.o
+	gcc -g -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< linux_fs.o
 
 test: test.c
 	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $<
