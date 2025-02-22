@@ -98,6 +98,7 @@ void shell(void)
 					printf("Maximum input length exceeded\n");
 					continue;
 				case BUFFER_EOF:
+					printf("\n");
 					keep_going = false;
 					break;
 				default:
