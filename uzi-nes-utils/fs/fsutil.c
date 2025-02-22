@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <malloc.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,12 +67,26 @@ char *scan_line(enum scan_ret_state *state)
 	return shell_buf;
 }
 
+int ls_main(int argc, char **argv)
+{
+	int i;
+
+	printf("ls argc: %d\n", argc);
+	for (i = 0; i < argc; i++)
+		printf("ls argv[%d]='%s'\n", i, argv[i]);
+}
+
+#define SHELL_CMD_TOKEN " "
+
 void shell(void)
 {
-	bool keep_going = true;
-	char *input_str;
+	char *input_str, *token;
 	unsigned long input_len;
+	int shell_argc, argv_buf_size;
+	char **shell_argv;
 	enum scan_ret_state state;
+
+	bool keep_going = true;
 
 	while (keep_going) {
 		printf("shell> ");
@@ -90,8 +105,24 @@ void shell(void)
 					break;
 			}
 		} else {
-			input_len = strlen(input_str);
-			printf("input len %d\n", input_len);
+			argv_buf_size = 8;
+			shell_argc = 0;
+			shell_argv = calloc(argv_buf_size, sizeof(char *));
+
+			token = strtok(input_str, SHELL_CMD_TOKEN);
+			while (token != NULL){
+				printf("token %s\n", token);
+				if (shell_argc == argv_buf_size) {
+					argv_buf_size *= 2;
+					shell_argv = reallocarray(shell_argv, argv_buf_size, sizeof(char *));
+				}
+
+				shell_argv[shell_argc++] = token;
+				token = strtok(NULL, SHELL_CMD_TOKEN);
+			}
+
+			if (strcmp(shell_argv[0], "ls"))
+				ls_main(shell_argc, shell_argv);
 		}
 	}
 }
