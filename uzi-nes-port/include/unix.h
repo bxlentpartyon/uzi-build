@@ -353,6 +353,10 @@ struct devsw {
 #define O_RDONLY        0
 #define O_WRONLY        1
 #define O_RDWR          2
+#else
+#define UZI_O_RDONLY        0
+#define UZI_O_WRONLY        1
+#define UZI_O_RDWR          2
 #endif
 
 #include "generated/errno.h"
