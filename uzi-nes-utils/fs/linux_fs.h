@@ -19,4 +19,6 @@
 
 int yes(void);
 
+int uzifs_open(char *path, short FLAG);
+
 #endif /* __FS_H__ */
