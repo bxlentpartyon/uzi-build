@@ -100,6 +100,52 @@ nodir:
 
 }
 
+inoptr srch_dir(inoptr wd, char *compname)
+{
+    register int curentry;
+    register blkno_t curblock;
+    register struct direct *buf;
+    register int nblocks;
+    unsigned inum;
+    inoptr i_open();
+    blkno_t bmap();
+
+    nblocks = wd->c_node.i_size.o_blkno;
+    if (wd->c_node.i_size.o_offset)
+	++nblocks;
+
+    for (curblock=0; curblock < nblocks; ++curblock)
+    {
+	buf = (struct direct *)bread( wd->c_dev, bmap(wd, curblock, 1), 0);
+	for (curentry = 0; curentry < 32; ++curentry)
+	{
+	    if (namecomp(compname,buf[curentry].d_name))
+	    {
+	        inum = buf[curentry&0x1f].d_ino;
+	        brelse(buf);
+	        return(i_open(wd->c_dev, inum));
+	    }
+	}
+	brelse(buf);
+    }
+    return(NULLINODE);
+}
+
+inoptr srch_mt(inoptr ino)
+{
+    register int j;
+    inoptr i_open();
+
+    for (j=0; j < NDEVS; ++j)
+	if (fs_tab[j].s_mounted == SMOUNTED && fs_tab[j].s_mntpt == ino)
+	{
+	    i_deref(ino);
+	    return(i_open(j,ROOTINODE));
+	}
+
+    return(ino);
+}
+
 int oft_alloc(void)
 {
 	int j;
