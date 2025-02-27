@@ -22,35 +22,6 @@ struct u_data udata;
 struct oft of_tab[OFTSIZE];
 struct filesys fs_tab[1];
 
-int uf_alloc(void)
-{
-	int j;
-
-	for (j = 0; j < UFTSIZE; ++j) {
-		if (udata.u_files[j] & 0x80) { /* Portable, unlike  == -1 */
-			return (j);
-		}
-
-	}
-	udata.u_error = UZI_ENFILE;
-	return(-1);
-}
-
-int oft_alloc(void)
-{
-	int j;
-
-	for (j = 0; j < OFTSIZE; ++j) {
-		ifnot (of_tab[j].o_refs) {
-			of_tab[j].o_refs = 1;
-			of_tab[j].o_inode = NULLINODE;
-			return (j);
-		}
-	}
-	udata.u_error = UZI_ENFILE;
-	return(-1);
-}
-
     inoptr srch_dir();
     inoptr srch_mt();
 inoptr n_open(char *name, inoptr *parent)
@@ -127,6 +98,35 @@ nodir:
     i_deref(wd);
     return(NULLINODE);
 
+}
+
+int oft_alloc(void)
+{
+	int j;
+
+	for (j = 0; j < OFTSIZE; ++j) {
+		ifnot (of_tab[j].o_refs) {
+			of_tab[j].o_refs = 1;
+			of_tab[j].o_inode = NULLINODE;
+			return (j);
+		}
+	}
+	udata.u_error = UZI_ENFILE;
+	return(-1);
+}
+
+int uf_alloc(void)
+{
+	int j;
+
+	for (j = 0; j < UFTSIZE; ++j) {
+		if (udata.u_files[j] & 0x80) { /* Portable, unlike  == -1 */
+			return (j);
+		}
+
+	}
+	udata.u_error = UZI_ENFILE;
+	return(-1);
 }
 
 int uzifs_open(char *path, short flag)
