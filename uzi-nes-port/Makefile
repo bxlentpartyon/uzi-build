@@ -7,7 +7,8 @@ PLATFORM := uzi
 TARGET := uzi.nes
 LINKER_SCRIPT := scripts/linker/uzi.cfg
 
-HEADER_DEPS := $(wildcard include/*.h)
+GENERATED_HEADERS := include/generated/errno.h
+HEADER_DEPS := $(wildcard include/*.h) $(GENERATED_HEADERS)
 
 KERNEL_ASM_OBJS := asm/head.o asm/interrupts_asm.o asm/clock.o asm/trampoline.o asm/reset.o
 KERNEL_OBJS := interrupts.o machdep.o process.o kdata.o scall1.o scall2.o time.o
@@ -64,4 +65,7 @@ $(TARGET): $(ALL_DEPS) $(LINKER_SCRIPT) $(FONT)
 
 clean:
 	rm -f $(ALL_DEPS) $(ALL_EXTRA) uzi.nes link.map
+
+include/generated/errno.h: include/generated/scripts/errno.py
+	python $<
 
