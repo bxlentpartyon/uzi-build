@@ -17,94 +17,6 @@ UZI (Unix Z80 Implementation) Kernel:  filesys.c
 
 char *bread();
 
-
-/* N_open is given a string containing a path name,
-  and returns a inode table pointer.  If it returns NULL,
-  the file did not exist.  If the parent existed,
-  and parent is not null, parent will be filled in with
-  the parents inoptr. Otherwise, parent will be set to NULL. */
-
-inoptr n_open(char *name, inoptr *parent)
-{
-
-    register inoptr wd;  /* the directory we are currently searching. */
-    register inoptr ninode;
-    register inoptr temp;
-    inoptr srch_dir();
-    inoptr srch_mt();
-
-    if (*name == '/')
-	wd = root;
-    else
-	wd = udata.u_cwd;
-
-    i_ref(ninode = wd);
-    i_ref(ninode);
-
-    for(;;)
-    {
-	if (ninode)
-	    magic(ninode);
-
-	/* See if we are at a mount point */
-	if (ninode)
-	    ninode = srch_mt(ninode);
-
-	while (*name == '/')    /* Skip (possibly repeated) slashes */
-	    ++name;
-	ifnot (*name)           /* No more components of path? */
-	    break;
-	ifnot (ninode)
-	{
-	    udata.u_error = ENOENT;
-	    goto nodir;
-	}
-	i_deref(wd);
-	wd = ninode;
-	if (getmode(wd) != F_DIR)
-	{
-	    udata.u_error = ENOTDIR;
-	    goto nodir;
-	}
-	ifnot (getperm(wd) & OTH_EX)
-	{
-	    udata.u_error = EPERM;
-	    goto nodir;
-	}
-
-	/* See if we are going up through a mount point */
-	if ( wd->c_num == ROOTINODE && wd->c_dev != ROOTDEV && name[1] == '.')
-	{
-	   temp = fs_tab[wd->c_dev].s_mntpt;
-	   ++temp->c_refs;
-	   i_deref(wd);
-	   wd = temp;
-	}
-
-	ninode = srch_dir(wd,name);
-
-	while (*name != '/' && *name )
-	    ++name;
-    }
-
-    if (parent)
-	*parent = wd;
-    else
-	i_deref(wd);
-    ifnot (parent || ninode)
-	udata.u_error = ENOENT;
-    return (ninode);
-
-nodir:
-    if (parent)
-	*parent = NULLINODE;
-    i_deref(wd);
-    return(NULLINODE);
-
-}
-
-
-
 /* Srch_dir is given a inode pointer of an open directory
 and a string containing a filename, and searches the directory
 for the file.  If it exists, it opens it and returns the inode pointer,
@@ -930,32 +842,6 @@ inoptr getinode(int uindex)
     return(inoindex);
 }
 
-/* Super returns true if we are the superuser */
-int super(void)
-{
-    return(udata.u_euid == 0);
-}
-
-/* Getperm looks at the given inode and the effective user/group ids, and
-returns the effective permissions in the low-order 3 bits. */
-
-int getperm(inoptr ino)
-{
-    int mode;
-
-    if (super())
-	return(07);
-
-    mode = ino->c_node.i_mode_lo;
-    if (ino->c_node.i_uid == udata.u_euid)
-	mode >>= 6;
-    else if (ino->c_node.i_gid == udata.u_egid)
-	mode >>= 3;
-
-    return(mode & 07);
-}
-
-
 /* This sets the times of the given inode, according to the flags */
 
 void setftime(register inoptr ino, register int flag)
@@ -969,17 +855,3 @@ void setftime(register inoptr ino, register int flag)
     if (flag & C_TIME)
 	rdtime(&(ino->c_node.i_ctime));
 }
-
-
-int getmode(inoptr ino)
-{
-    return ino->c_node.i_mode_hi & F_MASK;
-}
-
-
-void magic(inoptr ino)
-{
-    if (ino->c_magic != CMAGIC)
-	panic("Corrupt inode");
-}
-

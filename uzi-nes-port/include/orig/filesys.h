@@ -9,8 +9,6 @@ int uf_alloc(void);
 int oft_alloc(void);
 void oft_deref(register int of);
 
-int getperm(inoptr ino);
-int getmode(inoptr ino);
 int isdevice(inoptr ino);
 void d_close(int dev);
 inoptr i_open(int dev, unsigned ino);
@@ -24,7 +22,6 @@ blkno_t bmap(inoptr ip, blkno_t bn, int rwflg);
 void setftime(register inoptr ino, register int flag);
 
 /* static to filesys.c */
-void magic(inoptr ino);
 int namecomp(register char *n1, register char *n2);
 void validblk(int dev, blkno_t num);
 void freeblk(int dev, blkno_t blk, int level);
