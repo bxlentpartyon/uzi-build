@@ -15,6 +15,7 @@ int fmount(int dev, inoptr ino);
 /* static to filesys.c */
 void magic(inoptr ino);
 int namecomp(register char *n1, register char *n2);
+void validblk(int dev, blkno_t num);
 
 #define BLOCK_SIZE	512
 

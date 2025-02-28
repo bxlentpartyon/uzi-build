@@ -1,5 +1,4 @@
 int uninsq(register struct s_queue *q, char *cp);
-void bawrite(bufptr bp);
 int cdwrite(int dev);
 int bfree(register bufptr bp, int dirty);
 void bufsync(void);

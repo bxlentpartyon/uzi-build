@@ -22,7 +22,6 @@ blkno_t bmap(inoptr ip, blkno_t bn, int rwflg);
 void setftime(register inoptr ino, register int flag);
 
 /* static to filesys.c */
-void validblk(int dev, blkno_t num);
 void freeblk(int dev, blkno_t blk, int level);
 
 #endif /* __FILESYS_H__ */

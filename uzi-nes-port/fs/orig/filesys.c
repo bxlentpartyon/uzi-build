@@ -243,33 +243,6 @@ nogood:
     return (NULLINODE);
 }
 
-
-
-/* Check the given device number, and return its address in the mount table.
-Also time-stamp the superblock of dev, and mark it modified.
-Used when freeing and allocating blocks and inodes. */
-
-fsptr getdev(int devno)
-{
-    register fsptr dev;
-
-    dev = fs_tab + devno;
-    if (devno < 0 || devno >= NDEVS || !dev->s_mounted)
-	panic("getdev: bad dev");
-    rdtime(&(dev->s_time));
-    dev->s_fmod = 1;
-    return (dev);
-}
-
-
-/* Returns true if the magic number of a superblock is corrupt */
-
-baddev(fsptr dev)
-{
-    return (dev->s_mounted != SMOUNTED);
-}
-
-
 /* I_alloc finds an unused inode number, and returns it,
 or 0 if there are no more inodes available. */
 
@@ -355,67 +328,6 @@ i_free(int devno, unsigned ino)
     ++dev->s_tinode;
     if (dev->s_ninode < 50)
 	dev->s_inode[dev->s_ninode++] = ino;
-}
-
-
-/* Blk_alloc is given a device number, and allocates an unused block
-from it. A returned block number of zero means no more blocks. */
-
-blkno_t blk_alloc(int devno)
-{
-
-    register fsptr dev;
-    register blkno_t newno;
-    blkno_t *buf;
-    register int j;
-
-    if (baddev(dev = getdev(devno)))
-	goto corrupt2;
-
-    if (dev->s_nfree <= 0 || dev->s_nfree > 50)
-	goto corrupt;
-
-    newno = dev->s_free[--dev->s_nfree];
-    ifnot (newno)
-    {
-	if (dev->s_tfree != 0)
-	    goto corrupt;
-	udata.u_error = ENOSPC;
-	++dev->s_nfree;
-	return(0);
-    }
-
-    /* See if we must refill the s_free array */
-
-    ifnot (dev->s_nfree)
-    {
-	buf = (blkno_t *)bread(devno,newno, 0);
-	dev->s_nfree = buf[0];
-	for (j=0; j < 50; j++)
-	{
-	    dev->s_free[j] = buf[j+1];
-	}
-	brelse((char *)buf);
-    }
-
-    validblk(devno, newno);
-
-    ifnot (dev->s_tfree)
-	goto corrupt;
-    --dev->s_tfree;
-
-    /* Zero out the new block */
-    buf = bread(devno, newno, 2);
-    bzero(buf, 512);
-    bawrite(buf);
-    return(newno);
-
-corrupt:
-    warning("blk_alloc: corrupt");
-    dev->s_mounted = 1;
-corrupt2:
-    udata.u_error = ENOSPC;
-    return(0);
 }
 
 
@@ -597,7 +509,6 @@ void f_trunc(register inoptr ino)
     ino->c_node.i_size.o_offset = 0;
 }
 
-
 /* Companion function to f_trunc(). */
 void freeblk(int dev, blkno_t blk, int level)
 {
@@ -617,123 +528,6 @@ void freeblk(int dev, blkno_t blk, int level)
 
     blk_free(dev,blk);
 }
-
-
-
-/* Changes: blk_alloc zeroes block it allocates */
-
-/*
- * Bmap defines the structure of file system storage
- * by returning the physical block number on a device given the
- * inode and the logical block number in a file.
- * The block is zeroed if created.
- */
-blkno_t bmap(inoptr ip, blkno_t bn, int rwflg)
-{
-	register int i;
-	register bufptr bp;
-	register int j;
-	register blkno_t nb;
-	int sh;
-	int dev;
-
-	blkno_t blk_alloc();
-
-	if (getmode(ip) == F_BDEV)
-	    return (bn);
-
-	dev = ip->c_dev;
-
-	/*
-	 * blocks 0..17 are direct blocks
-	 */
-	if(bn < 18) {
-	        nb = ip->c_node.i_addr[bn];
-	        if(nb == 0) {
-	                if(rwflg || (nb = blk_alloc(dev))==0)
-	                        return(NULLBLK);
-	                ip->c_node.i_addr[bn] = nb;
-	                ip->c_dirty = 1;
-	        }
-	        return(nb);
-	}
-
-	/*
-	 * addresses 18 and 19
-	 * have single and double indirect blocks.
-	 * the first step is to determine
-	 * how many levels of indirection.
-	 */
-	bn -= 18;
-	sh = 0;
-	j = 2;
-	if (bn & 0xff00)   /* bn > 255  so double indirect */
-	{
-	    sh = 8;
-	    bn -= 256;
-	    j = 1;
-	}
-
-	/*
-	 * fetch the address from the inode
-	 * Create the first indirect block if needed.
-	 */
-	ifnot (nb = ip->c_node.i_addr[20-j])
-	{
-	        if(rwflg || !(nb = blk_alloc(dev)))
-	                return(NULLBLK);
-	        ip->c_node.i_addr[20-j] = nb;
-	        ip->c_dirty = 1;
-	}
-
-	/*
-	 * fetch through the indirect blocks
-	 */
-	for(; j<=2; j++) {
-	        bp = (bufptr)bread(dev, nb, 0);
-	        /******
-	        if(bp->bf_error) {
-	                brelse(bp);
-	                return((blkno_t)0);
-	        }
-	        ******/
-	        i = (bn>>sh) & 0xff;
-	        if (nb = ((blkno_t *)bp)[i])
-	            brelse(bp);
-	        else
-	        {
-	                if(rwflg || !(nb = blk_alloc(dev))) {
-	                        brelse(bp);
-	                        return(NULLBLK);
-	                }
-	                ((blkno_t *)bp)[i] = nb;
-	                bawrite(bp);
-	        }
-	        sh -= 8;
-	}
-
-	return(nb);
-}
-
-
-
-/* Validblk panics if the given block number is not a valid data block
-for the given device. */
-
-void validblk(int dev, blkno_t num)
-{
-    register fsptr devptr;
-
-    devptr = fs_tab + dev;
-
-    if (devptr->s_mounted == 0)
-	panic("validblk: not mounted");
-
-    if (num < devptr->s_isize || num >= devptr->s_fsize)
-	panic("validblk: invalid blk");
-}
-
-
 
 /* This returns the inode pointer associated with a user's
 file descriptor, checking for valid data structures */

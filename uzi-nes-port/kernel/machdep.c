@@ -126,6 +126,11 @@ void kprintf(char *fmt, ...)
 	puts(printbuf);
 }
 
+void warning(char *s)
+{
+    kprintf("WARNING: %s\n",s);
+}
+
 void start_kernel(void)
 {
 	di();

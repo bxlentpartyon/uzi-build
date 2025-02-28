@@ -207,7 +207,6 @@ shift8()
 */
 }
 
-
 /* This prints an error message and dies. */
 
 void panic(char *s)
@@ -217,12 +216,6 @@ void panic(char *s)
     kprintf("PANIC: %s\n",s);
     idump();
     abort();
-}
-
-
-void warning(char *s)
-{
-    kprintf("WARNING: %s\n",s);
 }
 
 void idump(void)
