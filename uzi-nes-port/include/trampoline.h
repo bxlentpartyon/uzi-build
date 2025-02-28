@@ -10,6 +10,7 @@ extern void trampoline(void);
 #define SCALL1_PAGE	4
 #define SCALL2_PAGE	5
 #define PROCESS_PAGE	6
+#define FS_PAGE		7
 #define CORE_PAGE	15
 #define NUM_CODE_PAGES	16
 

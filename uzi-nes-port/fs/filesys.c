@@ -6,6 +6,8 @@
 
 #include <lib/string.h>
 
+#pragma code-name (push, "FS_CODE")
+
 /* I_ref increases the reference count of the given inode table entry. */
 
 void i_ref(inoptr ino)
@@ -46,3 +48,5 @@ int fmount(register int dev, register inoptr ino)
 
 	return (0);
 }
+
+#pragma code-name (pop)
