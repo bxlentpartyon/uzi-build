@@ -92,8 +92,79 @@ nodir:
 
 }
 
-/* I_ref increases the reference count of the given inode table entry. */
+/* Srch_dir is given a inode pointer of an open directory
+and a string containing a filename, and searches the directory
+for the file.  If it exists, it opens it and returns the inode pointer,
+otherwise NULL. This depends on the fact that ba_read will return unallocated
+blocks as zero-filled, and a partially allocated block will be padded with
+zeroes.  */
+inoptr srch_dir(inoptr wd, char *compname)
+{
+    register int curentry;
+    register blkno_t curblock;
+    register struct direct *buf;
+    register int nblocks;
+    unsigned inum;
+    inoptr i_open();
+    blkno_t bmap();
 
+    nblocks = wd->c_node.i_size.o_blkno;
+    if (wd->c_node.i_size.o_offset)
+	++nblocks;
+
+    for (curblock=0; curblock < nblocks; ++curblock)
+    {
+	buf = (struct direct *)bread( wd->c_dev, bmap(wd, curblock, 1), 0);
+	for (curentry = 0; curentry < 32; ++curentry)
+	{
+	    if (namecomp(compname,buf[curentry].d_name))
+	    {
+	        inum = buf[curentry&0x1f].d_ino;
+	        brelse(buf);
+	        return(i_open(wd->c_dev, inum));
+	    }
+	}
+	brelse(buf);
+    }
+    return(NULLINODE);
+}
+
+/* Srch_mt sees if the given inode is a mount point. If
+so it dereferences it, and references and returns a pointer
+to the root of the mounted filesystem. */
+inoptr srch_mt(inoptr ino)
+{
+    register int j;
+    inoptr i_open();
+
+    for (j=0; j < NDEVS; ++j)
+	if (fs_tab[j].s_mounted == SMOUNTED && fs_tab[j].s_mntpt == ino)
+	{
+	    i_deref(ino);
+	    return(i_open(j,ROOTINODE));
+	}
+
+    return(ino);
+}
+
+/* Namecomp compares two strings to see if they are the same file name.
+It stops at 14 chars or a null or a slash. It returns 0 for difference. */
+int namecomp(register char *n1, register char *n2)
+{
+    register int n;
+
+    n = 14;
+    while (*n1 && *n1 != '/')
+    {
+	if (*n1++ != *n2++)
+	    return(0);
+	ifnot (--n)
+	    return(-1);
+    }
+    return(*n2 == '\0' || *n2 == '/');
+}
+
+/* I_ref increases the reference count of the given inode table entry. */
 void i_ref(inoptr ino)
 {
     if (++(ino->c_refs) == 2*ITABSIZE)  /* Arbitrary limit. */
