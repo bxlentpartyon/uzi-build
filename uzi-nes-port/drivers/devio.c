@@ -105,6 +105,17 @@ int bfree(register bufptr bp, int dirty)
 	return (0);
 }
 
+void bufsync(void)
+{
+    register bufptr bp;
+
+    for (bp=bufpool; bp < bufpool+NBUFS; ++bp)
+    {
+        if (bp->bf_dev != -1 && bp->bf_dirty)
+            bdwrite(bp);
+    }
+}
+
 bufptr bfind(int dev, blkno_t blk)
 {
 	register bufptr bp;

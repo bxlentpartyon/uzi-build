@@ -9,6 +9,8 @@ int getperm(inoptr ino);
 int getmode(inoptr ino);
 void i_ref(inoptr ino);
 void i_deref(inoptr ino);
+void f_trunc(register inoptr ino);
+void wr_inode(register inoptr ino);
 int fmount(int dev, inoptr ino);
 #pragma wrapped-call (pop)
 
@@ -16,6 +18,8 @@ int fmount(int dev, inoptr ino);
 void magic(inoptr ino);
 int namecomp(register char *n1, register char *n2);
 void validblk(int dev, blkno_t num);
+void freeblk(int dev, blkno_t blk, int level);
+
 
 #define BLOCK_SIZE	512
 

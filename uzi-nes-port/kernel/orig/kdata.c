@@ -6,10 +6,6 @@
 
 int16 inint;	/* flag is set whenever interrupts are being serviced */
 
-/* Filesystem stuff */
-
-struct cinode i_tab[1];    /* In-core inode table */
-
 /* Driver stuff */
 
 unsigned swapcnt;

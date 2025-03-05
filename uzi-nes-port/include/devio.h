@@ -11,8 +11,10 @@ char *bread(int dev, blkno_t blk, int rewrite);
 void brelse(bufptr bp);
 int cdread(int dev);
 void bawrite(bufptr bp);
-void bufinit(void);
+int bfree(register bufptr bp, int dirty);
+void bufsync(void);
 int validdev(int dev);
+void bufinit(void);
 
 int d_open(int dev);
 #pragma wrapped-call(pop)

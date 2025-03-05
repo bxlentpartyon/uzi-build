@@ -14,19 +14,6 @@ char *zerobuf(void)
     return(bp->bf_data);
 }
 
-
-void bufsync(void)
-{
-    register bufptr bp;
-
-    for (bp=bufpool; bp < bufpool+NBUFS; ++bp)
-    {
-        if (bp->bf_dev != -1 && bp->bf_dirty)
-            bdwrite(bp);
-    }
-}
-
-
 void bufdump(void)
 {
     register bufptr j;

@@ -150,59 +150,6 @@ nogood:
     return (NULLINODE);
 }
 
-/* I_free is given a device and inode number,
-and frees the inode.  It is assumed that there
-are no references to the inode in the inode table or
-in the filesystem. */
-
-i_free(int devno, unsigned ino)
-{
-    register fsptr dev;
-
-    if (baddev(dev = getdev(devno)))
-	return;
-
-    if (ino < 2 || ino >= (dev->s_isize-2)*8)
-	panic("i_free: bad ino");
-
-    ++dev->s_tinode;
-    if (dev->s_ninode < 50)
-	dev->s_inode[dev->s_ninode++] = ino;
-}
-
-
-/* Blk_free is given a device number and a block number,
-and frees the block. */
-
-blk_free(int devno, blkno_t blk)
-{
-    register fsptr dev;
-    register char *buf;
-
-    ifnot (blk)
-	return;
-
-    if (baddev(dev = getdev(devno)))
-	return;
-
-    validblk(devno, blk);
-
-    if (dev->s_nfree == 50)
-    {
-	buf = bread(devno, blk, 1);
-	bcopy((char *)&(dev->s_nfree), buf, 512);
-	bawrite(buf);
-	dev->s_nfree = 0;
-    }
-
-    ++dev->s_tfree;
-    dev->s_free[(dev->s_nfree)++] = blk;
-
-}
-
-
-
-
 /* Oft_alloc and oft_deref allocate and dereference (and possibly free)
 entries in the open file table. */
 
@@ -255,59 +202,6 @@ int uf_alloc(void)
     return(-1);
 }
 
-/* I_deref decreases the reference count of an inode, and frees it
-from the table if there are no more references to it.  If it also
-has no links, the inode itself and its blocks (if not a device) is freed. */
-
-void i_deref(register inoptr ino)
-{
-    magic(ino);
-
-    ifnot (ino->c_refs)
-	panic("inode freed.");
-
-    if ((ino->c_node.i_mode_hi & F_MASK) == F_PIPE)
-	wakeup((char *)ino);
-
-    /* If the inode has no links and no refs, it must have
-    its blocks freed. */
-
-    ifnot (--ino->c_refs || ino->c_node.i_nlink)
-	    f_trunc(ino);
-
-    /* If the inode was modified, we must write it to disk. */
-    if (!(ino->c_refs) && ino->c_dirty)
-    {
-	ifnot (ino->c_node.i_nlink)
-	{
-	    ino->c_node.i_mode_lo = 0;
-	    ino->c_node.i_mode_hi = 0;
-	    i_free(ino->c_dev, ino->c_num);
-	}
-	wr_inode(ino);
-    }
-}
-
-
-/* Wr_inode writes out the given inode in the inode table out to disk,
-and resets its dirty bit. */
-
-void wr_inode(register inoptr ino)
-{
-    struct dinode *buf;
-    register blkno_t blkno;
-
-    magic(ino);
-
-    blkno = (ino->c_num >> 3) + 2;
-    buf = (struct dinode *)bread(ino->c_dev, blkno,0);
-    bcopy((char *)(&ino->c_node),
-	(char *)((char **)&buf[ino->c_num & 0x07]), 64);
-    bfree(buf, 2);
-    ino->c_dirty = 0;
-}
-
-
 /* isdevice(ino) returns true if ino points to a device */
 int isdevice(inoptr ino)
 {
@@ -319,54 +213,6 @@ int isdevice(inoptr ino)
 devnum(inoptr ino)
 {
     return (*(ino->c_node.i_addr));
-}
-
-
-/* F_trunc frees all the blocks associated with the file,
-if it is a disk file. */
-
-void f_trunc(register inoptr ino)
-{
-    int dev;
-    int j;
-
-    dev = ino->c_dev;
-
-    /* First deallocate the double indirect blocks */
-    freeblk(dev, ino->c_node.i_addr[19], 2);
-
-    /* Also deallocate the indirect blocks */
-    freeblk(dev, ino->c_node.i_addr[18], 1);
-
-    /* Finally, free the direct blocks */
-    for (j=17; j >= 0; --j)
-	freeblk(dev, ino->c_node.i_addr[j], 0);
-
-    bzero((char *)ino->c_node.i_addr, sizeof(ino->c_node.i_addr));
-
-    ino->c_dirty = 1;
-    ino->c_node.i_size.o_blkno = 0;
-    ino->c_node.i_size.o_offset = 0;
-}
-
-/* Companion function to f_trunc(). */
-void freeblk(int dev, blkno_t blk, int level)
-{
-    blkno_t *buf;
-    int j;
-
-    ifnot (blk)
-	return;
-
-    if (level)
-    {
-	buf = (blkno_t *)bread(dev, blk, 0);
-	for (j=255; j >= 0; --j)
-	    freeblk(dev, buf[j], level-1);
-	brelse((char *)buf);
-    }
-
-    blk_free(dev,blk);
 }
 
 /* This returns the inode pointer associated with a user's

@@ -6,6 +6,7 @@
 
 #pragma wrapped-call(push, trampoline, SCALL1_PAGE)
 int doclose(int16 uindex);
+void _sync(void);
 #pragma wrapped-call(pop)
 
 #pragma wrapped-call(push, trampoline, SCALL2_PAGE)
