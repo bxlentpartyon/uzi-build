@@ -149,6 +149,96 @@ inoptr srch_mt(inoptr ino)
     return(ino);
 }
 
+/* I_open is given an inode number and a device number,
+and makes an entry in the inode table for them, or
+increases it reference count if it is already there.
+An inode # of zero means a newly allocated inode */
+inoptr i_open(int dev, unsigned ino)
+{
+
+    struct dinode *buf;
+    register inoptr nindex;
+    int i;
+    register inoptr j;
+    int new;
+    static nexti = i_tab;
+    unsigned i_alloc();
+
+    if (dev<0 || dev>=NDEVS)
+	panic("i_open: Bad dev");
+
+    new = 0;
+    ifnot (ino)  /* Want a new one */
+    {
+	new = 1;
+	ifnot (ino = i_alloc(dev))
+	{
+	    udata.u_error = ENOSPC;
+	    return (NULLINODE);
+	}
+    }
+
+    if (ino < ROOTINODE || ino >= (fs_tab[dev].s_isize-2)*8)
+    {
+	warning("i_open: bad inode number");
+	return (NULLINODE);
+    }
+
+
+    nindex = NULLINODE;
+    j = nexti;
+    for (i=0; i < ITABSIZE; ++i)
+    {
+	nexti =j;
+	if (++j >= i_tab+ITABSIZE)
+	    j = i_tab;
+
+	ifnot (j->c_refs)
+	   nindex = j;
+
+	if (j->c_dev == dev && j->c_num == ino)
+	{
+	    nindex = j;
+	    goto found;
+	}
+    }
+
+    /* Not already in table. */
+
+    ifnot (nindex)  /* No unrefed slots in inode table */
+    {
+	udata.u_error = ENFILE;
+	return(NULLINODE);
+    }
+
+    buf = (struct dinode *)bread(dev, (ino>>3)+2, 0);
+    bcopy((char *)&(buf[ino & 0x07]), (char *)&(nindex->c_node), 64);
+    brelse(buf);
+
+    nindex->c_dev = dev;
+    nindex->c_num = ino;
+    nindex->c_magic = CMAGIC;
+
+found:
+    if (new)
+    {
+	if (nindex->c_node.i_nlink || nindex->c_node.i_mode & F_MASK)
+	    goto badino;
+    }
+    else
+    {
+	ifnot (nindex->c_node.i_nlink && nindex->c_node.i_mode & F_MASK)
+	    goto badino;
+    }
+
+    ++nindex->c_refs;
+    return(nindex);
+
+badino:
+    warning("i_open: bad disk inode");
+    return (NULLINODE);
+}
+
 /* Namecomp compares two strings to see if they are the same file name.
 It stops at 14 chars or a null or a slash. It returns 0 for difference. */
 int namecomp(register char *n1, register char *n2)
