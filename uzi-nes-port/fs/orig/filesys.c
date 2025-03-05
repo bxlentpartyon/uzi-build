@@ -17,82 +17,6 @@ UZI (Unix Z80 Implementation) Kernel:  filesys.c
 
 char *bread();
 
-/* Ch_link modifies or makes a new entry in the directory for the name
-and inode pointer given. The directory is searched for oldname.
-When found, it is changed to newname, and it inode # is that of
-*nindex.  A oldname of "" matches a unused slot, and a nindex
-of NULLINODE means an inode # of 0.  A return status of 0 means there
-was no space left in the filesystem, or a non-empty oldname was not found,
-or the user did not have write permission. */
-
-int ch_link(register inoptr wd, char *oldname, char *newname, inoptr nindex)
-{
-    struct direct curentry;
-
-    ifnot (getperm(wd) & OTH_WR)
-    {
-	udata.u_error = EPERM;
-	return (0);
-    }
-
-    /* Search the directory for the desired slot. */
-
-    udata.u_offset.o_blkno = 0;
-    udata.u_offset.o_offset = 0;
-
-    for (;;)
-    {
-	udata.u_count = 16;
-	udata.u_base = (char *)&curentry;
-	readi(wd);
-
-	/* Read until EOF or name is found */
-	/* readi() advances udata.u_offset */
-	if (udata.u_count == 0 || namecomp(oldname, curentry.d_name))
-	    break;
-    }
-
-    if (udata.u_count == 0 && *oldname)
-	return (0);   /* Entry not found */
-
-    bcopy(newname, curentry.d_name, 14);
-    if (nindex)
-	curentry.d_ino = nindex->c_num;
-    else
-	curentry.d_ino = 0;
-
-    /* If an existing slot is being used, we must back up the file offset */
-    if (udata.u_count)
-    {
-	ifnot (udata.u_offset.o_offset)
-	{
-	    --udata.u_offset.o_blkno;
-	    udata.u_offset.o_offset = 512;
-	}
-	udata.u_offset.o_offset -= 16;
-    }
-
-    udata.u_count = 16;
-    udata.u_base = (char *)&curentry;
-    writei(wd);
-
-    if (udata.u_error)
-	return (0);
-
-    setftime(wd, A_TIME|M_TIME|C_TIME);  /* Sets c_dirty */
-
-    /* Update file length to next block */
-    if (wd->c_node.i_size.o_offset)
-    {
-	wd->c_node.i_size.o_offset = 0;
-	++wd->c_node.i_size.o_blkno;
-    }
-
-    return (1);
-}
-
-
-
 /* Filename is given a path name, and returns a pointer
 to the final component of it. */
 
@@ -239,18 +163,4 @@ inoptr getinode(int uindex)
     magic(inoindex);
 
     return(inoindex);
-}
-
-/* This sets the times of the given inode, according to the flags */
-
-void setftime(register inoptr ino, register int flag)
-{
-    ino->c_dirty = 1;
-
-    if (flag & A_TIME)
-	rdtime(&(ino->c_node.i_atime));
-    if (flag & M_TIME)
-	rdtime(&(ino->c_node.i_mtime));
-    if (flag & C_TIME)
-	rdtime(&(ino->c_node.i_ctime));
 }

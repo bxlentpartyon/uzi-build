@@ -105,6 +105,17 @@ int bfree(register bufptr bp, int dirty)
 	return (0);
 }
 
+char *zerobuf(void)
+{
+    bufptr bp;
+    bufptr freebuf();
+
+    bp = freebuf();
+    bp->bf_dev = -1;
+    bzero(bp->bf_data,512);
+    return(bp->bf_data);
+}
+
 void bufsync(void)
 {
     register bufptr bp;
@@ -200,6 +211,13 @@ int cdread(int dev)
 	ifnot (validdev(dev))
 		panic("cdread: invalid dev");
 	return ((*dev_tab[dev].dev_read)(dev_tab[dev].minor, 1));
+}
+
+int cdwrite(int dev)
+{
+    ifnot (validdev(dev))
+        panic("cdwrite: invalid dev");
+    return ((*dev_tab[dev].dev_write)(dev_tab[dev].minor, 1));
 }
 
 int d_open(int dev)

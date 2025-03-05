@@ -24,15 +24,6 @@ void bufdump(void)
             j->bf_dev,j->bf_blk,j->bf_dirty,j->bf_busy,j->bf_time);
 }
 
-
-int cdwrite(int dev)
-{
-    ifnot (validdev(dev))
-        panic("cdwrite: invalid dev");
-    return ((*dev_tab[dev].dev_write)(dev_tab[dev].minor, 1));
-}
-
-
 int swapread(int dev, blkno_t blkno, unsigned nbytes, char *buf)
 {
     swapbase = buf;

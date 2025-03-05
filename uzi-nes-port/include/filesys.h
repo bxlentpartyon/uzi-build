@@ -12,6 +12,8 @@ void i_deref(inoptr ino);
 void f_trunc(register inoptr ino);
 void wr_inode(register inoptr ino);
 int fmount(int dev, inoptr ino);
+
+void setftime(register inoptr ino, register int flag);
 #pragma wrapped-call (pop)
 
 /* static to filesys.c */
@@ -19,7 +21,6 @@ void magic(inoptr ino);
 int namecomp(register char *n1, register char *n2);
 void validblk(int dev, blkno_t num);
 void freeblk(int dev, blkno_t blk, int level);
-
 
 #define BLOCK_SIZE	512
 

@@ -11,6 +11,7 @@ char *bread(int dev, blkno_t blk, int rewrite);
 void brelse(bufptr bp);
 int cdread(int dev);
 void bawrite(bufptr bp);
+int cdwrite(int dev);
 int bfree(register bufptr bp, int dirty);
 void bufsync(void);
 int validdev(int dev);

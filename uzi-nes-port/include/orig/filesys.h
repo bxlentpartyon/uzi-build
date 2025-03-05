@@ -17,6 +17,4 @@ int ch_link(register inoptr wd, char *oldname, char *newname, inoptr nindex);
 int fmount(register int dev, register inoptr ino);
 blkno_t bmap(inoptr ip, blkno_t bn, int rwflg);
 
-void setftime(register inoptr ino, register int flag);
-
 #endif /* __FILESYS_H__ */
