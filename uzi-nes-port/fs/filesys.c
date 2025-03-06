@@ -160,7 +160,7 @@ inoptr i_open(int dev, unsigned ino)
 	int i;
 	register inoptr j;
 	int new;
-	static nexti = i_tab;
+	static inoptr nexti = i_tab;
 	unsigned i_alloc();
 
 	if (dev < 0 || dev >= NDEVS)
@@ -380,7 +380,7 @@ fsptr getdev(int devno)
 }
 
 /* Returns true if the magic number of a superblock is corrupt */
-baddev(fsptr dev)
+int baddev(fsptr dev)
 {
 	return (dev->s_mounted != SMOUNTED);
 }
@@ -650,7 +650,7 @@ int isdevice(inoptr ino)
 }
 
 /* This returns the device number of an inode representing a device */
-devnum(inoptr ino)
+int devnum(inoptr ino)
 {
 	return (*(ino->c_node.i_addr));
 }
