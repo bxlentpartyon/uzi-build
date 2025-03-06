@@ -16,6 +16,16 @@ UZI (Unix Z80 Implementation) Kernel:  filesys.c
 
 #pragma code-name (push, "FS_CODE")
 
+void magic(inoptr ino);
+int namecomp(register char *n1, register char *n2);
+void validblk(int dev, blkno_t num);
+void freeblk(int dev, blkno_t blk, int level);
+inoptr srch_dir(inoptr wd, char *compname);
+inoptr srch_mt(inoptr ino);
+blkno_t bmap(inoptr ip, blkno_t bn, int rwflg);
+unsigned i_alloc(int devno);
+blkno_t blk_alloc(int devno);
+
 /* N_open is given a string containing a path name,
   and returns a inode table pointer.  If it returns NULL,
   the file did not exist.  If the parent existed,
@@ -27,8 +37,6 @@ inoptr n_open(char *name, inoptr *parent)
 	register inoptr wd;	/* the directory we are currently searching. */
 	register inoptr ninode;
 	register inoptr temp;
-	inoptr srch_dir();
-	inoptr srch_mt();
 
 	if (*name == '/')
 		wd = root;
@@ -109,8 +117,6 @@ inoptr srch_dir(inoptr wd, char *compname)
 	register struct direct *buf;
 	register int nblocks;
 	unsigned inum;
-	inoptr i_open();
-	blkno_t bmap();
 
 	nblocks = wd->c_node.i_size.o_blkno;
 	if (wd->c_node.i_size.o_offset)
@@ -137,7 +143,6 @@ to the root of the mounted filesystem. */
 inoptr srch_mt(inoptr ino)
 {
 	register int j;
-	inoptr i_open();
 
 	for (j = 0; j < NDEVS; ++j)
 		if (fs_tab[j].s_mounted == SMOUNTED && fs_tab[j].s_mntpt == ino) {
@@ -161,7 +166,6 @@ inoptr i_open(int dev, unsigned ino)
 	register inoptr j;
 	int new;
 	static inoptr nexti = i_tab;
-	unsigned i_alloc();
 
 	if (dev < 0 || dev >= NDEVS)
 		panic("i_open: Bad dev");
@@ -716,8 +720,6 @@ blkno_t bmap(inoptr ip, blkno_t bn, int rwflg)
 	register blkno_t nb;
 	int sh;
 	int dev;
-
-	blkno_t blk_alloc();
 
 	if (getmode(ip) == F_BDEV)
 		return (bn);
