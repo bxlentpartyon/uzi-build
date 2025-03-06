@@ -3,17 +3,6 @@ int ok(), nogood();
 
 #include <string.h>
 
-char *zerobuf(void)
-{
-    bufptr bp;
-    bufptr freebuf();
-
-    bp = freebuf();
-    bp->bf_dev = -1;
-    bzero(bp->bf_data,512);
-    return(bp->bf_data);
-}
-
 void bufdump(void)
 {
     register bufptr j;
