@@ -11,8 +11,6 @@ void oft_deref(register int of);
 
 int isdevice(inoptr ino);
 void d_close(int dev);
-inoptr i_open(int dev, unsigned ino);
-oid i_ref(inoptr ino);
 int ch_link(register inoptr wd, char *oldname, char *newname, inoptr nindex);
 int fmount(register int dev, register inoptr ino);
 blkno_t bmap(inoptr ip, blkno_t bn, int rwflg);

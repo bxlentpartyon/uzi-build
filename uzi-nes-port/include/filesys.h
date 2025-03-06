@@ -7,6 +7,7 @@
 #pragma wrapped-call (push, trampoline, FS_PAGE)
 int getperm(inoptr ino);
 int getmode(inoptr ino);
+inoptr i_open(int dev, unsigned ino);
 void i_ref(inoptr ino);
 void i_deref(inoptr ino);
 void f_trunc(register inoptr ino);

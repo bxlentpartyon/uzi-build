@@ -164,6 +164,13 @@ void init2(void)
 		kprintf("root fs mounted!\n");
 	}
 
+	ifnot (root = i_open(ROOTDEV,ROOTINODE))
+		panic("no root");
+
+	i_ref(udata.u_cwd = root);
+
+	kprintf("root inode %x\n", root);
+
 	dump_proc(initproc);
 
 	while(1);

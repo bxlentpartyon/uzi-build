@@ -19,10 +19,6 @@ void init2(void)
 
     kprintf("boot: ");
 
-    ifnot (root = i_open(ROOTDEV,ROOTINODE))
-	panic("no root");
-
-    i_ref(udata.u_cwd = root);
     rdtime(&udata.u_time);
 
     udata.u_argn2 = (int16)("/init");
