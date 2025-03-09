@@ -7,20 +7,23 @@ endif
 
 all: mkfs fsck fsutil test
 
-linux_fs.o: linux_fs.c linux_fs.h
-	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -c -o $@ $<
+CFLAGS += -I$(UZIBUILD_ROOT)/uzi-nes-port/include -I$(UZIBUILD_ROOT)/uzi-nes-utils/fs/include
+HEADERS=include/linux_fs.h
 
-mkfs: mkfs.c linux_fs.o linux_fs.h
-	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< linux_fs.o
+linux_fs.o: linux_fs.c $(HEADERS)
+	gcc $(CFLAGS) -c -o $@ $<
 
-fsck: fsck.c linux_fs.o linux_fs.h
-	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< linux_fs.o
+mkfs: mkfs.c linux_fs.o $(HEADERS)
+	gcc $(CFLAGS) -o $@ $< linux_fs.o
 
-fsutil: fsutil.c linux_fs.o linux_fs.h
-	gcc -g -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $< linux_fs.o
+fsck: fsck.c linux_fs.o $(HEADERS)
+	gcc $(CFLAGS) -o $@ $< linux_fs.o
+
+fsutil: fsutil/fsutil.c linux_fs.o $(HEADERS)
+	gcc -g $(CFLAGS) -o $@ $< linux_fs.o
 
 test: test.c
-	gcc -I$(UZIBUILD_ROOT)/uzi-nes-port/include -o $@ $<
+	gcc $(CFLAGS) -o $@ $<
 
 clean:
-	rm mkfs fsck fsutil linux_fs.o
+	rm -f mkfs fsck fsutil/fsutil linux_fs.o
