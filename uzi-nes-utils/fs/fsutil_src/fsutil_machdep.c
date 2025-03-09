@@ -1,6 +1,7 @@
 #include <unix.h>
 
 #include "fsutil.h"
+#include "fsutil_machdep.h"
 
 void warning(char *msg)
 {

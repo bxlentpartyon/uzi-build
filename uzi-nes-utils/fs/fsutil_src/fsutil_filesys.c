@@ -4,6 +4,7 @@
 #include <unix.h>
 
 #include "fsutil.h"
+#include "fsutil_machdep.h"
 
 void fs_init(int bootdev)
 {
