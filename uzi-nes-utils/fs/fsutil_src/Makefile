@@ -38,4 +38,4 @@ linux_scall1.o: $(UZI_KERNEL_DIR)/kernel/scall1.c
 	$(CC) -c -g -o $@ $<
 
 clean:
-	rm -f fsutil_all.o fsutil.o ls.o linux_devio.o
+	rm -f *.o

@@ -31,7 +31,7 @@ test: test.c
 	gcc $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f mkfs fsck fsutil linux_fs.o fsutil_src/fsutil_all.o
+	rm -f mkfs fsck fsutil linux_fs.o
 	$(MAKE) -C fsutil_src clean
 
 .PHONY: fsutil_src/fsutil_all.o
