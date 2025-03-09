@@ -20,9 +20,10 @@ mkfs: mkfs.c linux_fs.o $(HEADERS)
 fsck: fsck.c linux_fs.o $(HEADERS)
 	gcc $(CFLAGS) -o $@ $< linux_fs.o
 
-fsutil: linux_fs.o $(HEADERS)
+FSUTIL_OBJS := fsutil_src/fsutil_all.o linux_fs.o
+fsutil: $(FSUTIL_OBJS) $(HEADERS)
 	$(MAKE) -C fsutil_src
-	gcc -g -o $@ fsutil_src/fsutil_all.o linux_fs.o
+	gcc -g -o $@ $(FSUTIL_OBJS)
 
 test: test.c
 	gcc $(CFLAGS) -o $@ $<
