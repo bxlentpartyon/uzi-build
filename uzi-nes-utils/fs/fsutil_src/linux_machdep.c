@@ -31,3 +31,8 @@ void psleep(void *event)
 {
 	panic("shouldn't be sleeping");
 }
+
+int valadr(char *base, uint16 size)
+{
+	return 1;
+}
