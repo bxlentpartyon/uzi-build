@@ -116,6 +116,9 @@ void shell(void)
 				token = strtok(NULL, SHELL_CMD_TOKEN);
 			}
 
+			if (!shell_argv[0])
+				continue;
+
 			if (strcmp(shell_argv[0], "ls"))
 				ls_main(shell_argc, shell_argv);
 		}
