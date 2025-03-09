@@ -3,9 +3,6 @@
 
 #include <unix.h>
 
-int super(void);
-
-int ch_link(register inoptr wd, char *oldname, char *newname, inoptr nindex);
 int fmount(register int dev, register inoptr ino);
 blkno_t bmap(inoptr ip, blkno_t bn, int rwflg);
 
