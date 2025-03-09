@@ -12,6 +12,11 @@ int fsutil_printf(const char *format, ...)
 	va_end(args);
 }
 
+void warning(char *msg)
+{
+	printf("WARNING: %s\n", msg);
+}
+
 void panic(char *msg)
 {
 	printf("%s\n", msg);
@@ -26,4 +31,14 @@ void ei(void)
 void di(void)
 {
 	return;
+}
+
+void wakeup(char *event)
+{
+	return;
+}
+
+void psleep(void *event)
+{
+	panic("shouldn't be sleeping");
 }
