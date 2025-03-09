@@ -651,18 +651,6 @@ _fstat()
 #undef fd
 #undef buf
 
-
-/* Utility for stat and fstat */
-void stcpy(inoptr ino, char *buf)
-{
-    /* violently system-dependent */
-    bcopy((char *)&(ino->c_dev), buf, 12);
-    bcopy((char *)&(ino->c_node.i_addr[0]), buf+12, 2);
-    bcopy((char *)&(ino->c_node.i_size), buf+14, 16);
-}
-
-
-
 /************************************
 dup(oldd)
 int16 oldd;

@@ -442,6 +442,8 @@ char *buf;
 #define buf (char *)udata.u_argn
 */
 
+void stcpy(inoptr ino, char *buf);
+
 _stat(char *path, char *buf)
 {
 
@@ -462,5 +464,14 @@ _stat(char *path, char *buf)
 #undef path
 #undef buf
 */
+
+/* Utility for stat and fstat */
+void stcpy(inoptr ino, char *buf)
+{
+    /* violently system-dependent */
+    bcopy((char *)&(ino->c_dev), buf, 12);
+    bcopy((char *)&(ino->c_node.i_addr[0]), buf+12, 2);
+    bcopy((char *)&(ino->c_node.i_size), buf+14, 16);
+}
 
 #pragma code-name (pop)
