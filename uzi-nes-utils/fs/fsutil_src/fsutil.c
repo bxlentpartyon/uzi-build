@@ -12,6 +12,9 @@
 #include "fsutil.h"
 #include "fsutil_filesys.h"
 #include "fsutil_time.h"
+#include "fsutil_wd.h"
+
+int img_fd;
 
 #define error(...)	fprintf(stderr, "error: " __VA_ARGS__);
 
@@ -161,9 +164,21 @@ void fsutil_rdtime(void *tloc)
 	return;
 }
 
+void fsutil_img_read(unsigned short blk)
+{
+	int ret = read(img_fd, tmp_buf, FSUTIL_BLOCK_SIZE);
+
+	if (ret == 0)
+		fsutil_panic("end of file during read");
+	else if (ret < 0)
+		fsutil_panic("failed image read");
+	else if (ret != FSUTIL_BLOCK_SIZE)
+		fsutil_panic("unknown read error");
+}
+
 int main(int argc, char **argv)
 {
-	int opt, fd;
+	int opt;
 	char *fs_image;
 
 	while ((opt = getopt(argc, argv, "h")) != -1) {
@@ -186,8 +201,8 @@ int main(int argc, char **argv)
 	fs_image = argv[optind];
 	printf("Mounting UNIX filesystem image: %s\n", fs_image);
 
-	fd = open(fs_image, O_RDWR);
-	if (fd < 0) {
+	img_fd = open(fs_image, O_RDWR);
+	if (img_fd < 0) {
 		error("Can't open file %s\n", fs_image);
 		exit(EXIT_FAILURE);
 	}
@@ -196,7 +211,7 @@ int main(int argc, char **argv)
 
 	shell();
 
-	close(fd);
+	close(img_fd);
 
 	return EXIT_SUCCESS;
 }

@@ -5,7 +5,7 @@
 
 struct devsw dev_tab[] = /* The device driver switch table */
 {
-	{ 0, fsutil_wd_open, nogood, nogood, nogood, nogood },
+	{ 0, fsutil_wd_open, nogood, fsutil_wd_read, nogood, nogood },
 };
 
 /* Process/userspace stuff */
