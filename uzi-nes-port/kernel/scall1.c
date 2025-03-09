@@ -9,9 +9,96 @@
 
 #pragma code-name (push, "SCALL1_CODE")
 
+/*
+#define name (char *)udata.u_argn1
+#define flag (int16)udata.u_argn
+*/
+
+_open(char *name, int16 flag)
+{
+    int16 uindex;
+    register int16 oftindex;
+    register inoptr ino;
+    register int16 perm;
+    inoptr n_open();
+
+    if (flag < 0 || flag > 2)
+    {
+	udata.u_error = EINVAL;
+	return (-1);
+    }
+    if ((uindex = uf_alloc()) == -1)
+	return (-1);
+
+    if ((oftindex = oft_alloc()) == -1)
+	goto nooft;
+
+    ifnot (ino = n_open(name,NULLINOPTR))
+	goto cantopen;
+
+    of_tab[oftindex].o_inode = ino;
+
+    perm = getperm(ino);
+    if (((flag == O_RDONLY || flag == O_RDWR) && !(perm & OTH_RD)) ||
+	((flag == O_WRONLY || flag == O_RDWR) && !(perm & OTH_WR)))
+    {
+	udata.u_error = EPERM;
+	goto cantopen;
+    }
+
+    if (getmode(ino) == F_DIR &&
+	(flag == O_WRONLY || flag == O_RDWR))
+    {
+	udata.u_error = EISDIR;
+	goto cantopen;
+    }
+
+    if (isdevice(ino) && d_open((int)ino->c_node.i_addr[0]) != 0)
+    {
+	udata.u_error = ENXIO;
+	goto cantopen;
+    }
+
+    udata.u_files[uindex] = oftindex;
+
+    of_tab[oftindex].o_ptr.o_offset = 0;
+    of_tab[oftindex].o_ptr.o_blkno = 0;
+    of_tab[oftindex].o_access = flag;
+
+    return (uindex);
+
+cantopen:
+    oft_deref(oftindex);  /* This will call i_deref() */
+nooft:
+    udata.u_files[uindex] = -1;
+    return (-1);
+}
+
+_close(int uindex)
+{
+    return doclose(uindex);
+}
+
+#undef uindex
+
 int doclose(int16 uindex)
 {
-	return 0;
+    register int16 oftindex;
+    inoptr ino;
+    inoptr getinode();
+
+    ifnot(ino = getinode(uindex))
+	return(-1);
+    oftindex = udata.u_files[uindex];
+
+    if (isdevice(ino)
+	/* && ino->c_refs == 1 && of_tab[oftindex].o_refs == 1 */ )
+	d_close((int)(ino->c_node.i_addr[0]));
+
+    udata.u_files[uindex] = -1;
+    oft_deref(oftindex);
+
+    return(0);
 }
 
 void readi(register inoptr ino)
