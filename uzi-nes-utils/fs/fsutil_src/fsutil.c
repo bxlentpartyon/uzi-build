@@ -166,13 +166,23 @@ void fsutil_rdtime(void *tloc)
 
 void fsutil_img_read(unsigned short blk)
 {
-	int ret = read(img_fd, tmp_buf, FSUTIL_BLOCK_SIZE);
+	ssize_t read_ret;
+	off_t seek_off, seek_ret;
 
-	if (ret == 0)
+	seek_off = blk * FSUTIL_BLOCK_SIZE;
+	seek_ret = lseek(img_fd, seek_off, SEEK_SET);
+	if (seek_ret != seek_off)
+		fsutil_panic("unknown seek error");
+	else if (seek_ret < 0)
+		fsutil_panic("failed image seek");
+
+	read_ret = read(img_fd, tmp_buf, FSUTIL_BLOCK_SIZE);
+
+	if (read_ret == 0)
 		fsutil_panic("end of file during read");
-	else if (ret < 0)
+	else if (read_ret < 0)
 		fsutil_panic("failed image read");
-	else if (ret != FSUTIL_BLOCK_SIZE)
+	else if (read_ret != FSUTIL_BLOCK_SIZE)
 		fsutil_panic("unknown read error");
 }
 
