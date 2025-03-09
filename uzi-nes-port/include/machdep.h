@@ -7,6 +7,7 @@ void kprintf(char *fmt, ...);
 void sprintf(char *str, char *fmt, ...);
 void ei(void);
 void di(void);
+int valadr(char *base, uint16 size);
 void warning(char *s);
 void start_clock(void);
 void stop_clock(void);

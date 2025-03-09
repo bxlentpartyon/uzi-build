@@ -1,7 +1,6 @@
 void di(void);
 void ei(void);
 void idump(void);
-int valadr(char *base, uint16 size);
 void tempstack(void);
 void doexec(void *new_stack);
 void panic(char *s);

@@ -141,3 +141,9 @@ void start_kernel(void)
 
 	init2();	/* in process.c */
 }
+
+/* FIXME this needs real math */
+int valadr(char *base, uint16 size)
+{
+	return 1;
+}
