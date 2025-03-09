@@ -47,10 +47,11 @@ pointer to the data.  This is very important.
 
 unsigned bufclock = 0;  /* Time-stamp counter for LRU */
 
+bufptr bfind(int dev, blkno_t blk);
+
 char *bread(int dev, blkno_t blk, int rewrite)
 {
 	register bufptr bp;
-	bufptr bfind();
 	bufptr freebuf();
 
 	if (bp = bfind(dev, blk)) {

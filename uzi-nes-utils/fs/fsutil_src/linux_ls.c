@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <unix.h>
 
 #include "fsutil.h"
 
@@ -11,7 +11,7 @@ int ls(char *path)
 
 	d = _open(path, 0);
 	if (d < 0) {
-		printf("ls: can't open %s\n", path);
+		fsutil_printf("ls: can't open %s\n", path);
 		return;
 	}
 

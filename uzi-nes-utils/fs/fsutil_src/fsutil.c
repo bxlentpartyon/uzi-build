@@ -6,7 +6,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <extern.h>
 #include <unix.h>
+#include <devio.h>
 
 #include "fsutil.h"
 #include "linux_fs.h"
