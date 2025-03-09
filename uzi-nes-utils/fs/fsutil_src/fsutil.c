@@ -143,10 +143,6 @@ void fs_init(int bootdev)
 	for (j = udata.u_files; j < (udata.u_files + UFTSIZE); ++j)
 		*j = -1;
 
-	/* Open the console tty device */
-	if (d_open(TTYDEV) != 0)
-		panic("no tty");
-
 	ROOTDEV = bootdev;
 
 	/* Mount the root device */
