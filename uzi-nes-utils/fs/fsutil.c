@@ -69,48 +69,6 @@ char *scan_line(enum scan_ret_state *state)
 	return shell_buf;
 }
 
-void ls(char *path)
-{
-    struct direct buf;
-    struct stat statbuf;
-    char dname[128];
-    int d;
-
-    d = open(path,0);
-    if (d < 0)
-    {
-	perror(path);
-	return;
-    }
-
-    fstat(d,&statbuf);
-    if ((statbuf.st_mode & F_MASK) != F_DIR)
-    {
-	describe(path);
-    }
-    else
-    {
-
-        while (read(d,(char *)&buf,16) == 16)
-        {
-	    if (buf.d_name[0] == '\0')
-	        continue;
-
-	    if (path[0] != '.' || path[1] )
-	    {
-	        strcpy(dname,path);
-	        strcat(dname,"/");
-	    }
-	    else
-	        dname[0] = '\0';
-	    strcat(dname,buf.d_name);
-
-	    describe(dname);
-        }
-        close(d);
-    }
-}
-
 int ls_main(int argc, char **argv)
 {
 	int i;
@@ -119,7 +77,7 @@ int ls_main(int argc, char **argv)
 		ls(".");
 	} else {
 		for (i = 0; i < argc; i++)
-			ls(argv[i])
+			ls(argv[i]);
 	}
 
 	return 0;
