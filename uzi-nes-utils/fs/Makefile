@@ -32,5 +32,6 @@ test: test.c
 
 clean:
 	rm -f mkfs fsck fsutil linux_fs.o fsutil_src/fsutil_all.o
+	$(MAKE) -C fsutil_src clean
 
 .PHONY: fsutil_src/fsutil_all.o
