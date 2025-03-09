@@ -30,31 +30,6 @@ int swapwrite(int dev, blkno_t blkno, unsigned nbytes, char *buf)
     return ((*dev_tab[dev].dev_write)(dev_tab[dev].minor, 2));
 }
 
-
-/**************************************************
-The device driver read and write routines now have
-only two arguments, minor and rawflag.  If rawflag is
-zero, a single block is desired, and the necessary data
-can be found in udata.u_buf.
-Otherwise, a "raw" or character read is desired, and
-udata.u_offset, udata.u_count, and udata.u_base
-should be consulted instead.
-Any device other than a disk will have only raw access.
-*****************************************************/
-
-
-
-
-
-void d_close(int dev)
-{
-    ifnot (validdev(dev))
-        panic("d_close: bad device");
-    (*dev_tab[dev].dev_close)(dev_tab[dev].minor);
-}
-
-
-
 int d_ioctl(int dev, int request, char *data)
 {
     ifnot (validdev(dev))

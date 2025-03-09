@@ -18,6 +18,7 @@ int validdev(int dev);
 void bufinit(void);
 
 int d_open(int dev);
+void d_close(int dev);
 #pragma wrapped-call(pop)
 
 int ok(void);
