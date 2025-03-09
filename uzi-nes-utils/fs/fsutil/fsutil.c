@@ -8,6 +8,7 @@
 
 #include <unix.h>
 
+#include "fsutil.h"
 #include "linux_fs.h"
 
 struct filesys *filsys;
@@ -67,20 +68,6 @@ char *scan_line(enum scan_ret_state *state)
 	} while (!newline);
 
 	return shell_buf;
-}
-
-int ls_main(int argc, char **argv)
-{
-	int i;
-
-	if (argc == 1) {
-		ls(".");
-	} else {
-		for (i = 0; i < argc; i++)
-			ls(argv[i]);
-	}
-
-	return 0;
 }
 
 #define SHELL_CMD_TOKEN " "
