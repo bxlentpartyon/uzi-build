@@ -4,7 +4,7 @@ export CFLAGS
 UZI_KERNEL_DIR := $(UZIBUILD_ROOT)/uzi-nes-port
 UZI_INTERNAL_CFLAGS := -nostdinc -isystem $(UZI_KERNEL_DIR)/include -DUZI
 
-fsutil_all.o: fsutil.o fsutil_filesys.o fsutil_kdata.o fsutil_ls.o fsutil_machdep.o linux_devio.o linux_filesys.o linux_scall1.o
+fsutil_all.o: fsutil.o fsutil_filesys.o fsutil_kdata.o fsutil_ls.o fsutil_machdep.o fsutil_process.o linux_devio.o linux_filesys.o linux_scall1.o
 	ar rv $@ $^
 
 fsutil_filesys.o: fsutil_filesys.c
@@ -17,6 +17,9 @@ fsutil_ls.o: fsutil_ls.c
 	$(CC) $(UZI_INTERNAL_CFLAGS) -c -g -o $@ $<
 
 fsutil_machdep.o: fsutil_machdep.c
+	$(CC) $(UZI_INTERNAL_CFLAGS) -c -g -o $@ $<
+
+fsutil_process.o: fsutil_process.c
 	$(CC) $(UZI_INTERNAL_CFLAGS) -c -g -o $@ $<
 
 linux_devio.o: $(UZI_KERNEL_DIR)/drivers/devio.c
