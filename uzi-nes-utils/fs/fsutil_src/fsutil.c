@@ -12,7 +12,7 @@
 #include "linux_fs.h"
 
 struct filesys *filsys;
-char sb_buf[DUMMY_BLOCKSIZE] =  { 0 };
+char sb_buf[DUMMY_BLOCKSIZE] = { 0 };
 
 #define error(...)	fprintf(stderr, "error: " __VA_ARGS__);
 
@@ -31,7 +31,7 @@ char shell_buf[SHELL_BUF_LEN];
 void clear_to_newline(void)
 {
 	char c;
-	while ((c = getchar()) != '\n');
+	while ((c = getchar()) != '\n') ;
 }
 
 enum scan_ret_state {
@@ -87,17 +87,18 @@ void shell(void)
 		input_str = scan_line(&state);
 
 		if (!input_str) {
-			switch(state) {
-				case BUFFER_TOO_LONG:
-					printf("Maximum input length exceeded\n");
-					continue;
-				case BUFFER_EOF:
-					printf("\n");
-					keep_going = false;
-					break;
-				default:
-					printf("Bad return state from scan_line: %u\n", state);
-					break;
+			switch (state) {
+			case BUFFER_TOO_LONG:
+				printf("Maximum input length exceeded\n");
+				continue;
+			case BUFFER_EOF:
+				printf("\n");
+				keep_going = false;
+				break;
+			default:
+				printf("Bad return state from scan_line: %u\n",
+				       state);
+				break;
 			}
 		} else {
 			argv_buf_size = 8;
@@ -105,11 +106,14 @@ void shell(void)
 			shell_argv = calloc(argv_buf_size, sizeof(char *));
 
 			token = strtok(input_str, SHELL_CMD_TOKEN);
-			while (token != NULL){
+			while (token != NULL) {
 				printf("token %s\n", token);
 				if (shell_argc == argv_buf_size) {
 					argv_buf_size *= 2;
-					shell_argv = reallocarray(shell_argv, argv_buf_size, sizeof(char *));
+					shell_argv =
+					    reallocarray(shell_argv,
+							 argv_buf_size,
+							 sizeof(char *));
 				}
 
 				shell_argv[shell_argc++] = token;
@@ -125,13 +129,41 @@ void shell(void)
 	}
 }
 
+void fs_init(int bootdev)
+{
+	register char *j;
+	inoptr i_open();
+
+	fs_init();
+	bufinit();
+
+	/* User's file table */
+	for (j = udata.u_files; j < (udata.u_files + UFTSIZE); ++j)
+		*j = -1;
+
+	/* Open the console tty device */
+	if (d_open(TTYDEV) != 0)
+		panic("no tty");
+
+	ROOTDEV = bootdev;
+
+	/* Mount the root device */
+	if (fmount(ROOTDEV, NULLINODE))
+		panic("no filesys");
+
+	ifnot(root = i_open(ROOTDEV, ROOTINODE))
+	    panic("no root");
+	i_ref(udata.u_cwd = root);
+	rdtime(&udata.u_time);
+}
+
 int main(int argc, char **argv)
 {
 	int opt, fd;
 	char *fs_image;
 
 	while ((opt = getopt(argc, argv, "h")) != -1) {
-		switch(opt) {
+		switch (opt) {
 		case 'h':
 			usage();
 			exit(0);
