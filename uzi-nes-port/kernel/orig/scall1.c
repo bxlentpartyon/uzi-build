@@ -624,38 +624,6 @@ _chown()
 #undef owner
 #undef group
 
-
-
-/**************************************
-stat(path,buf)
-char *path;
-char *buf;
-****************************************/
-
-#define path (char *)udata.u_argn1
-#define buf (char *)udata.u_argn
-
-_stat()
-{
-
-    register inoptr ino;
-    inoptr n_open();
-
-    ifnot (valadr(buf,sizeof(struct stat)) && (ino = n_open(path,NULLINOPTR)))
-    {
-	return (-1);
-    }
-
-    stcpy(ino,buf);
-    i_deref(ino);
-    return(0);
-}
-
-#undef path
-#undef buf
-
-
-
 /********************************************
 fstat(fd, buf)
 int16 fd;
