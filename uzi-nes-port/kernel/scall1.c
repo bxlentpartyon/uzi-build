@@ -22,7 +22,6 @@ void readi(register inoptr ino)
     register char *bp;
     int dev;
     int ispipe;
-    char *bread();
     char *zerobuf();
     blkno_t bmap();
 
@@ -108,7 +107,6 @@ void writei(register inoptr ino)
     int created;        /* Set by bmap if newly allocated block used */
     int dev;
     char *zerobuf();
-    char *bread();
     blkno_t bmap();
 
     dev = ino->c_dev;
@@ -242,7 +240,6 @@ void _sync(void)
     register j;
     register inoptr ino;
     register char *buf;
-    char *bread();
 
     /* Write out modified inodes */
 
