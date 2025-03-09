@@ -4,7 +4,6 @@
 int _execve(void);
 
 /* stuff below is static to scall1.c and should be pulled out of the header */
-void updoff(void);
 void stcpy(inoptr ino, char *buf);
 
 /* stuff below is static to scall2.c and should be pulled out of the header */

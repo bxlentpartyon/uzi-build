@@ -101,6 +101,72 @@ int doclose(int16 uindex)
     return(0);
 }
 
+/*****************************************************
+read(d, buf, nbytes)
+int16 d;
+char *buf;
+uint16 nbytes;
+**********************************************/
+
+/*
+#define d (int16)udata.u_argn2
+#define buf (char *)udata.u_argn1
+#define nbytes (uint16)udata.u_argn
+*/
+
+void updoff(void);
+
+_read()
+{
+    register inoptr ino;
+    inoptr rwsetup();
+
+    /* Set up u_base, u_offset, ino; check permissions, file num. */
+    if ((ino = rwsetup(1)) == NULLINODE)
+	return (-1);   /* bomb out if error */
+
+    readi(ino);
+    updoff();
+
+    return (udata.u_count);
+}
+
+/*
+#undef d
+#undef buf
+#undef nbytes
+*/
+
+inoptr
+rwsetup(rwflag)
+int rwflag;
+{
+    register inoptr ino;
+    register struct oft *oftp;
+    inoptr getinode();
+
+    udata.u_base = (char *)udata.u_argn1;  /* buf */
+    udata.u_count = (uint16)udata.u_argn;  /* nbytes */
+
+    if ((ino = getinode(udata.u_argn2)) == NULLINODE)
+	return (NULLINODE);
+
+    oftp = of_tab + udata.u_files[udata.u_argn2];
+    if (oftp->o_access == (rwflag ? O_WRONLY : O_RDONLY))
+    {
+	udata.u_error = EBADF;
+	return (NULLINODE);
+    }
+
+    setftime(ino, rwflag ? A_TIME : (A_TIME | M_TIME | C_TIME));
+
+    /* Initialize u_offset from file pointer */
+    udata.u_offset.o_blkno = oftp->o_ptr.o_blkno;
+    udata.u_offset.o_offset = oftp->o_ptr.o_offset;
+
+    return (ino);
+}
+
 void readi(register inoptr ino)
 {
     register uint16 amount;
@@ -317,6 +383,16 @@ void addoff(off_t *ofptr, int amount)
 	}
 	ofptr->o_blkno -= (-amount)/512;
     }
+}
+
+void updoff(void)
+{
+    register off_t *offp;
+
+    /* Update current file pointer */
+    offp = &of_tab[udata.u_files[udata.u_argn2]].o_ptr;
+    offp->o_blkno = udata.u_offset.o_blkno;
+    offp->o_offset = udata.u_offset.o_offset;
 }
 
 /****************************************
