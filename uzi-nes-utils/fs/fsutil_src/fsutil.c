@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include "fsutil.h"
+#include "fsutil_filesys.h"
 #include "fsutil_time.h"
 
 #define error(...)	fprintf(stderr, "error: " __VA_ARGS__);
@@ -190,6 +191,8 @@ int main(int argc, char **argv)
 		error("Can't open file %s\n", fs_image);
 		exit(EXIT_FAILURE);
 	}
+
+	fs_init(0);
 
 	shell();
 
