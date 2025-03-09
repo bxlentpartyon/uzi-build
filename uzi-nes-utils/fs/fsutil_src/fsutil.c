@@ -1,5 +1,7 @@
+#include <assert.h>
 #include <fcntl.h>
 #include <malloc.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -155,6 +157,20 @@ void fs_init(int bootdev)
 	    panic("no root");
 	i_ref(udata.u_cwd = root);
 	rdtime(&udata.u_time);
+}
+
+int fsutil_printf(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	printf(format, args);
+	va_end(args);
+}
+
+void fsutil_panic(char *msg)
+{
+	printf("%s\n", msg);
+	assert(0);
 }
 
 int main(int argc, char **argv)
