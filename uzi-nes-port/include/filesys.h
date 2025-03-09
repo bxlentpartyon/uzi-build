@@ -5,8 +5,13 @@
 #include <unix.h>
 
 #pragma wrapped-call (push, trampoline, FS_PAGE)
+int uf_alloc(void);
+int oft_alloc(void);
+void oft_deref(register int of);
+
 int getperm(inoptr ino);
 int getmode(inoptr ino);
+int isdevice(inoptr ino);
 inoptr i_open(int dev, unsigned ino);
 void i_ref(inoptr ino);
 void i_deref(inoptr ino);
