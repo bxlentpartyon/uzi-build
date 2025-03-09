@@ -147,6 +147,11 @@ void fsutil_panic(char *msg)
 	assert(0);
 }
 
+void fsutil_rdtime(void *tloc)
+{
+	return;
+}
+
 int main(int argc, char **argv)
 {
 	int opt, fd;
