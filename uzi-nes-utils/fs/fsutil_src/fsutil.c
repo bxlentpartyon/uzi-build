@@ -81,6 +81,7 @@ void shell(void)
 	int shell_argc, argv_buf_size;
 	char **shell_argv;
 	enum scan_ret_state state;
+	int i;
 
 	bool keep_going = true;
 
@@ -125,7 +126,10 @@ void shell(void)
 			if (!shell_argv[0])
 				continue;
 
-			if (strcmp(shell_argv[0], "ls"))
+			for (i = 0; i < shell_argc; i++)
+				printf("argv[%d]: %s\n", i, shell_argv[i]);
+
+			if (strcmp(shell_argv[0], "ls") == 0)
 				ls_main(shell_argc, shell_argv);
 		}
 	}
