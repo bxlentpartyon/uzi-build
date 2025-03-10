@@ -168,9 +168,8 @@ void fsutil_rdtime(void *tloc)
 	return;
 }
 
-void fsutil_img_read(unsigned short blk)
+void fsutil_img_seek(unsigned short blk)
 {
-	ssize_t read_ret;
 	off_t seek_off, seek_ret;
 
 	seek_off = blk * FSUTIL_BLOCK_SIZE;
@@ -179,6 +178,13 @@ void fsutil_img_read(unsigned short blk)
 		fsutil_panic("unknown seek error");
 	else if (seek_ret < 0)
 		fsutil_panic("failed image seek");
+}
+
+void fsutil_img_read(unsigned short blk)
+{
+	ssize_t read_ret;
+
+	fsutil_img_seek(blk);
 
 	read_ret = read(img_fd, tmp_buf, FSUTIL_BLOCK_SIZE);
 
@@ -188,6 +194,18 @@ void fsutil_img_read(unsigned short blk)
 		fsutil_panic("failed image read");
 	else if (read_ret != FSUTIL_BLOCK_SIZE)
 		fsutil_panic("unknown read error");
+}
+
+void fsutil_img_write(unsigned short blk)
+{
+	ssize_t write_ret;
+
+	fsutil_img_seek(blk);
+
+	write_ret = write(img_fd, tmp_buf, FSUTIL_BLOCK_SIZE);
+
+	if (write_ret < FSUTIL_BLOCK_SIZE)
+		fsutil_panic("write failed");
 }
 
 char *fsutil_strcpy(char *dst, const char *src)
