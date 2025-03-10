@@ -4,5 +4,5 @@
 
 void rdtime(time_t *tloc)
 {
-	fsutil_rdtime((void *) tloc);
+	fsutil_rdtime((void *)tloc);
 }

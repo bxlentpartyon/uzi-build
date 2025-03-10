@@ -7,8 +7,8 @@ static char *s;
 void dout(int n)
 {
 	n %= 100;
-	*s++ = n/10 + '0';
-	*s++ = n%10 + '0';
+	*s++ = n / 10 + '0';
+	*s++ = n % 10 + '0';
 }
 
 char *ctime(time_t *t)
@@ -18,20 +18,20 @@ char *ctime(time_t *t)
 	s = str;
 	*s = '\0';
 
-	dout((t->t_time&0xf800)>>11);
+	dout((t->t_time & 0xf800) >> 11);
 	*s++ = ':';
-	dout((t->t_time&0x07e0)>>5);
+	dout((t->t_time & 0x07e0) >> 5);
 	*s++ = ':';
-	dout(t->t_time&0x001f * 2);
+	dout(t->t_time & 0x001f * 2);
 	*s++ = ' ';
-	dout((t->t_date&0x01e0)>>5);
+	dout((t->t_date & 0x01e0) >> 5);
 	*s++ = '/';
-	dout(t->t_date&0x001f);
+	dout(t->t_date & 0x001f);
 	*s++ = '/';
-	dout((t->t_date&0xfe00)>>9);
+	dout((t->t_date & 0xfe00) >> 9);
 	*s = '\0';
 
-	return(str);
+	return (str);
 }
 
 int ls(char *path)
@@ -67,13 +67,14 @@ int ls(char *path)
 			fsutil_strcat(dname, "/");
 
 		fsutil_printf("%-6d %-15s",
-		       (statbuf.st_mode & F_CDEV) ?
-		       statbuf.st_rdev :
-		       512 * statbuf.st_size.o_blkno + statbuf.st_size.o_offset,
-		       dname);
+			      (statbuf.st_mode & F_CDEV) ?
+			      statbuf.st_rdev :
+			      512 * statbuf.st_size.o_blkno +
+			      statbuf.st_size.o_offset, dname);
 
-		fsutil_printf("  0%-6o %-2d %-5d %s\n", statbuf.st_mode, statbuf.st_nlink,
-		       statbuf.st_ino, ctime(&statbuf.st_mtime));
+		fsutil_printf("  0%-6o %-2d %-5d %s\n", statbuf.st_mode,
+			      statbuf.st_nlink, statbuf.st_ino,
+			      ctime(&statbuf.st_mtime));
 	}
 	_close(d);
 }

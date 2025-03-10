@@ -35,10 +35,10 @@ void fs_exit(void)
 {
 	register int16 j;
 
-	for (j=0; j < UFTSIZE; ++j) {
-		ifnot (udata.u_files[j] & 0x80)  /* Portable equivalent of == -1 */
-			doclose(j);
+	for (j = 0; j < UFTSIZE; ++j) {
+		ifnot(udata.u_files[j] & 0x80)	/* Portable equivalent of == -1 */
+		    doclose(j);
 	}
 
-	_sync();  /* Not necessary, but a good idea. */
+	_sync();		/* Not necessary, but a good idea. */
 }

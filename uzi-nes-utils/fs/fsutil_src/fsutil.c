@@ -161,7 +161,7 @@ void fsutil_panic(char *msg)
 
 void fsutil_rdtime(void *tloc)
 {
-	struct fsutil_time_t *local_tloc = (struct fsutil_time_t *) tloc;
+	struct fsutil_time_t *local_tloc = (struct fsutil_time_t *)tloc;
 	time_t epoch_time;
 	struct tm *time_info;
 
@@ -171,7 +171,7 @@ void fsutil_rdtime(void *tloc)
 	local_tloc->t_time = ((time_info->tm_sec >> 1) |
 			      (time_info->tm_min << 5) |
 			      (time_info->tm_hour << 11));
-	local_tloc->t_date = ((time_info->tm_mday)     |
+	local_tloc->t_date = ((time_info->tm_mday) |
 			      (time_info->tm_mon << 5) |
 			      (time_info->tm_year << 9));
 
