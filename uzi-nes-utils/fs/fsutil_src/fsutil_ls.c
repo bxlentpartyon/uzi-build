@@ -27,20 +27,20 @@ int ls(char *path)
 		strcat(dname, buf.d_name);
 
 		if (_stat(dname, &statbuf) != 0) {
-			printf("ls: can't stat %s\n", dname);
+			fsutil_printf("ls: can't stat %s\n", dname);
 			continue;
 		}
 
 		if ((statbuf.st_mode & F_MASK) == F_DIR)
 			strcat(dname, "/");
 
-		printf("%-6d %-15s",
+		fsutil_printf("%-6d %-15s",
 		       (statbuf.st_mode & F_CDEV) ?
 		       statbuf.st_rdev :
 		       512 * statbuf.st_size.o_blkno + statbuf.st_size.o_offset,
 		       dname);
 
-		printf("  0%-6o %-2d %-5d\n", statbuf.st_mode, statbuf.st_nlink,
+		fsutil_printf("  0%-6o %-2d %-5d\n", statbuf.st_mode, statbuf.st_nlink,
 		       statbuf.st_ino);
 	}
 	_close(d);
