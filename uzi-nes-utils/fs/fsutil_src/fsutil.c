@@ -263,6 +263,8 @@ int main(int argc, char **argv)
 
 	shell();
 
+	fs_exit();
+
 	close(img_fd);
 
 	return EXIT_SUCCESS;
