@@ -9,6 +9,7 @@
 
 #include "fsutil.h"
 #include "fsutil_filesys.h"
+#include "fsutil_lib.h"
 
 int img_fd;
 static bool shell_waiting = false;

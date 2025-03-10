@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "fsutil.h"
+#include "fsutil_lib.h"
 #include "fsutil_time.h"
 #include "fsutil_wd.h"
 

@@ -4,9 +4,4 @@
 int ls_main(int argc, char **argv);
 int mkdir_main(int argc, char **argv);
 
-int fsutil_printf(const char *format, ...);
-void fsutil_panic(char *msg);
-
-extern int img_fd;
-
 #endif /* __FSUTIL_H__ */
