@@ -20,11 +20,11 @@ int ls(char *path)
 			continue;
 
 		if (path[0] != '.' || path[1]) {
-			strcpy(dname, path);
-			strcat(dname, "/");
+			fsutil_strcpy(dname, path);
+			fsutil_strcat(dname, "/");
 		} else
 			dname[0] = '\0';
-		strcat(dname, buf.d_name);
+		fsutil_strcat(dname, buf.d_name);
 
 		if (_stat(dname, &statbuf) != 0) {
 			fsutil_printf("ls: can't stat %s\n", dname);
@@ -32,7 +32,7 @@ int ls(char *path)
 		}
 
 		if ((statbuf.st_mode & F_MASK) == F_DIR)
-			strcat(dname, "/");
+			fsutil_strcat(dname, "/");
 
 		fsutil_printf("%-6d %-15s",
 		       (statbuf.st_mode & F_CDEV) ?
