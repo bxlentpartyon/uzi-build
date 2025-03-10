@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <malloc.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +11,7 @@
 #include "fsutil_filesys.h"
 
 int img_fd;
+static bool shell_waiting = false;
 
 #define error(...)	fprintf(stderr, "error: " __VA_ARGS__);
 
@@ -37,6 +39,11 @@ enum scan_ret_state {
 	BUFFER_EOF,
 };
 
+void clear_shell_buf(void)
+{
+	bzero(shell_buf, SHELL_BUF_LEN);
+}
+
 char *scan_line(enum scan_ret_state *state)
 {
 	char c;
@@ -44,10 +51,12 @@ char *scan_line(enum scan_ret_state *state)
 	bool newline = false;
 
 	*state = BUFFER_OK;
-	bzero(shell_buf, SHELL_BUF_LEN);
+	clear_shell_buf();
 
 	do {
+		shell_waiting = true;
 		c = getchar();
+		shell_waiting = false;
 
 		if (c != '\n' && c != EOF) {
 			shell_buf[shell_buf_pos++] = c;
@@ -68,6 +77,7 @@ char *scan_line(enum scan_ret_state *state)
 }
 
 #define SHELL_CMD_TOKEN " "
+#define SHELL_PROMPT "shell> "
 
 void shell(void)
 {
@@ -81,7 +91,7 @@ void shell(void)
 	bool keep_going = true;
 
 	while (keep_going) {
-		printf("shell> ");
+		printf(SHELL_PROMPT);
 		input_str = scan_line(&state);
 
 		if (!input_str) {
@@ -132,10 +142,29 @@ void shell(void)
 	}
 }
 
+void sigint_handler(int sig)
+{
+	signal(sig, SIG_IGN);
+
+	/*
+	 * Ctrl-C while waiting for the shell causes it to reset to a new line.
+	 * Outside of that, we just ignore it.
+	 */
+	if (shell_waiting) {
+		clear_shell_buf();
+		printf("\n" SHELL_PROMPT);
+		fflush(stdout);
+	}
+
+	signal(sig, sigint_handler);
+}
+
 int main(int argc, char **argv)
 {
 	int opt;
 	char *fs_image;
+
+	signal(SIGINT, sigint_handler);
 
 	while ((opt = getopt(argc, argv, "h")) != -1) {
 		switch (opt) {
