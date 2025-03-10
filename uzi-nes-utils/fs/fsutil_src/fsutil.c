@@ -141,7 +141,7 @@ int fsutil_printf(const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	printf(format, args);
+	vprintf(format, args);
 	va_end(args);
 }
 
@@ -149,7 +149,7 @@ void kprintf(char *format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	printf(format, args);
+	vprintf(format, args);
 	va_end(args);
 }
 
