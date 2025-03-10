@@ -344,7 +344,6 @@ inoptr newfile(inoptr pino, char *name)
 
 	register inoptr nindex;
 	register int j;
-	inoptr i_open();
 
 	ifnot(nindex = i_open(pino->c_dev, 0))
 		goto nogood;

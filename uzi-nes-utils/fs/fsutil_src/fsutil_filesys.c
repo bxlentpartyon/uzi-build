@@ -9,7 +9,6 @@
 void fs_init(int bootdev)
 {
 	register char *j;
-	inoptr i_open();
 
 	udata.u_euid = 0;
 	udata.u_insys = 1;
