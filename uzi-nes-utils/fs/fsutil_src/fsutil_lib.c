@@ -100,3 +100,18 @@ char *fsutil_strcat(char *dst, const char *src)
 {
 	return strcat(dst, src);
 }
+
+fsutil_FILE *fsutil_fopen(const char *pathname, const char *mode)
+{
+	return fopen(pathname, mode);
+}
+
+int fsutil_fclose(fsutil_FILE *stream)
+{
+	return fclose(stream);
+}
+
+unsigned long fsutil_fread(void *ptr, size_t size, size_t nmemb, fsutil_FILE *stream)
+{
+	return fread(ptr, size, nmemb, stream);
+}

@@ -139,6 +139,8 @@ void shell(void)
 				ls_main(shell_argc, shell_argv);
 			else if (strcmp(shell_argv[0], "mkdir") == 0)
 				mkdir_main(shell_argc, shell_argv);
+			else if (strcmp(shell_argv[0], "get") == 0)
+				get_main(shell_argc, shell_argv);
 		}
 	}
 }
