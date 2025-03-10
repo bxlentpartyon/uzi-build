@@ -16,6 +16,7 @@ int getmode(inoptr ino);
 inoptr getinode(int uindex);
 int isdevice(inoptr ino);
 inoptr i_open(int dev, unsigned ino);
+inoptr n_open(char *name, inoptr *parent);
 void i_ref(inoptr ino);
 void i_deref(inoptr ino);
 void f_trunc(register inoptr ino);

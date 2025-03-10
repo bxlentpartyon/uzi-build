@@ -21,7 +21,6 @@ _open(char *name, int16 flag)
     register int16 oftindex;
     register inoptr ino;
     register int16 perm;
-    inoptr n_open();
 
     if (flag < 0 || flag > 2)
     {
@@ -118,7 +117,6 @@ int _link(char *name1, char *name2)
     register inoptr ino2;
     inoptr parent2;
     char *filename();
-    inoptr n_open();
 
     ifnot (ino = n_open(name1,NULLINOPTR))
 	return(-1);
@@ -475,7 +473,6 @@ int _mknod(char *name, int16 mode, int16 dev)
 {
     register inoptr ino;
     inoptr parent;
-    inoptr n_open();
     inoptr newfile();
 
     udata.u_error = 0;
@@ -569,7 +566,6 @@ _stat(char *path, char *buf)
 {
 
     register inoptr ino;
-    inoptr n_open();
 
     ifnot (valadr(buf,sizeof(struct stat)) && (ino = n_open(path,NULLINOPTR)))
     {
