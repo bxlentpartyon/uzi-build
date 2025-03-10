@@ -14,98 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/****************************************
-creat(name, mode)
-char *name;
-int16 mode;
-*****************************************/
-
-#define name (char *)udata.u_argn1
-#define mode (int16)udata.u_argn
-
-_creat()
-{
-    register inoptr ino;
-    register int16 uindex;
-    register int16 oftindex;
-    inoptr parent;
-    register int16 j;
-    inoptr n_open();
-    inoptr newfile();
-
-    parent = NULLINODE;
-
-    if ((uindex = uf_alloc()) == -1)
-	return (-1);
-    if ((oftindex = oft_alloc()) == -1)
-	return (-1);
-
-    if (ino = n_open(name,&parent))  /* The file exists */
-    {
-	i_deref(parent);
-	if (getmode(ino) == F_DIR)
-	{
-	    i_deref(ino);
-	    udata.u_error = EISDIR;
-	    goto nogood;
-	}
-	ifnot (getperm(ino) & OTH_WR)
-	{
-	    i_deref(ino);
-	    udata.u_error = EACCES;
-	    goto nogood;
-	}
-	if (getmode(ino) == F_REG)
-	{
-	    /* Truncate the file to zero length */
-	    f_trunc(ino);
-	    /* Reset any oft pointers */
-	    for (j=0; j < OFTSIZE; ++j)
-	        if (of_tab[j].o_inode == ino)
-	            of_tab[j].o_ptr.o_blkno = of_tab[j].o_ptr.o_offset = 0;
-	}
-
-    }
-    else
-    {
-	if (parent && (ino = newfile(parent,name)))
-	         /* Parent was derefed in newfile */
-	{
-	    ino->c_node.i_mode_lo = mode & MODE_MASK & ~udata.u_mask;
-	    ino->c_node.i_mode_hi = F_REG;
-	    setftime(ino, A_TIME|M_TIME|C_TIME);
-	    /* The rest of the inode is initialized in newfile() */
-	    wr_inode(ino);
-	}
-	else
-	{
-	    /* Doesn't exist and can't make it */
-	    if (parent)
-	        i_deref(parent);
-	    goto nogood;
-	}
-    }
-
-    udata.u_files[uindex] = oftindex;
-
-    of_tab[oftindex].o_ptr.o_offset = 0;
-    of_tab[oftindex].o_ptr.o_blkno = 0;
-    of_tab[oftindex].o_inode = ino;
-    of_tab[oftindex].o_access = O_WRONLY;
-
-    return (uindex);
-
-nogood:
-    oft_deref(oftindex);
-    return (-1);
-
-}
-
-#undef name
-#undef mode
-
-
-
 /********************************************
 pipe(fildes)
 int fildes[];
@@ -225,37 +133,6 @@ nogood:
 }
 
 #undef path
-
-/***********************************
-write(d, buf, nbytes)
-int16 d;
-char *buf;
-uint16 nbytes;
-***********************************/
-
-#define d (int16)udata.u_argn2
-#define buf (char *)udata.u_argn1
-#define nbytes (uint16)udata.u_argn
-
-_write()
-{
-    register inoptr ino;
-    off_t *offp;
-    inoptr rwsetup();
-
-    /* Set up u_base, u_offset, ino; check permissions, file num. */
-    if ((ino = rwsetup(0)) == NULLINODE)
-	return (-1);   /* bomb out if error */
-
-    writei(ino);
-    updoff();
-
-    return (udata.u_count);
-}
-
-#undef d
-#undef buf
-#undef nbytes
 
 /****************************************
 seek(file,offset,flag)

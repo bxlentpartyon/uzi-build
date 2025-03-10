@@ -100,6 +100,100 @@ int doclose(int16 uindex)
     return(0);
 }
 
+/****************************************
+creat(name, mode)
+char *name;
+int16 mode;
+*****************************************/
+
+/*
+#define name (char *)udata.u_argn1
+#define mode (int16)udata.u_argn
+*/
+
+int _creat(char *name, int16 mode)
+{
+    register inoptr ino;
+    register int16 uindex;
+    register int16 oftindex;
+    inoptr parent;
+    register int16 j;
+    inoptr n_open();
+    inoptr newfile();
+
+    parent = NULLINODE;
+
+    if ((uindex = uf_alloc()) == -1)
+	return (-1);
+    if ((oftindex = oft_alloc()) == -1)
+	return (-1);
+
+    if (ino = n_open(name,&parent))  /* The file exists */
+    {
+	i_deref(parent);
+	if (getmode(ino) == F_DIR)
+	{
+	    i_deref(ino);
+	    udata.u_error = EISDIR;
+	    goto nogood;
+	}
+	ifnot (getperm(ino) & OTH_WR)
+	{
+	    i_deref(ino);
+	    udata.u_error = EACCES;
+	    goto nogood;
+	}
+	if (getmode(ino) == F_REG)
+	{
+	    /* Truncate the file to zero length */
+	    f_trunc(ino);
+	    /* Reset any oft pointers */
+	    for (j=0; j < OFTSIZE; ++j)
+	        if (of_tab[j].o_inode == ino)
+	            of_tab[j].o_ptr.o_blkno = of_tab[j].o_ptr.o_offset = 0;
+	}
+
+    }
+    else
+    {
+	if (parent && (ino = newfile(parent,name)))
+	         /* Parent was derefed in newfile */
+	{
+	    ino->c_node.i_mode = (F_REG | (mode & MODE_MASK & ~udata.u_mask));
+	    setftime(ino, A_TIME|M_TIME|C_TIME);
+	    /* The rest of the inode is initialized in newfile() */
+	    wr_inode(ino);
+	}
+	else
+	{
+	    /* Doesn't exist and can't make it */
+	    if (parent)
+	        i_deref(parent);
+	    goto nogood;
+	}
+    }
+
+    udata.u_files[uindex] = oftindex;
+
+    of_tab[oftindex].o_ptr.o_offset = 0;
+    of_tab[oftindex].o_ptr.o_blkno = 0;
+    of_tab[oftindex].o_inode = ino;
+    of_tab[oftindex].o_access = O_WRONLY;
+
+    return (uindex);
+
+nogood:
+    oft_deref(oftindex);
+    return (-1);
+
+}
+
+#undef name
+#undef mode
+
+
+
+
 /********************************************
 link(name1, name2)
 char *name1;
@@ -190,6 +284,40 @@ _read(int16 d, char *buf, unsigned nbytes)
 	return (-1);   /* bomb out if error */
 
     readi(ino);
+    updoff(d);
+
+    return (udata.u_count);
+}
+
+/*
+#undef d
+#undef buf
+#undef nbytes
+*/
+
+/***********************************
+write(d, buf, nbytes)
+int16 d;
+char *buf;
+uint16 nbytes;
+***********************************/
+
+/*
+#define d (int16)udata.u_argn2
+#define buf (char *)udata.u_argn1
+#define nbytes (uint16)udata.u_argn
+*/
+
+int _write(int16 d, char *buf, uint16 nbytes)
+{
+    register inoptr ino;
+    off_t *offp;
+
+    /* Set up u_base, u_offset, ino; check permissions, file num. */
+    if ((ino = rwsetup(d, buf, nbytes, 0)) == NULLINODE)
+	return (-1);   /* bomb out if error */
+
+    writei(ino);
     updoff(d);
 
     return (udata.u_count);
