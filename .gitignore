@@ -5,5 +5,6 @@
 *.dbg
 link.map
 cscope.out
+*~
 
 uzi-nes-port/include/generated/*.h
