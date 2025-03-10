@@ -13,6 +13,7 @@ void oft_deref(register int of);
 
 int getperm(inoptr ino);
 int getmode(inoptr ino);
+inoptr getinode(int uindex);
 int isdevice(inoptr ino);
 inoptr i_open(int dev, unsigned ino);
 void i_ref(inoptr ino);

@@ -86,7 +86,6 @@ int doclose(int16 uindex)
 {
     register int16 oftindex;
     inoptr ino;
-    inoptr getinode();
 
     ifnot(ino = getinode(uindex))
 	return(-1);
@@ -181,19 +180,19 @@ uint16 nbytes;
 #define nbytes (uint16)udata.u_argn
 */
 
-void updoff(void);
+void updoff(int16 d);
+inoptr rwsetup(int16 d, char *buf, unsigned nbytes, int16 rwflag);
 
-_read()
+_read(int16 d, char *buf, unsigned nbytes)
 {
     register inoptr ino;
-    inoptr rwsetup();
 
     /* Set up u_base, u_offset, ino; check permissions, file num. */
-    if ((ino = rwsetup(1)) == NULLINODE)
+    if ((ino = rwsetup(d, buf, nbytes, 1)) == NULLINODE)
 	return (-1);   /* bomb out if error */
 
     readi(ino);
-    updoff();
+    updoff(d);
 
     return (udata.u_count);
 }
@@ -204,21 +203,18 @@ _read()
 #undef nbytes
 */
 
-inoptr
-rwsetup(rwflag)
-int rwflag;
+inoptr rwsetup(int16 d, char *buf, unsigned nbytes, int16 rwflag)
 {
     register inoptr ino;
     register struct oft *oftp;
-    inoptr getinode();
 
-    udata.u_base = (char *)udata.u_argn1;  /* buf */
-    udata.u_count = (uint16)udata.u_argn;  /* nbytes */
+    udata.u_base = buf;
+    udata.u_count = nbytes;
 
-    if ((ino = getinode(udata.u_argn2)) == NULLINODE)
+    if ((ino = getinode(d)) == NULLINODE)
 	return (NULLINODE);
 
-    oftp = of_tab + udata.u_files[udata.u_argn2];
+    oftp = of_tab + udata.u_files[d];
     if (oftp->o_access == (rwflag ? O_WRONLY : O_RDONLY))
     {
 	udata.u_error = EBADF;
@@ -452,12 +448,12 @@ void addoff(off_t *ofptr, int amount)
     }
 }
 
-void updoff(void)
+void updoff(int16 d)
 {
     register off_t *offp;
 
     /* Update current file pointer */
-    offp = &of_tab[udata.u_files[udata.u_argn2]].o_ptr;
+    offp = &of_tab[udata.u_files[d]].o_ptr;
     offp->o_blkno = udata.u_offset.o_blkno;
     offp->o_offset = udata.u_offset.o_offset;
 }
