@@ -190,6 +190,16 @@ void fsutil_img_read(unsigned short blk)
 		fsutil_panic("unknown read error");
 }
 
+char *fsutil_strcpy(char *dst, const char *src)
+{
+	return strcpy(dst, src);
+}
+
+char *fsutil_strcat(char *dst, const char *src)
+{
+	return strcat(dst, src);
+}
+
 int main(int argc, char **argv)
 {
 	int opt;
