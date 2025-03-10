@@ -10,7 +10,7 @@ struct devsw dev_tab[] = /* The device driver switch table */
 
 /* Process/userspace stuff */
 
-struct u_data udata;
+struct u_data udata = { 0 };
 
 /* Filesystem stuff */
 
@@ -18,9 +18,9 @@ struct u_data udata;
 
 inoptr root;   /* Address of root dir in inode table */
 int16 ROOTDEV;
-struct cinode i_tab[ITABSIZE];    /* In-core inode table */
-struct oft of_tab[OFTSIZE];
-struct filesys fs_tab[FSUTIL_NDEVS];
+struct cinode i_tab[ITABSIZE] = { 0 };    /* In-core inode table */
+struct oft of_tab[OFTSIZE] = { 0 };
+struct filesys fs_tab[FSUTIL_NDEVS] = { 0 };
 
 /* Driver stuff */
 
