@@ -10,7 +10,7 @@ int fsutil_wd_open(int minor)
 	return 0;
 }
 
-char tmp_buf[FSUTIL_BLOCK_SIZE];
+char tmp_buf[FSUTIL_BLOCK_SIZE] = { 0 };
 
 int fsutil_wd_read(int minor, int rawflag)
 {
