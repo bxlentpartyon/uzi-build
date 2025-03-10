@@ -143,6 +143,14 @@ int fsutil_printf(const char *format, ...)
 	va_end(args);
 }
 
+void kprintf(char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	printf(format, args);
+	va_end(args);
+}
+
 void fsutil_panic(char *msg)
 {
 	printf("%s\n", msg);
