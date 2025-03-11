@@ -115,3 +115,8 @@ unsigned long fsutil_fread(void *ptr, size_t size, size_t nmemb, fsutil_FILE *st
 {
 	return fread(ptr, size, nmemb, stream);
 }
+
+unsigned long fsutil_fwrite_stdout(void *ptr, unsigned long size, unsigned long nmemb)
+{
+	return fwrite(ptr, size, nmemb, stdout);
+}

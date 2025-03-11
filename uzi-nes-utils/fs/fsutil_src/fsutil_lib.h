@@ -14,6 +14,7 @@ char *fsutil_strcat(char *dst, const char *src);
 fsutil_FILE *fsutil_fopen(const char *pathname, const char *mode);
 int fsutil_fclose(fsutil_FILE *stream);
 unsigned long fsutil_fread(void *ptr, unsigned long size, unsigned long nmemb, fsutil_FILE *stream);
+unsigned long fsutil_fwrite_stdout(void *ptr, unsigned long size, unsigned long nmemb);
 
 extern int img_fd;
 

@@ -142,6 +142,8 @@ void shell(void)
 				main_func = mkdir_main;
 			else if (strcmp(shell_argv[0], "get") == 0)
 				main_func = get_main;
+			else if (strcmp(shell_argv[0], "type") == 0)
+				main_func = type_main;
 			else if (strcmp(shell_argv[0], "exit") == 0)
 				break;
 

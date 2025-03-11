@@ -4,5 +4,6 @@
 int ls_main(int argc, char **argv);
 int mkdir_main(int argc, char **argv);
 int get_main(int argc, char **argv);
+int type_main(int argc, char **argv);
 
 #endif /* __FSUTIL_H__ */
