@@ -87,6 +87,7 @@ void shell(void)
 	int shell_argc, argv_buf_size;
 	char **shell_argv;
 	enum scan_ret_state state;
+	int (*main_func)(int argc, char **argv);
 	int i;
 
 	bool keep_going = true;
@@ -136,11 +137,13 @@ void shell(void)
 				printf("argv[%d]: %s\n", i, shell_argv[i]);
 
 			if (strcmp(shell_argv[0], "ls") == 0)
-				ls_main(shell_argc, shell_argv);
+				main_func = ls_main;
 			else if (strcmp(shell_argv[0], "mkdir") == 0)
-				mkdir_main(shell_argc, shell_argv);
+				main_func = mkdir_main;
 			else if (strcmp(shell_argv[0], "get") == 0)
-				get_main(shell_argc, shell_argv);
+				main_func = get_main;
+
+			main_func(shell_argc, shell_argv);
 		}
 	}
 }
