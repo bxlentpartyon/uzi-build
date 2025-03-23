@@ -6,6 +6,7 @@ UZI (Unix Z80 Implementation) Kernel:  devtty.c
 #include <extern.h>
 #include <machdep.h>
 #include <process.h>
+#include <ppu.h>
 #include <unix.h>
 
 #pragma code-name (push, "DEVTTY_CODE")
@@ -23,6 +24,9 @@ struct s_queue ttyinq = {
     0,
     TTYSIZ/2
 };
+
+int stopflag;   /* Flag for ^S/^Q */
+int flshflag;   /* Flag for ^O */
 
 void tty_init(void)
 {
@@ -67,6 +71,39 @@ int tty_read(int16 minor, int16 rawflag)
     return(nread);
 }
 
+int tty_write(int16 minor, int16 rawflag)
+{
+    int towrite;
+
+    towrite = udata.u_count;
+
+    while (udata.u_count-- != 0)
+    {
+        for (;;)        /* Wait on the ^S/^Q flag */
+        {
+            di();
+            ifnot (stopflag)
+                break;
+            psleep(&stopflag);
+            if (udata.u_cursig || udata.u_ptab->p_pending)  /* messy */
+            {
+                udata.u_error = EINTR;
+                return(-1);
+            }
+        }
+        ei();
+
+        ifnot (flshflag)
+        {
+            if (*udata.u_base == '\n')
+                _putc('\r');
+            _putc(*udata.u_base);
+        }
+        ++udata.u_base;
+    }
+    return(towrite);
+}
+
 int tty_open(int minor)
 {
 	if (minor == 0)
@@ -77,4 +114,9 @@ int tty_open(int minor)
 int tty_close(int minor)
 {
 	return(0);
+}
+
+int tty_ioctl(int minor)
+{
+    return(-1);
 }

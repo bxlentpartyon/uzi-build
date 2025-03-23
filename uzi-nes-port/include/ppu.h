@@ -7,6 +7,8 @@ void ppu_putc(char c);
 void ppu_spray(void);
 void test_ppu_read(void);
 
+#define _putc ppu_putc
+
 void ppu_lock(void);
 void ppu_unlock(void);
 

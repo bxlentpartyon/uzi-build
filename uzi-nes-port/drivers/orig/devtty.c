@@ -3,50 +3,6 @@
 #include <devio.h>
 #include <process.h>
 
-int stopflag;   /* Flag for ^S/^Q */
-int flshflag;   /* Flag for ^O */
-
-int tty_write(int16 minor, int16 rawflag)
-{
-    int towrite;
-
-    towrite = udata.u_count;
-
-    while (udata.u_count-- != 0)
-    {
-        for (;;)        /* Wait on the ^S/^Q flag */
-        {
-            di();
-            ifnot (stopflag)    
-                break;
-            psleep(&stopflag);
-            if (udata.u_cursig || udata.u_ptab->p_pending)  /* messy */
-            {
-                udata.u_error = EINTR;
-                return(-1);
-            }
-        }
-        ei();   
-        
-        ifnot (flshflag)
-        {
-            if (*udata.u_base == '\n')
-                _putc('\r');
-            _putc(*udata.u_base);
-        }
-        ++udata.u_base;
-    }
-    return(towrite);
-}
-
-
-int tty_ioctl(int minor)
-{
-    return(-1);
-}
-
-
-
 /* This tty interrupt routine checks to see if the uart receiver actually
 caused the interrupt.  If so it adds the character to the tty input
 queue, echoing and processing backspace and carriage return.  If the queue 

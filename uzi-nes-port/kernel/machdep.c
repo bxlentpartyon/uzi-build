@@ -23,8 +23,6 @@ void puts(char *s)
 		kputchar(*(s++));
 }
 
-#define _putc ppu_putc
-
 void kputchar(char c)
 {
 	if (c == '\n') {
