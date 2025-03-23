@@ -14,43 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/*******************************************
-chmod(path,mode)
-char *path;
-int16 mode;
-*******************************************/
-
-#define path (char *)udata.u_argn1
-#define mode (int16)udata.u_argn
-
-_chmod()
-{
-
-    inoptr ino;
-    inoptr n_open();
-
-    ifnot (ino = n_open(path,NULLINOPTR))
-	return (-1);
-
-    if (ino->c_node.i_uid != udata.u_euid && !super())
-    {
-	i_deref(ino);
-	udata.u_error = EPERM;
-	return(-1);
-    }
-
-    ino->c_node.i_mode_lo = mode & MODE_MASK;
-    ino->c_node.i_mode_hi = ino->c_node.i_mode_hi & F_MASK;
-    setftime(ino, C_TIME);
-    i_deref(ino);
-    return(0);
-}
-
-#undef path
-#undef mode
-
-
-
 /***********************************************
 chown(path, owner, group)
 char *path;

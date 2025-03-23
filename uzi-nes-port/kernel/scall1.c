@@ -961,6 +961,42 @@ nogood:
 #undef mode
 */
 
+/*******************************************
+chmod(path,mode)
+char *path;
+int16 mode;
+*******************************************/
+
+/*
+#define path (char *)udata.u_argn1
+#define mode (int16)udata.u_argn
+*/
+
+int _chmod(char *path, int16 mode)
+{
+    inoptr ino;
+
+    ifnot (ino = n_open(path,NULLINOPTR))
+	return (-1);
+
+    if (ino->c_node.i_uid != udata.u_euid && !super())
+    {
+	i_deref(ino);
+	udata.u_error = EPERM;
+	return(-1);
+    }
+
+    ino->c_node.i_mode = (mode & MODE_MASK) | (ino->c_node.i_mode & F_MASK);
+    setftime(ino, C_TIME);
+    i_deref(ino);
+    return(0);
+}
+
+/*
+#undef path
+#undef mode
+*/
+
 /**************************************
 stat(path,buf)
 char *path;
