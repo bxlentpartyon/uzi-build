@@ -70,23 +70,3 @@ again:
     found = 1;
     goto again;         /* Loop until the uart has no data ready */
 }
-
-#ifdef vax
-
-void _putc(char c)
-{
-    write(1,&c,1);
-}
-
-#else
-
-void _putc(char c)
-{
-    while(!(in(0x72)&02))
-        ;
-    out(c,0x73);
-}
-    
-#endif
-
-
