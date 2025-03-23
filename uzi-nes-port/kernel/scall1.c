@@ -997,6 +997,46 @@ int _chmod(char *path, int16 mode)
 #undef mode
 */
 
+/***********************************************
+chown(path, owner, group)
+char *path;
+int owner;
+int group;
+**********************************************/
+
+/*
+#define path (char *)udata.u_argn2
+#define owner (int16)udata.u_argn1
+#define group (int16)udata.u_argn
+*/
+
+int _chown(char *path, int owner, int group)
+{
+    register inoptr ino;
+
+    ifnot (ino = n_open(path,NULLINOPTR))
+	return (-1);
+
+    if (ino->c_node.i_uid != udata.u_euid && !super())
+    {
+	i_deref(ino);
+	udata.u_error = EPERM;
+	return(-1);
+    }
+
+    ino->c_node.i_uid = owner;
+    ino->c_node.i_gid = group;
+    setftime(ino, C_TIME);
+    i_deref(ino);
+    return(0);
+}
+
+/*
+#undef path
+#undef owner
+#undef group
+*/
+
 /**************************************
 stat(path,buf)
 char *path;
