@@ -14,60 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/**********************************************************
-unlink(path)
-char *path;
-**************************************************/
-
-#define path (char *)udata.u_argn
-
-_unlink()
-{
-    register inoptr ino;
-    inoptr pino;
-    char *filename();
-    inoptr i_open();
-    inoptr n_open();
-
-    ino = n_open(path,&pino);
-
-    ifnot (pino && ino)
-    {
-	udata.u_error = ENOENT;
-	return (-1);
-    }
-
-    if (getmode(ino) == F_DIR && !super())
-    {
-	udata.u_error = EPERM;
-	goto nogood;
-    }
-
-    /* Remove the directory entry */
-
-    if (ch_link(pino,filename(path),"",NULLINODE) == 0)
-	goto nogood;
-
-    /* Decrease the link count of the inode */
-
-    ifnot (ino->c_node.i_nlink--)
-    {
-	ino->c_node.i_nlink += 2;
-	warning("_unlink: bad nlink");
-    }
-    setftime(ino, C_TIME);
-    i_deref(pino);
-    i_deref(ino);
-    return(0);
-
-nogood:
-    i_deref(pino);
-    i_deref(ino);
-    return(-1);
-}
-
-#undef path
-
 /****************************************
 seek(file,offset,flag)
 int16 file;
