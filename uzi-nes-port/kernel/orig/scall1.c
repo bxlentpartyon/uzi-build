@@ -14,61 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/****************************************
-access(path,mode)
-char *path;
-int16 mode;
-****************************************/
-
-#define path (char *)udata.u_argn1
-#define mode (int16)udata.u_argn
-
-_access()
-{
-    register inoptr ino;
-    register int16 euid;
-    register int16 egid;
-    register int16 retval;
-    inoptr n_open();
-
-    if ((mode & 07) && !*(path))
-    {
-	udata.u_error = ENOENT;
-	return (-1);
-    }
-
-    /* Temporarily make eff. id real id. */
-    euid = udata.u_euid;
-    egid = udata.u_egid;
-    udata.u_euid = udata.u_ptab->p_uid;
-    udata.u_egid = udata.u_gid;
-
-    ifnot (ino = n_open(path,NULLINOPTR))
-    {
-	retval = -1;
-	goto nogood;
-    }
-
-    retval = 0;
-    if (~getperm(ino) & (mode&07))
-    {
-	udata.u_error = EPERM;
-	retval = -1;
-    }
-
-    i_deref(ino);
-nogood:
-    udata.u_euid = euid;
-    udata.u_egid = egid;
-
-    return(retval);
-}
-
-#undef path
-#undef mode
-
-
-
 /*******************************************
 chmod(path,mode)
 char *path;
