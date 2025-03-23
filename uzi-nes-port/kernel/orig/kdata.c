@@ -11,4 +11,3 @@ int16 inint;	/* flag is set whenever interrupts are being serviced */
 unsigned swapcnt;
 char *swapbase;
 blkno_t swapblk;
-struct blkbuf bufpool[NBUFS];
