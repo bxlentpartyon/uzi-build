@@ -246,6 +246,21 @@ void d_close(int dev)
     (*dev_tab[dev].dev_close)(dev_tab[dev].minor);
 }
 
+int d_ioctl(int dev, int request, char *data)
+{
+    ifnot (validdev(dev))
+    {
+        udata.u_error = ENXIO;
+        return(-1);
+    }
+    if((*dev_tab[dev].dev_ioctl)(dev_tab[dev].minor,request,data))
+    {
+        udata.u_error = EINVAL;
+        return(-1);
+    }
+        return(0);
+}
+
 int validdev(int dev)
 {
 	/* FIXME */

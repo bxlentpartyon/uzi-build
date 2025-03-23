@@ -30,21 +30,6 @@ int swapwrite(int dev, blkno_t blkno, unsigned nbytes, char *buf)
     return ((*dev_tab[dev].dev_write)(dev_tab[dev].minor, 2));
 }
 
-int d_ioctl(int dev, int request, char *data)
-{
-    ifnot (validdev(dev))
-    {
-        udata.u_error = ENXIO;
-        return(-1);
-    }
-    if((*dev_tab[dev].dev_ioctl)(dev_tab[dev].minor,request,data))
-    {
-        udata.u_error = EINVAL;
-        return(-1);
-    }
-        return(0);
-}
-
 /*************************************************************
 Character queue management routines
 ************************************************************/

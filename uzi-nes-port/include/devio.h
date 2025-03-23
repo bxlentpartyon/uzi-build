@@ -14,6 +14,7 @@ void bawrite(bufptr bp);
 int cdwrite(int dev);
 int bfree(register bufptr bp, int dirty);
 void bufsync(void);
+int d_ioctl(int dev, int request, char *data);
 int validdev(int dev);
 void bufinit(void);
 
