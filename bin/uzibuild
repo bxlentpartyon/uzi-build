@@ -4,14 +4,25 @@ import os
 import subprocess
 import sys
 
-UZIBUILD_ROOT = os.getenv('UZIBUILD_ROOT')
+DEFAULT_ROOT = os.path.join(os.path.dirname(__file__), '..')
+UZIBUILD_ROOT = os.getenv('UZIBUILD_ROOT', DEFAULT_ROOT)
 UZIBUILD_DOCKER_PATH = os.path.join(UZIBUILD_ROOT, 'build-docker')
 CC65_PATH = os.path.join(UZIBUILD_ROOT, 'cc65')
 FCEUX_PATH = os.path.join(UZIBUILD_ROOT, 'fceux')
 
 def docker_build(args):
-    subprocess.check_call(['docker', 'pull', 'oraclelinux:9'])
-    subprocess.check_call(['docker', 'build', '-t', 'uzibuild', UZIBUILD_DOCKER_PATH])
+    supported_distro_map = { 'ol9': 'oraclelinux:9',
+                             'deb12': 'debian:12' }
+    if args.distro not in supported_distro_map.keys():
+        raise RuntimeError(f'unsupported distro: {args.distro}')
+
+    dockerfile_path = os.path.join(UZIBUILD_DOCKER_PATH,
+                                   f'Dockerfile.{args.distro}')
+
+    subprocess.check_call(['docker', 'pull', supported_distro_map[args.distro]])
+    subprocess.check_call(['docker', 'build',
+			   '-t', 'uzibuild',
+			   '-f', dockerfile_path, UZIBUILD_DOCKER_PATH])
 
 def docker_shell(args):
     def create_mount_args():
@@ -46,6 +57,7 @@ def main():
     subparsers = parser.add_subparsers()
 
     build_parser = subparsers.add_parser('docker-build')
+    build_parser.add_argument('--distro', action='store', required=False, default='deb12')
     build_parser.set_defaults(func=docker_build)
 
     open_parser = subparsers.add_parser('docker-shell')
