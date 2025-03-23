@@ -14,33 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/********************************************
-fstat(fd, buf)
-int16 fd;
-char *buf;
-********************************************/
-
-#define fd (int16)udata.u_argn1
-#define buf (char *)udata.u_argn
-
-_fstat()
-{
-    register inoptr ino;
-    inoptr getinode();
-
-    ifnot (valadr(buf,sizeof(struct stat)))
-	return(-1);
-
-    if ((ino = getinode(fd)) == NULLINODE)
-	return(-1);
-
-    stcpy(ino,buf);
-    return(0);
-}
-
-#undef fd
-#undef buf
-
 /************************************
 dup(oldd)
 int16 oldd;

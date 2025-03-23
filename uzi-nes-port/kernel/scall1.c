@@ -1070,6 +1070,36 @@ _stat(char *path, char *buf)
 #undef buf
 */
 
+/********************************************
+fstat(fd, buf)
+int16 fd;
+char *buf;
+********************************************/
+
+/*
+#define fd (int16)udata.u_argn1
+#define buf (char *)udata.u_argn
+*/
+
+int _fstat(int16 fd, char *buf)
+{
+    register inoptr ino;
+
+    ifnot (valadr(buf,sizeof(struct stat)))
+	return(-1);
+
+    if ((ino = getinode(fd)) == NULLINODE)
+	return(-1);
+
+    stcpy(ino,buf);
+    return(0);
+}
+
+/*
+#undef fd
+#undef buf
+*/
+
 /* Utility for stat and fstat */
 void stcpy(inoptr ino, char *buf)
 {
