@@ -276,7 +276,6 @@ int _link(char *name1, char *name2)
     register inoptr ino;
     register inoptr ino2;
     inoptr parent2;
-    char *filename();
 
     ifnot (ino = n_open(name1,NULLINOPTR))
 	return(-1);
