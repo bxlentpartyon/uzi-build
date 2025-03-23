@@ -14,37 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/* Special system call returns super-block of given
-filesystem for users to determine free space, etc.
-Should be replaced with a sync() followed by a read
-of block 1 of the device.  */
-
-/***********************************************
-getfsys(dev,buf)
-int16 dev;
-struct filesys *buf;
-**************************************************/
-
-#define dev (int16)udata.u_argn1
-#define buf (struct filesys *)udata.u_argn
-
-_getfsys()
-{
-   if (dev < 0 || dev >= NDEVS || fs_tab[dev].s_mounted != SMOUNTED)
-   {
-       udata.u_error = ENXIO;
-       return(-1);
-    }
-
-    bcopy((char *)&fs_tab[dev],(char *)buf,sizeof(struct filesys));
-    return(0);
-}
-
-#undef dev
-#undef buf
-
-
-
 /****************************************
 ioctl(fd, request, data)
 int fd;
