@@ -206,7 +206,6 @@ int _pipe(int fildes[])
 {
     register int16 u1, u2, oft1, oft2;
     register inoptr ino;
-    inoptr i_open();
 
     if ((u1 = uf_alloc()) == -1)
 	goto nogood2;
