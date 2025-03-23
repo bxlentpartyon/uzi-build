@@ -188,11 +188,77 @@ nogood:
 
 }
 
+/*
 #undef name
 #undef mode
+*/
 
+/********************************************
+pipe(fildes)
+int fildes[];
+*******************************************/
 
+/*
+#define fildes (int *)udata.u_argn
+*/
 
+int _pipe(int fildes[])
+{
+    register int16 u1, u2, oft1, oft2;
+    register inoptr ino;
+    inoptr i_open();
+
+    if ((u1 = uf_alloc()) == -1)
+	goto nogood2;
+    if ((oft1 = oft_alloc()) == -1)
+	goto nogood2;
+    udata.u_files[u1] = oft1;
+
+    if ((u2 = uf_alloc()) == -1)
+	goto nogood;
+    if ((oft2 = oft_alloc()) == -1)
+    {
+	oft_deref(oft1);
+	goto nogood;
+    }
+
+    ifnot (ino = i_open(ROOTDEV, 0))
+    {
+	oft_deref(oft1);
+	oft_deref(oft2);
+	goto nogood;
+    }
+
+    udata.u_files[u2] = oft2;
+
+    of_tab[oft1].o_ptr.o_offset = 0;
+    of_tab[oft1].o_ptr.o_blkno = 0;
+    of_tab[oft1].o_inode = ino;
+    of_tab[oft1].o_access = O_RDONLY;
+
+    of_tab[oft2].o_ptr.o_offset = 0;
+    of_tab[oft2].o_ptr.o_blkno = 0;
+    of_tab[oft2].o_inode = ino;
+    of_tab[oft2].o_access = O_WRONLY;
+
+    ++ino->c_refs;
+    ino->c_node.i_mode = F_PIPE | 0777; /* No permissions necessary on pipes */
+    ino->c_node.i_nlink = 0;            /* a pipe is not in any directory */
+
+    *fildes = u1;
+    *(fildes+1) = u2;
+    return (0);
+
+nogood:
+    udata.u_files[u1] = -1;
+nogood2:
+    return(-1);
+
+}
+
+/*
+#undef fildes
+*/
 
 /********************************************
 link(name1, name2)
