@@ -14,34 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/************************************
-dup(oldd)
-int16 oldd;
-************************************/
-
-#define oldd (uint16)udata.u_argn
-
-_dup()
-{
-    register int newd;
-    inoptr getinode();
-
-    if (getinode(oldd) == NULLINODE)
-	return(-1);
-
-    if ((newd = uf_alloc()) == -1)
-	return (-1);
-
-    udata.u_files[newd] = udata.u_files[oldd];
-    ++of_tab[udata.u_files[oldd]].o_refs;
-
-    return(newd);
-}
-
-#undef oldd
-
-
-
 /****************************************
 dup2(oldd, newd)
 int16 oldd;
