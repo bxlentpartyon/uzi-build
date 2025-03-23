@@ -14,34 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/************************************
-chdir(dir)
-char *dir;
-************************************/
-
-#define dir (char *)udata.u_argn
-
-_chdir()
-{
-    register inoptr newcwd;
-    inoptr n_open();
-
-    ifnot (newcwd = n_open(dir,NULLINOPTR))
-	return(-1);
-
-    if (getmode(newcwd) != F_DIR)
-    {
-	udata.u_error = ENOTDIR;
-	i_deref(newcwd);
-	return(-1);
-    }
-    i_deref(udata.u_cwd);
-    udata.u_cwd = newcwd;
-    return(0);
-}
-
-#undef dir
-
 /****************************************
 access(path,mode)
 char *path;

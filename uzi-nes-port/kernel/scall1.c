@@ -781,6 +781,37 @@ int _seek(int16 file, uint16 offset, int16 flag)
 #undef flag
 */
 
+/************************************
+chdir(dir)
+char *dir;
+************************************/
+
+/*
+#define dir (char *)udata.u_argn
+*/
+
+int _chdir(char *dir)
+{
+    register inoptr newcwd;
+
+    ifnot (newcwd = n_open(dir,NULLINOPTR))
+	return(-1);
+
+    if (getmode(newcwd) != F_DIR)
+    {
+	udata.u_error = ENOTDIR;
+	i_deref(newcwd);
+	return(-1);
+    }
+    i_deref(udata.u_cwd);
+    udata.u_cwd = newcwd;
+    return(0);
+}
+
+/*
+#undef dir
+*/
+
 /*************************************
 mknod(name,mode,dev)
 char *name;
