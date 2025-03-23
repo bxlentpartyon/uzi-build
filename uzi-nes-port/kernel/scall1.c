@@ -1138,4 +1138,41 @@ int _dup(int16 oldd)
 #undef oldd
 */
 
+/****************************************
+dup2(oldd, newd)
+int16 oldd;
+int16 newd;
+****************************************/
+
+/*
+#define oldd (int16)udata.u_argn1
+#define newd (int16)udata.u_argn
+*/
+
+int _dup2(int16 oldd, int16 newd)
+{
+
+    if (getinode(oldd) == NULLINODE)
+	return(-1);
+
+    if (newd < 0 || newd >= UFTSIZE)
+    {
+	udata.u_error = EBADF;
+	return (-1);
+    }
+
+    ifnot (udata.u_files[newd] & 0x80)
+	doclose(newd);
+
+    udata.u_files[newd] = udata.u_files[oldd];
+    ++of_tab[udata.u_files[oldd]].o_refs;
+
+    return(0);
+}
+
+/*
+#undef oldd
+#undef newd
+*/
+
 #pragma code-name (pop)
