@@ -14,26 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/**************************************
-umask(mask)
-int mask;
-*************************************/
-
-#define mask (int16)udata.u_argn
-
-_umask()
-{
-    register int omask;
-
-    omask = udata.u_mask;
-    udata.u_mask = mask & 0777;
-    return(omask);
-}
-
-#undef mask
-
-
-
 /* Special system call returns super-block of given
 filesystem for users to determine free space, etc.
 Should be replaced with a sync() followed by a read
