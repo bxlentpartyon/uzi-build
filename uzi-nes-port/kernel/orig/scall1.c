@@ -14,52 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall1.c
 #include <process.h>
 #include <scall.h>
 
-/****************************************
-ioctl(fd, request, data)
-int fd;
-int request;
-char *data;
-*******************************************/
-
-#define fd (int)udata.u_argn2
-#define request (int)udata.u_argn1
-#define data (char *)udata.u_argn
-
-_ioctl()
-{
-
-    register inoptr ino;
-    register int dev;
-    inoptr getinode();
-
-    if ((ino = getinode(fd)) == NULLINODE)
-	return(-1);
-
-    ifnot (isdevice(ino))
-    {
-	udata.u_error = ENOTTY;
-	return(-1);
-    }
-
-    ifnot (getperm(ino) & OTH_WR)
-    {
-	udata.u_error = EPERM;
-	return(-1);
-    }
-
-    dev = ino->c_node.i_addr[0];
-
-    if (d_ioctl(dev, request,data))
-	return(-1);
-    return(0);
-}
-
-#undef fd
-#undef request
-#undef data
-
-
-
 /* This implementation of mount ignores the rwflag */
 
 /*****************************************

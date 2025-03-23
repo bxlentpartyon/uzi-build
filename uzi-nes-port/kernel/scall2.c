@@ -1,3 +1,4 @@
+#include <devio.h>
 #include <extern.h>
 #include <filesys.h>
 #include <lib/string.h>
@@ -80,6 +81,53 @@ int _getfsys(int16 dev, struct filesys *buf)
 /*
 #undef dev
 #undef buf
+*/
+
+/****************************************
+ioctl(fd, request, data)
+int fd;
+int request;
+char *data;
+*******************************************/
+
+/*
+#define fd (int)udata.u_argn2
+#define request (int)udata.u_argn1
+#define data (char *)udata.u_argn
+*/
+
+int _ioctl(int fd, int request, char *data)
+{
+
+    register inoptr ino;
+    register int dev;
+
+    if ((ino = getinode(fd)) == NULLINODE)
+	return(-1);
+
+    ifnot (isdevice(ino))
+    {
+	udata.u_error = ENOTTY;
+	return(-1);
+    }
+
+    ifnot (getperm(ino) & OTH_WR)
+    {
+	udata.u_error = EPERM;
+	return(-1);
+    }
+
+    dev = ino->c_node.i_addr[0];
+
+    if (d_ioctl(dev, request,data))
+	return(-1);
+    return(0);
+}
+
+/*
+#undef fd
+#undef request
+#undef data
 */
 
 #pragma code-name (pop)
