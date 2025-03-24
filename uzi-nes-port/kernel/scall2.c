@@ -82,6 +82,78 @@ int _setgid(int gid)
 #undef gid;
 */
 
+/***********************************
+time(tvec)
+int tvec[];
+**************************************/
+
+/*
+#define tvec (int *)udata.u_argn
+*/
+
+int _time(int tvec[])
+{
+    rdtime(tvec);  /* In machdep.c */
+    return(0);
+}
+
+#undef tvec
+
+
+/**************************************
+stime(tvec)
+int tvec[];
+**********************************/
+
+/*
+#define tvec (int *)udata.u_argn
+*/
+
+int _stime(int tvec[])
+{
+/*
+    ifnot (super())
+    {
+	udata.u_error = EPERM;
+	return(-1);
+    }
+    sttime(tvec);
+    return(0);
+*/
+
+    udata.u_error = EPERM;
+    return(-1);
+}
+
+/*
+#undef tvec
+*/
+
+/********************************************
+times(buf)
+char *buf;
+**********************************************/
+
+/*
+#define buf (char *)udata.u_argn
+*/
+
+int _times(char *buf)
+{
+    ifnot (valadr(buf,6*sizeof(time_t)))
+	return(-1);
+
+    di();
+    bcopy(&udata.u_utime, buf, 4*sizeof(time_t));
+    bcopy(&ticks, buf + 4*sizeof(time_t), sizeof(time_t));
+    ei();
+    return(0);
+}
+
+/*
+#undef buf
+*/
+
 void doexit(int16 val, int16 val2)
 {
     register int16 j;
