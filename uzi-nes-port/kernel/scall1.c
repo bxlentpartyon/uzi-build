@@ -484,7 +484,6 @@ void readi(register inoptr ino)
     int dev;
     int ispipe;
     char *zerobuf();
-    blkno_t bmap();
 
     dev = ino->c_dev;
     ispipe = 0;
@@ -568,7 +567,6 @@ void writei(register inoptr ino)
     int created;        /* Set by bmap if newly allocated block used */
     int dev;
     char *zerobuf();
-    blkno_t bmap();
 
     dev = ino->c_dev;
 

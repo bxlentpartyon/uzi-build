@@ -23,6 +23,7 @@ void f_trunc(register inoptr ino);
 void wr_inode(register inoptr ino);
 int ch_link(register inoptr wd, char *oldname, char *newname, inoptr nindex);
 int fmount(int dev, inoptr ino);
+blkno_t bmap(inoptr ip, blkno_t bn, int rwflg);
 char *filename(char *path);
 
 void setftime(register inoptr ino, register int flag);
