@@ -51,17 +51,6 @@ void stkreset(void)
 }
 
 
-void tempstack(void)
-{
-/*
-#asm 8080
-        POP     H
-        LXI     SP,100H
-        PCHL
-#endasm
-*/
-}
-
 void initvec(void)
 {
 /*
