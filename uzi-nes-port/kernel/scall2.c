@@ -176,8 +176,6 @@ int _execve(char *name, char *argv[], char *envp[])
 {
     register inoptr ino;
     register char *buf;
-    inoptr n_open();
-    char *bread();
 
     ifnot (ino = n_open(name,NULLINOPTR))
 	return(-1);
@@ -240,6 +238,8 @@ nogood:
 
 }
 
+char *rargs(char *ptr, int blk, int *cnt);
+
 void exec2(void)
 {
     register blkno_t blk;
@@ -247,11 +247,9 @@ void exec2(void)
     register char **envp;
     register int (**sp)();
     int argc;
-    char *rargs();
     register char *progptr;
     char *buf;
     blkno_t pblk;
-    char *bread();
 
     /* Read in the rest of the program */
     progptr = PROGBASE+512;
@@ -307,8 +305,6 @@ int wargs(char **argv, int blk)
     struct s_argblk *argbuf;
     register char *bufp;
     register int j;
-    char *zerobuf();
-    char *bread();
 
     /* Gather the arguments, and put them on the swap device */
     argbuf = (struct s_argblk *)bread(SWAPDEV, udata.u_ptab->p_swap+blk, 2);
@@ -343,7 +339,6 @@ char *rargs(char *ptr, int blk, int *cnt)
     struct s_argblk *argbuf;
     register char **argv;  /* Address of users argv[], just below ptr */
     register int n;
-    char *bread();
 
     /* Read back the arguments */
     argbuf = (struct s_argblk *)bread(SWAPDEV,udata.u_ptab->p_swap+blk, 0);
