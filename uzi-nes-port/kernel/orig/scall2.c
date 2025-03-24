@@ -14,36 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall2.c
 #include <process.h>
 #include <scall.h>
 
-
-/* Getpid() */
-
-_getpid()
-{
-    return(udata.u_ptab->p_pid);
-}
-
-/* Getppid() */
-
-_getppid()
-{
-    return(udata.u_ptab->p_pptr->p_pid);
-}
-
-
-/* Getuid() */
-
-_getuid()
-{
-    return(udata.u_ptab->p_uid);
-}
-
-
-_getgid()
-{
-    return(udata.u_gid);
-}
-
-
 /*********************************
 setuid(uid)
 int uid;

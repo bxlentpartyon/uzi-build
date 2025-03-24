@@ -11,6 +11,29 @@
 
 #pragma code-name (push, "SCALL2_CODE")
 
+/* Getpid() */
+_getpid()
+{
+    return(udata.u_ptab->p_pid);
+}
+
+/* Getppid() */
+_getppid()
+{
+    return(udata.u_ptab->p_pptr->p_pid);
+}
+
+/* Getuid() */
+_getuid()
+{
+    return(udata.u_ptab->p_uid);
+}
+
+_getgid()
+{
+    return(udata.u_gid);
+}
+
 void doexit(int16 val, int16 val2)
 {
     register int16 j;
