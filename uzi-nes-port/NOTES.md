@@ -1,4 +1,16 @@
-Current size of p_tab: 0x15 (21) bytes
+# Current memory bank layout
+
+I'm currently using PRG mode 3, i.e. 5 8K banks.
+
+That current bank layout is:
+
+	Bank	Addres Range	Internal page	Usage
+	------------------------------------------------------------------
+	Bank 0	$6000-7FFF	RAM 08		Kernel RAM
+	Bank 1	$8000-9FFF	RAM 07		Kernal stacks
+	Bank 2	$A000-BFFF	-		Currently unused
+	Bank 3	$C000-DFFF	ROM XX		Kernel floating code page
+	Bank 4	$E000-FFFF	ROM 15		Kernel permanent code page
 
 # Handling multiple processes
 
@@ -115,3 +127,9 @@ clear_stack_loop:
 	bne clear_stack_loop
 .endif
 </snip>
+
+## Current p_tab size
+
+I don't remember why I thought I needed to save this...
+
+Current size of p_tab: 0x15 (21) bytes
