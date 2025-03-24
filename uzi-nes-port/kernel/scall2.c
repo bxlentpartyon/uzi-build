@@ -34,6 +34,54 @@ _getgid()
     return(udata.u_gid);
 }
 
+/*********************************
+setuid(uid)
+***********************************/
+
+/*
+#define uid (int)udata.u_argn
+*/
+
+int _setuid(int uid)
+{
+    if (super() || udata.u_ptab->p_uid == uid)
+    {
+	udata.u_ptab->p_uid = uid;
+	udata.u_euid = uid;
+	return(0);
+    }
+    udata.u_error = EPERM;
+    return(-1);
+}
+
+/*
+#undef uid
+*/
+
+/*****************************************
+setgid(gid)
+****************************************/
+
+/*
+#define gid (int16)udata.u_argn
+*/
+
+int _setgid(int gid)
+{
+    if (super() || udata.u_gid == gid)
+    {
+	udata.u_gid = gid;
+	udata.u_egid = gid;
+	return(0);
+    }
+    udata.u_error = EPERM;
+    return(-1);
+}
+
+/*
+#undef gid;
+*/
+
 void doexit(int16 val, int16 val2)
 {
     register int16 j;

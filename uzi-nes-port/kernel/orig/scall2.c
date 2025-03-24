@@ -14,52 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall2.c
 #include <process.h>
 #include <scall.h>
 
-/*********************************
-setuid(uid)
-int uid;
-***********************************/
-
-#define uid (int)udata.u_argn
-
-_setuid()
-{
-    if (super() || udata.u_ptab->p_uid == uid)
-    {
-	udata.u_ptab->p_uid = uid;
-	udata.u_euid = uid;
-	return(0);
-    }
-    udata.u_error = EPERM;
-    return(-1);
-}
-
-#undef uid
-
-
-
-/*****************************************
-setgid(gid)
-int gid;
-****************************************/
-
-#define gid (int16)udata.u_argn
-
-_setgid()
-{
-    if (super() || udata.u_gid == gid)
-    {
-	udata.u_gid = gid;
-	udata.u_egid = gid;
-	return(0);
-    }
-    udata.u_error = EPERM;
-    return(-1);
-}
-
-#undef gid;
-
-
-
 /***********************************
 time(tvec)
 int tvec[];
