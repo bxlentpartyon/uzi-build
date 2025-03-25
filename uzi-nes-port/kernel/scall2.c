@@ -240,6 +240,12 @@ nogood:
 
 char *rargs(char *ptr, int blk, int *cnt);
 
+void doexec(int16 *newsp)
+{
+	/* FIXME: STUB! */
+	return;
+}
+
 void exec2(void)
 {
     register blkno_t blk;
