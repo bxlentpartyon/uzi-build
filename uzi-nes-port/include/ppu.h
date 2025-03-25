@@ -51,6 +51,7 @@ void queue_descriptor(struct ppu_desc *desc, char *data);
 #define PPU_DESC_FLAGS_EMPTY	0x00
 #define PPU_DESC_FLAG_NULL	0x01
 #define PPU_DESC_FLAG_READ	0x02
+#define PPU_DESC_FLAG_WRITE	0x04
 #define PPU_DESC_UPPER_SHIFT	4
 
 #define PPU_MAX_READ	64

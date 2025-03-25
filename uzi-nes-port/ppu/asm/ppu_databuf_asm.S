@@ -38,13 +38,14 @@ cur_databuf_ptr:
 ;		 read descriotor:	number of bytes to read
 ;  byte 1:	high byte of target PPU address
 ;  byte	2:	low byte of target PPU address
-;  byte	3:	00xx 00RN
-;		  ||   ||
-;		  \|   |\- NULL descriptor (write len bytes of 0x00)
-;		   |   \-- Read descriptor
-;		   \------ PPU upper CHR bank bits (currently used for reads only)
-; bytes 5-X:	write descriptor:	the data to draw (number of bytes determined by the length)
-;		 read descriptor:	PPU lower CHR bank bits (always a single byte)
+;  byte	3:	00xx 0WRN
+;		  ||  |||
+;		  \|  ||\- NULL descriptor (write len bytes of 0x00)
+;		   |  |\-- Read descriptor
+;		   |  \--- Write descriptor
+;		   \------ PPU upper CHR bank bits
+; bytes 5-X:	   video write desc:	the data to draw (number of bytes determined by the length)
+;		 non-video r/w desc:	PPU lower CHR bank bits (followed by data for writes)
 ;
 ;  Original idea borrowed from:
 ;  https://www.nesdev.org/wiki/The_frame_and_NMIs#Buffer_Formats
@@ -93,21 +94,32 @@ buf_write_loop:
 	iny
 	sta tmp_options_byte
 
-; first check for a read descriptor
-	lda #PPUBUF_READ_DESC_MASK
+; first check for an r/w descriptor
+	lda #PPUBUF_RW_DESC_MASK
 	and tmp_options_byte
 	beq check_null_desc
 
-; handle read descriptor
+; handle bank switching
 	lsr	; shift off the low 4 bits of the flags to
 	lsr	; get to the upper CHR bits
 	lsr
 	lsr
 	sta MMC5_CHR_UPPER		; write upper CHR bank bits
-	lda (cur_databuf_ptr), y	; for a read descriptor, the single data byte contains the low bits
+	lda (cur_databuf_ptr), y	; for an r/w descriptor, the first data byte contains the low bits
 	iny				; of the CHR bank number
 	sta MMC5_CHR_4K_SEG1		; write lower CHR bank bits
 
+	; We don't have to explicitly check for a write descriptor here, since
+	; we know one bit or the the other was set.
+	lda #PPUBUF_READ_DESC_MASK
+	and tmp_options_byte
+	bne handle_read_desc
+
+	; bank switch has been handled, so we can use the existing write
+	; code from here
+	jmp out_options_byte
+
+handle_read_desc:
 	bit PPU_DATA	; throw away a PPU read to prime the data buffer
 			; see https://www.nesdev.org/wiki/PPU_registers#The_PPUDATA_read_buffer_(post-fetch)
 	ldx #0
@@ -122,7 +134,7 @@ read_desc_loop:
 	sta _ppu_readbuf_dirty
 
 	jmp buf_write_loop
-; end handle read descriptor
+; end handle r/w descriptor
 
 ; check for NULL descriptor
 check_null_desc:

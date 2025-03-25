@@ -31,8 +31,9 @@ void swap_nametable(void)
 }
 
 enum ppu_desc_type {
-	PPU_WRITE_DESC,
+	PPU_VIDEO_DESC,
 	PPU_READ_DESC,
+	PPU_WRITE_DESC,
 	PPU_NULL_DESC,
 	PPU_BAD_DESC
 };
@@ -40,11 +41,14 @@ enum ppu_desc_type {
 enum ppu_desc_type get_desc_type(struct ppu_desc *desc)
 {
 	char low_flag_bits = desc->flags & 0x0f;
+	char high_flag_bits = desc->flags & 0xf0;
 
-	if (!low_flag_bits) {
-		return PPU_WRITE_DESC;
+	if (!desc->flags) {
+		return PPU_VIDEO_DESC;
 	} else if (low_flag_bits & PPU_DESC_FLAG_READ) {
 		return PPU_READ_DESC;
+	} else if (low_flag_bits & PPU_DESC_FLAG_WRITE) {
+		return PPU_WRITE_DESC;
 	} else if (low_flag_bits & PPU_DESC_FLAG_NULL) {
 		return PPU_NULL_DESC;
 	} else {
@@ -55,12 +59,12 @@ enum ppu_desc_type get_desc_type(struct ppu_desc *desc)
 #define PPU_LOOP_MAX_CYCLES		2200
 
 #define BASE_PPU_LOOP_CYCLES		171
-#define WRITE_DESC_OVERHEAD_CYCLES	74
-#define READ_DESC_OVERHEAD_CYCLES	101
+#define VIDEO_DESC_OVERHEAD_CYCLES	74
+#define RW_DESC_OVERHEAD_CYCLES		115
 #define NULL_DESC_OVERHEAD_CYCLES	78
 
-#define WRITE_DESC_PERBYTE_CYCLES	20
-#define READ_DESC_PERBYTE_CYCLES	19
+#define VIDEO_DESC_PERBYTE_CYCLES	20
+#define RW_DESC_PERBYTE_CYCLES		20
 #define NULL_DESC_PERBYTE_CYCLES	10
 
 unsigned int calc_desc_weight(struct ppu_desc *desc)
@@ -68,13 +72,15 @@ unsigned int calc_desc_weight(struct ppu_desc *desc)
 	unsigned int desc_cycles, perbyte_cycles;
 
 	switch (get_desc_type(desc)) {
-		case PPU_WRITE_DESC:
-			desc_cycles = WRITE_DESC_OVERHEAD_CYCLES;
-			perbyte_cycles = WRITE_DESC_PERBYTE_CYCLES;
+		case PPU_VIDEO_DESC:
+			desc_cycles = VIDEO_DESC_OVERHEAD_CYCLES;
+			perbyte_cycles = VIDEO_DESC_PERBYTE_CYCLES;
 			break;
 		case PPU_READ_DESC:
-			desc_cycles = READ_DESC_OVERHEAD_CYCLES;
-			perbyte_cycles = READ_DESC_PERBYTE_CYCLES;
+			/* fall through */
+		case PPU_WRITE_DESC:
+			desc_cycles = RW_DESC_OVERHEAD_CYCLES;
+			perbyte_cycles = RW_DESC_PERBYTE_CYCLES;
 			break;
 		case PPU_NULL_DESC:
 			desc_cycles = NULL_DESC_OVERHEAD_CYCLES;
