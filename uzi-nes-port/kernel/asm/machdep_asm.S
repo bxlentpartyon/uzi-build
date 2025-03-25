@@ -19,5 +19,5 @@ temp_stack:
 	lda >temp_stack
 	sta sp+1
 
-	jmp (jmp_temp)	
+	jmp (jump_temp)
 .endproc
