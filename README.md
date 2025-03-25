@@ -78,6 +78,13 @@ The fork of nestile was ultimately unnecessary, but I've kept it around
 for posterity.  It was used to craft the tileset that I use for my font,
 but I haven't made any modifications to it.
 
+# Build dependencies
+
+docker
+python
+make
+indent
+
 # Building container
 
 source uzibuild_env  
