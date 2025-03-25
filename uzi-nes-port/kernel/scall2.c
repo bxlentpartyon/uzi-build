@@ -202,7 +202,7 @@ int _execve(char *name, char *argv[], char *envp[])
     ifnot (ino = n_open(name,NULLINOPTR))
 	return(-1);
 
-    if (ino->c_node.i_size.o_blkno >= ((uint16)(&udata)/512))
+    if (ino->c_node.i_size.o_blkno >= (MAX_PROGRAM_SIZE / 512))
     {
 	udata.u_error = ENOMEM;
 	goto nogood;
