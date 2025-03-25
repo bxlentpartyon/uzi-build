@@ -11,6 +11,28 @@
 
 #pragma code-name (push, "SCALL2_CODE")
 
+/**************************************
+umask(mask)
+int mask;
+*************************************/
+
+/*
+#define mask (int16)udata.u_argn
+*/
+
+int _umask(int mask)
+{
+    register int omask;
+
+    omask = udata.u_mask;
+    udata.u_mask = mask & 0777;
+    return(omask);
+}
+
+/*
+#undef mask
+*/
+
 /* Getpid() */
 _getpid()
 {

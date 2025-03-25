@@ -1173,26 +1173,4 @@ int _dup2(int16 oldd, int16 newd)
 #undef newd
 */
 
-/**************************************
-umask(mask)
-int mask;
-*************************************/
-
-/*
-#define mask (int16)udata.u_argn
-*/
-
-int _umask(int mask)
-{
-    register int omask;
-
-    omask = udata.u_mask;
-    udata.u_mask = mask & 0777;
-    return(omask);
-}
-
-/*
-#undef mask
-*/
-
 #pragma code-name (pop)
