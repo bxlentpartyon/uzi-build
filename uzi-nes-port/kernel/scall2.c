@@ -220,7 +220,7 @@ int _execve(char *name, char *argv[], char *envp[])
 
     /* Gather the arguments, and put them on the root device */
     /* Put environment on another block */
-    if (wargs(argv, 0) || wargs(envp, 1))
+    if (wargs(argv, ARGBLK) || wargs(envp, ENVBLK))
 	goto nogood;
 
     /* Read in the first block of the new program */
@@ -300,8 +300,8 @@ void exec2(void)
 
 
     /* Read back the arguments and the environment */
-    argv = (char **)rargs((char *)&udata, 0, &argc);
-    envp = (char **)rargs((char *)argv, 1, NULL);
+    argv = (char **)rargs((char *)&udata, ARGBLK, &argc);
+    envp = (char **)rargs((char *)argv, ENVBLK, NULL);
 
     /* Fill in udata.u_name */
     bcopy(*argv,udata.u_name,8);

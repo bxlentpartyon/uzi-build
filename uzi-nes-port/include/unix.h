@@ -28,6 +28,7 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 #define MAXTICKS   10  /* Max ticks before swapping out (time slice) */
 
 #define ARGBLK 0        /* Block number on SWAPDEV for arguments */
+#define ENVBLK 1        /* Block number on SWAPDEV for environment */
 #define PROGBASE ((char *)(0xA000)) /* Hard coded to PRG mode 3, bank 2 for now */
 #define MAXEXEC 0       /* Max no of blks of executable file */
 
