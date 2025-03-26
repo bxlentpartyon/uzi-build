@@ -14,7 +14,6 @@ struct devsw dev_tab[] =  /* The device driver switch table */
 
 /* Process/userspace stuff */
 
-struct u_data udata;
 ptptr initproc; /* The process table address of the first process. */
 struct p_tab ptab[PTABSIZE];
 

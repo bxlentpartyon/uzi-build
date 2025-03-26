@@ -107,6 +107,55 @@ page, so I'll need to explicitly place it with .org.  The actual address can be
 wherever, because we can use an indirect jump through the fixed address pointer
 to reach it, if that makes sense.
 
+# Known bugs
+
+## Linker alignment problems with multiple sections in one bank
+
+I'm not sure if this is a bug or if I'm just not understanding how something
+works, but I started seeing a weird problem when I tried to move the udata stuff
+to the beginning of kernel memory.
+
+The linker changes I made look like this:
+
+       UDATA:          load = PRG_ROM00, run = PRG_RAM, type = rw, define = yes, align = $100;
+
+And the code is:
+
+	.segment "UDATA"
+	_udata:
+		.align $100
+		.res $e0, $DB
+
+In my mind, I thought it would align the following symbols to 0x100 as well,
+effectively padding out this section to 0x100 bytes, but it doesn't do that.
+Instead, it's slamming the next pieces of data right up against the end of the
+udata stuff.
+
+Here's a dump from the resulting ROM, showing this:
+
+	00000000  4e 45 53 1a 08 00 52 08  00 00 aa ff 00 00 00 00  |NES...R.........|
+	00000010  db db db db db db db db  db db db db db db db db  |................|
+	*
+	000000f0  00 00 a9 72 00 00 00 00  64 f2 a6 f0 aa f2 86 f3  |...r....d.......|
+	00000100  a6 f0 00 10 64 f2 a6 f0  aa f2 86 f3 a6 f0 00 00  |....d...........|
+
+You can see the repeated 0xdb's there, until 0xf0, and then "some other stuff"
+starts showing up right after that.  The weird thing is, it seems like the
+linker treats symbol addresses as if this _didn't_ happen, so, in the case
+above, all of the symbol addresses after this will be off by 16 bytes, because
+we started emitting DATA 16 bytes early.
+
+I think this probably has something to do with how I've sloppily pieced together
+the data section.  It's likely that I've just been getting lucky up until now,
+and I just exposed the nastiness when I started shuffling stuff around.
+
+One possible solution might be to create explicit memory banks for some things,
+to isolate the alignment restrictions to smaller chunks of memory.  I don't
+actually know if this would work though...
+
+For now, everything seems to play nice if I just allocate 256 bytes for udata,
+but I should probably figure out the weird behavior here at some point.
+
 # Stash area
 
 This is a place for stuff I know I wanted to save, but don't remember why.

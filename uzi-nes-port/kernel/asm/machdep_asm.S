@@ -1,5 +1,11 @@
 	.importzp	sp
+	.export		_udata
 	.export		_tempstack
+
+.segment "UDATA"
+_udata:
+	.align $100
+	.res $100, $00
 
 .segment "DATA"
 jump_temp:
