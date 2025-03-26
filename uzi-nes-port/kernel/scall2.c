@@ -295,9 +295,8 @@ void exec2(void)
     i_deref(udata.u_ino);
 
     /* Zero out the free memory */
-    bzero(progptr,(uint16)((char *)&udata - progptr));
+    bzero(progptr, (uint16) ((char *) MMC5_PRG_MODE3_BANK3_START - progptr));
     udata.u_break = progptr;
-
 
     /* Read back the arguments and the environment */
     argv = (char **)rargs((char *)&udata, ARGBLK, &argc);
