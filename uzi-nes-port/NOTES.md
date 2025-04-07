@@ -7,7 +7,7 @@ That current bank layout is:
 	Bank	Addres Range	Internal page	Usage
 	------------------------------------------------------------------
 	Bank 0	$6000-7FFF	RAM 08		Kernel RAM
-	Bank 1	$8000-9FFF	RAM 07		Kernal stacks
+	Bank 1	$8000-9FFF	RAM 07		Kernel stacks
 	Bank 2	$A000-BFFF	-		Currently unused
 	Bank 3	$C000-DFFF	ROM XX		Kernel floating code page
 	Bank 4	$E000-FFFF	ROM 15		Kernel permanent code page
