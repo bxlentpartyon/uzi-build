@@ -12,6 +12,26 @@ That current bank layout is:
 	Bank 3	$C000-DFFF	ROM XX		Kernel floating code page
 	Bank 4	$E000-FFFF	ROM 15		Kernel permanent code page
 
+## New layout to get kernel actually working
+
+I've realized that there's a big problem with all of the math surrounding
+userspace memory layout because I've put kernel RAM at the lowest memory bank.
+Even though we've now got `_data` at the beginning of RAM, the math for setting
+up/swapping processes doesn't work unless udata actually lives at the very high
+end of available memory.
+
+Specifically the rargs stuff used for `_execve` does all of its math of where to
+place the argv/env based off of udata being the highest address, and it also
+sets the "break" (the area of memory between the process code and the
+argv/environment/stack) based on these locations.
+
+While this isn't efficient use of memory on the NES, if we don't put `_udata` at
+a high address, all this math won't work, and we'll be redesigning stuff as we
+try to port it, which isn't ideal.  Instead, I will move kernel RAM to be just
+below the permanent ROM page to facilitate this.  For now, this should work
+fine, as we won't be getting anywhere close to the limit of process size to
+begin with.
+
 # Handling multiple processes
 
 ## The problem
