@@ -15,21 +15,12 @@ UZI (Unix Z80 Implementation) Kernel:  process.c
 
 void init2(void)
 {
-    static char *arg[2] = { "init", NULL };
-
     kprintf("boot: ");
-
-    rdtime(&udata.u_time);
 
     udata.u_argn2 = (int16)("/init");
     udata.u_argn1 = (int16)(&arg[0]);
     udata.u_argn = (int16)(&arg[1]);
     _execve();
-/*
-    _execve("/init",&arg[0],&arg[1]);
-*/
-    panic("no /init");
-
 }
 
 /* This actually writes out the image */

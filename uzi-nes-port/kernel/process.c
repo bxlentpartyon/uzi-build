@@ -125,6 +125,7 @@ void init2(void)
 {
 	register char *j;
 	static char bootchar;
+	static char *arg[2] = { "init", NULL };
 
 	bufinit();
 
@@ -168,12 +169,15 @@ void init2(void)
 		panic("no root");
 
 	i_ref(udata.u_cwd = root);
+	rdtime(&udata.u_time);
 
 	kprintf("root inode %x\n", root);
 
 	dump_proc(initproc);
 
-	while(1);
+	_execve("/init",&arg[0],&arg[1]);
+
+	panic("no /init");
 }
 
 /* psleep() puts a process to sleep on the given event.

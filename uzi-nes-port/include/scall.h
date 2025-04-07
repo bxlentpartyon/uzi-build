@@ -12,6 +12,7 @@ void _sync(void);
 #pragma wrapped-call(pop)
 
 #pragma wrapped-call(push, trampoline, SCALL2_PAGE)
+int _execve(char *name, char *argv[], char *envp[]);
 void doexit(int16 val, int16 val2);
 #pragma wrapped-call(pop)
 
