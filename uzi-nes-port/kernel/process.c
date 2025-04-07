@@ -343,3 +343,9 @@ done:
 }
 
 #pragma code-name (pop)
+
+/* Stub for unix().  Needs to be outside of PROCESS_CODE, in regular CODE */
+void unix(void)
+{
+	return;
+}
