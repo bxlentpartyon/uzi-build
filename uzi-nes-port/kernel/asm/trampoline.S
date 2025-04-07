@@ -33,7 +33,7 @@ trampoline_init:
 	; calls.
 	lda tmp4
 	ora #$80
-	sta MMC5_PRG_MODE3_P2
+	sta MMC5_PRG_MODE3_P1
 	sta cur_code_bank
 	jmp call_target_noswitch
 
@@ -52,7 +52,7 @@ trampoline_main:
 	; switch to new code page
 	lda tmp4
 	ora #$80
-	sta MMC5_PRG_MODE3_P2
+	sta MMC5_PRG_MODE3_P1
 	sta cur_code_bank
 
 	; restore A from stack before call
@@ -62,7 +62,7 @@ trampoline_main:
 	; restore previous code page
 	sta trampoline_tmp
 	pla
-	sta MMC5_PRG_MODE3_P2
+	sta MMC5_PRG_MODE3_P1
 	sta cur_code_bank
 	lda trampoline_tmp
 

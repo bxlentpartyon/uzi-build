@@ -75,70 +75,70 @@ clrmem:
 	; copy init data from rom to ram
 	ldx #$00
 copy_to_ram:
-	lda $a000, x
-	sta $6000, x
-	lda $a100, x
-	sta $6100, x
-	lda $a200, x
-	sta $6200, x
-	lda $a300, x
-	sta $6300, x
-	lda $a400, x
-	sta $6400, x
-	lda $a500, x
-	sta $6500, x
-	lda $a600, x
-	sta $6600, x
-	lda $a700, x
-	sta $6700, x
-	lda $a800, x
-	sta $6800, x
-	lda $a900, x
-	sta $6900, x
-	lda $aa00, x
-	sta $6a00, x
-	lda $ab00, x
-	sta $6b00, x
-	lda $ac00, x
-	sta $6c00, x
-	lda $ad00, x
-	sta $6d00, x
-	lda $ae00, x
-	sta $6e00, x
-	lda $af00, x
-	sta $6f00, x
-	lda $b000, x
-	sta $7000, x
-	lda $b100, x
-	sta $7100, x
-	lda $b200, x
-	sta $7200, x
-	lda $b300, x
-	sta $7300, x
-	lda $b400, x
-	sta $7400, x
-	lda $b500, x
-	sta $7500, x
-	lda $b600, x
-	sta $7600, x
-	lda $b700, x
-	sta $7700, x
-	lda $b800, x
-	sta $7800, x
-	lda $b900, x
-	sta $7900, x
-	lda $ba00, x
-	sta $7a00, x
-	lda $bb00, x
-	sta $7b00, x
-	lda $bc00, x
-	sta $7c00, x
-	lda $bd00, x
-	sta $7d00, x
-	lda $be00, x
-	sta $7e00, x
-	lda $bf00, x
-	sta $7f00, x
+	lda $8000, x
+	sta $c000, x
+	lda $8100, x
+	sta $c100, x
+	lda $8200, x
+	sta $c200, x
+	lda $8300, x
+	sta $c300, x
+	lda $8400, x
+	sta $c400, x
+	lda $8500, x
+	sta $c500, x
+	lda $8600, x
+	sta $c600, x
+	lda $8700, x
+	sta $c700, x
+	lda $8800, x
+	sta $c800, x
+	lda $8900, x
+	sta $c900, x
+	lda $8a00, x
+	sta $ca00, x
+	lda $8b00, x
+	sta $cb00, x
+	lda $8c00, x
+	sta $cc00, x
+	lda $8d00, x
+	sta $cd00, x
+	lda $8e00, x
+	sta $ce00, x
+	lda $8f00, x
+	sta $cf00, x
+	lda $9000, x
+	sta $d000, x
+	lda $9100, x
+	sta $d100, x
+	lda $9200, x
+	sta $d200, x
+	lda $9300, x
+	sta $d300, x
+	lda $9400, x
+	sta $d400, x
+	lda $9500, x
+	sta $d500, x
+	lda $9600, x
+	sta $d600, x
+	lda $9700, x
+	sta $d700, x
+	lda $9800, x
+	sta $d800, x
+	lda $9900, x
+	sta $d900, x
+	lda $9a00, x
+	sta $da00, x
+	lda $9b00, x
+	sta $db00, x
+	lda $9c00, x
+	sta $dc00, x
+	lda $9d00, x
+	sta $dd00, x
+	lda $9e00, x
+	sta $de00, x
+	lda $9f00, x
+	sta $df00, x
 	inx
 	beq vblankwait2
 	jmp copy_to_ram
@@ -155,51 +155,51 @@ set_palette:
 	lda #$30
 	sta PPU_DATA
 
-	ldx #$07		;
-	stx MMC5_PRG_MODE3_P0	; PRG-RAM page 0 to bank 10
+	ldx #$07		; Kernel stack space
+	stx MMC5_PRG_RAM_PM	; PRG-RAM permanent page to bank 7
 
 	ldx #$00
 clrmem2:
 	lda #$00
-	sta $8000, x
-	sta $8100, x
-	sta $8200, x
-	sta $8300, x
-	sta $8400, x
-	sta $8500, x
-	sta $8600, x
-	sta $8700, x
-	sta $8800, x
-	sta $8900, x
-	sta $8a00, x
-	sta $8b00, x
-	sta $8c00, x
-	sta $8d00, x
-	sta $8e00, x
-	sta $8f00, x
-	sta $9000, x
-	sta $9100, x
-	sta $9200, x
-	sta $9300, x
-	sta $9400, x
-	sta $9500, x
-	sta $9600, x
-	sta $9700, x
-	sta $9800, x
-	sta $9900, x
-	sta $9a00, x
-	sta $9b00, x
-	sta $9c00, x
-	sta $9d00, x
-	sta $9e00, x
-	sta $9f00, x
+	sta $6000, x
+	sta $6100, x
+	sta $6200, x
+	sta $6300, x
+	sta $6400, x
+	sta $6500, x
+	sta $6600, x
+	sta $6700, x
+	sta $6800, x
+	sta $6900, x
+	sta $6a00, x
+	sta $6b00, x
+	sta $6c00, x
+	sta $6d00, x
+	sta $6e00, x
+	sta $6f00, x
+	sta $7000, x
+	sta $7100, x
+	sta $7200, x
+	sta $7300, x
+	sta $7400, x
+	sta $7500, x
+	sta $7600, x
+	sta $7700, x
+	sta $7800, x
+	sta $7900, x
+	sta $7a00, x
+	sta $7b00, x
+	sta $7c00, x
+	sta $7d00, x
+	sta $7e00, x
+	sta $7f00, x
 	inx
 	beq init_stack
 	jmp clrmem2
 
 init_stack:
 	lda #$00
-	ldx #$9f
+	ldx #$7f
 	sta sp
 	stx sp+1
 
