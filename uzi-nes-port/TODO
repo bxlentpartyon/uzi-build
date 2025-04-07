@@ -49,3 +49,8 @@
   as the ~0x600 bytes that we can currently use for either stack just isn't going to be
   sufficient.  If we move this stuff to an 8K PRG-RAM page, we can allocate a full 4K to
   each stack, which should _hopefully_ be sufficient...
+
+4/6/25
+- Huge reminder to look back at commit d927bc4e4cbbf6c4085e24f1c9ee3fc155129f6e
+  and try to improve a bunch of my low-level/early code to be less hard-cody and
+  more flexible to change.  This _will_ come up again.
