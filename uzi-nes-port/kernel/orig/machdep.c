@@ -247,17 +247,3 @@ void idump(void)
         udata.u_insys,udata.u_ptab-ptab, udata.u_callno, udata.u_cwd-i_tab,
        udata.u_sp);
 }
-
-
-
-
-
-void out(char c, unsigned int *addr)
-{
-	return;
-}
-
-unsigned int in(unsigned int *addr)
-{
-	return 0;
-}
