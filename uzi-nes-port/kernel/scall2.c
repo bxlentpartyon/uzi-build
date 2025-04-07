@@ -261,12 +261,7 @@ nogood:
 }
 
 char *rargs(char *ptr, int blk, int *cnt);
-
-void doexec(int16 *newsp)
-{
-	/* FIXME: STUB! */
-	return;
-}
+extern void __fastcall__ doexec(int16 *newsp);
 
 void exec2(void)
 {

@@ -29,10 +29,18 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 
 #define ARGBLK 0        /* Block number on SWAPDEV for arguments */
 #define ENVBLK 1        /* Block number on SWAPDEV for environment */
-#define PROGBASE ((char *)(0xA000)) /* Hard coded to PRG mode 3, bank 2 for now */
+
+/* This must be kept in sync with the PROGBASE defition
+   in include/asm/uzi_nes.inc, or execve will break */
+#define PROGBASE ((char *)(0x6000)) /* Hard coded to PRG mode 3, permanent RAM for now */
 #define MAXEXEC 0       /* Max no of blks of executable file */
 
-#define EMAGIC 0xc3     /* Header of executable */
+/*
+ * Note that the executable header byte is an absolute jump instruction.  This
+ * is necessary so that we can always start execution at program address 0 and
+ * know (hope) that we'll end up somewhere sane.
+ */
+#define EMAGIC 0x4c     /* Header of executable */
 #define CMAGIC 24721    /* Random number for cinode c_magic */
 #define SMOUNTED 12742  /* Magic number to specify mounted filesystem */
 #ifdef UZI
@@ -270,18 +278,6 @@ typedef struct p_tab {
 } p_tab, *ptptr;
 
 /* Per-process data (Swapped with process) */
-
-#if 0
-#asm 8080
-?OSYS equ 2     ;byte offsets of elements of u_data
-?OCALL equ 3
-?ORET equ 4     ;return location
-?ORVAL equ 6    ;return value
-?OERR equ 8     ;error number
-?OSP equ 10     ;users stack pointer
-?OBC equ 12     ;users frame pointer
-#endasm
-#endif
 
 typedef struct u_data {
     struct p_tab *u_ptab;       /* Process table pointer */
