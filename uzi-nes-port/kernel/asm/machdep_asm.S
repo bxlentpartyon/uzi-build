@@ -24,9 +24,9 @@ temp_stack:
 .segment "CODE"
 .proc _tempstack
 	pla
-	sta jump_temp+1
-	pla
 	sta jump_temp
+	pla
+	sta jump_temp+1
 
 	lda <temp_stack
 	sta sp
