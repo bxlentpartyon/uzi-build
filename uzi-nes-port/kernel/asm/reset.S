@@ -38,7 +38,7 @@ stub_entry:
 	stx MMC5_PRG_MODE3_P0	; PRG-ROM page 0 to bank 0
 
 	ldx #$08
-	stx MMC5_PRG_MODE3_P2	; PRG-ROM page 2 to bank 8 (first non-battery-backed bank)
+	stx MMC5_PRG_MODE3_P2	; PRG-RAM page 2 to bank 8 (first non-battery-backed bank)
 
 	ldx #$8e
 	stx MMC5_PRG_MODE3_P1	; PRG-ROM page 1 to bank 14 (init code)
