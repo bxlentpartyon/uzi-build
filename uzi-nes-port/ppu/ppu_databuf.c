@@ -7,6 +7,8 @@
 #define PPU_BUF_BYTE	sizeof(struct ppu_desc) + 1	// Write buffer entry size for a single byte
 #define PPU_BUF_SIZE	(PPU_MAX_WRITE * PPU_BUF_BYTE)
 
+#pragma code-name (push, "PPU_CODE")
+
 extern char ppu_databuf[];
 extern int databuf_pos;
 extern void wait_frame(void);
@@ -246,6 +248,8 @@ void ppu_putc(char c)
 	queue_descriptor(&desc, &data);
 	update_screen_ptrs(1);
 }
+
+#pragma code-name (pop)
 
 /*
  * 1698 CPU cycles for fully loaded buffer NMI (i.e. fully loaded with 1-byte descriptors)

@@ -1,11 +1,23 @@
 #ifndef __PPU_H__
 #define __PPU_H__
 
+#include <trampoline.h>
+
 void init_ppu(void);
+
+struct ppu_desc {
+	char size;
+	char *target;
+	char flags;
+};
+
+#pragma wrapped-call(push, trampoline, PPU_PAGE)
 void ppu_puts(char *s);
 void ppu_putc(char c);
 void ppu_spray(void);
 void test_ppu_read(void);
+void queue_descriptor(struct ppu_desc *desc, char *data);
+#pragma wrapped-call(pop)
 
 #define _putc ppu_putc
 
@@ -25,14 +37,6 @@ void panic(char *s);
 			panic(#cond);		\
 		}				\
 	} while (0)
-
-struct ppu_desc {
-	char size;
-	char *target;
-	char flags;
-};
-
-void queue_descriptor(struct ppu_desc *desc, char *data);
 
 #define SCREEN_VIS_ROWS		28
 #define SCREEN_ROWS		30
