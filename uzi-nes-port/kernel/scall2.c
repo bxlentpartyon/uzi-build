@@ -313,7 +313,6 @@ void exec2(inoptr initbuf)
 
     /* Go jump into the program, first setting the stack */
     doexec((int16 *)(udata.u_isp = envp - 2));
-
 }
 
 /*
