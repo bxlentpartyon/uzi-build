@@ -60,6 +60,10 @@ cur_stack_page:	.byte $00
 .endproc
 
 .macro activate_irq_stack
+; Skip stack sanity check entirely for now. It makes a lot less sense with
+; temp stacks and user stacks in play.  At very least, it needs to be a lot
+; more clever.
+.if 0
 	lda stack_setup
 	beq skip_stack_check
 ; make sure current stack pointer is above 0x6f00
@@ -67,6 +71,7 @@ cur_stack_page:	.byte $00
 	cmp irq_stack_start+1
 ; if the carry is clear then sp+1 <= 0x6f, which is too low in memory
 	bcc bad_stack
+.endif
 
 skip_stack_check:
 	; zpsave borrowed from libsrc/common/interrupt.s in cc65
