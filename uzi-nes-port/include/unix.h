@@ -70,9 +70,9 @@ typedef struct s_queue {
     char *q_base;   /* Pointer to data */
     char *q_head;  /* Pointer to addr of next char to read. */
     char *q_tail;  /* Pointer to where next char to insert goes. */
-    int q_size; /* Max size of queue */
-    int q_count;        /* How many characters presently in queue */
-    int q_wakeup;       /* Threshold for waking up processes waiting on queue */
+    int16 q_size; /* Max size of queue */
+    int16 q_count;        /* How many characters presently in queue */
+    int16 q_wakeup;       /* Threshold for waking up processes waiting on queue */
 } queue_t;
 
 
@@ -184,9 +184,9 @@ struct  UZI_TYPE(stat)    /* Really only used by users */
 
 
 typedef struct cinode {
-    int    c_magic;             /* Used to check for corruption. */
-    int    c_dev;               /* Inode's device */
-    unsigned   c_num;           /* Inode # */
+    int16    c_magic;             /* Used to check for corruption. */
+    int16    c_dev;               /* Inode's device */
+    uint16   c_num;           /* Inode # */
     dinode   c_node;
     char     c_refs;            /* In-core reference count */
     char     c_dirty;           /* Modified flag. */
@@ -255,8 +255,8 @@ typedef struct oft {
 #define SIGALRM 14
 #define SIGTERM 15
 
-#define SIG_DFL         (int (*)())0
-#define SIG_IGN         (int (*)())1
+#define SIG_DFL         (int16 (*)())0
+#define SIG_IGN         (int16 (*)())1
 
 #define sigmask(sig)    (1<<(sig))
 
@@ -264,15 +264,15 @@ typedef struct oft {
 
 typedef struct p_tab {
     char        p_status;       /* Process status */
-    int p_pid;    /* Process ID */
-    int p_uid;
+    int16 p_pid;    /* Process ID */
+    int16 p_uid;
     struct p_tab *p_pptr;    /* Process parent's table entry */
     blkno_t     p_swap;   /* Starting block of swap space */
-    unsigned    p_alarm;        /* Seconds until alarm goes off */
-    unsigned    p_exitval;      /* Exit value */
+    uint16	p_alarm;        /* Seconds until alarm goes off */
+    uint16	p_exitval;      /* Exit value */
     /* Everything below here is overlaid by time info at exit */
     char       *p_wait;         /* Address of thing waited for */
-    int p_priority;     /* Process priority */
+    int16 p_priority;     /* Process priority */
     uint16      p_pending;      /* Pending signals */
     uint16      p_ignored;      /* Ignored signals */
 } p_tab, *ptptr;
@@ -284,24 +284,24 @@ typedef struct u_data {
     char        u_insys;        /* True if in kernel */
     char        u_callno;       /* sys call being executed. */
     char        *u_retloc;     /* Return location from sys call */
-    int         u_retval;       /* Return value from sys call */
-    int         u_error;                /* Last error number */
+    int16         u_retval;       /* Return value from sys call */
+    int16         u_error;                /* Last error number */
     char        *u_sp;          /* Used when a process is swapped. */
     char        *u_bc;          /* Place to save user's frame pointer */
-    int         u_argn;         /* Last arg */
-    int         u_argn1;        /* This way because args on stack backwards */
-    int         u_argn2;
-    int         u_argn3;        /* args n-3, n-2, n-1, and n */
+    int16         u_argn;         /* Last arg */
+    int16         u_argn1;        /* This way because args on stack backwards */
+    int16         u_argn2;
+    int16         u_argn3;        /* args n-3, n-2, n-1, and n */
 
     char *      u_base;         /* Source or dest for I/O */
-    unsigned    u_count;        /* Amount for I/O */
+    uint16    u_count;        /* Amount for I/O */
     UZI_TYPE_T(off)	u_offset;       /* Place in file for I/O */
     struct blkbuf *u_buf;
 
-    int         u_gid;
-    int         u_euid;
-    int         u_egid;
-    int         u_mask;         /* umask: file creation mode mask */
+    int16         u_gid;
+    int16         u_euid;
+    int16         u_egid;
+    int16         u_mask;         /* umask: file creation mode mask */
     UZI_TYPE_T(time)	u_time;         /* Start time */
     char        u_files[UFTSIZE];       /* Process file table:
 	                        contains indexes into open file table. */
@@ -311,8 +311,8 @@ typedef struct u_data {
     inoptr      u_ino;  /* Used during execve() */
     char        *u_isp;  /* Value of initial sp (argv) */
 
-    int         (*u_sigvec[NSIGS])();   /* Array of signal vectors */
-    int         u_cursig;       /* Signal currently being caught */
+    int16         (*u_sigvec[NSIGS])();   /* Array of signal vectors */
+    int16         u_cursig;       /* Signal currently being caught */
     char        u_name[8];      /* Name invoked with */
     UZI_TYPE_T(time)	u_utime;        /* Elapsed ticks in user mode */
     UZI_TYPE_T(time)	u_stime;        /* Ticks in system mode */
@@ -324,22 +324,22 @@ typedef struct u_data {
 
 /* Struct to temporarily hold arguments in execve */
 struct s_argblk {
-    int a_argc;
-    int a_arglen;
-    int a_envc;
-    char a_buf[512-3*sizeof(int)];
+    int16 a_argc;
+    int16 a_arglen;
+    int16 a_envc;
+    char a_buf[512-3*sizeof(int16)];
 };
 
 
 /* The device driver switch table */
 
 struct devsw {
-    int minor;          /* The minor device number (an argument to below) */
-    int (*dev_open)(int minor);  /* The routines for reading, etc */
-    int (*dev_close)(int minor); /* format: op(minor,blkno,offset,count,buf); */
-    int (*dev_read)(int16 minor, int16 rawflag);  /* offset would be ignored for block devices */
-    int (*dev_write)(int16 minor, int16 rawflag); /* blkno and offset ignored for tty, etc. */
-    int (*dev_ioctl)(int dev, int request, char *data); /* count is rounded to 512 for block devices */
+    int16 minor;          /* The minor device number (an argument to below) */
+    int16 (*dev_open)(int16 minor);  /* The routines for reading, etc */
+    int16 (*dev_close)(int16 minor); /* format: op(minor,blkno,offset,count,buf); */
+    int16 (*dev_read)(int16 minor, int16 rawflag);  /* offset would be ignored for block devices */
+    int16 (*dev_write)(int16 minor, int16 rawflag); /* blkno and offset ignored for tty, etc. */
+    int16 (*dev_ioctl)(int16 dev, int16 request, char *data); /* count is rounded to 512 for block devices */
 };
 
 
