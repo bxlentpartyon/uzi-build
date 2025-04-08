@@ -20,4 +20,7 @@ PROGBASE	= $6000
 ; Offsets into udata structure
 OSYS		= $02
 
+; Kernel memory information
+KERNEL_STACK_PAGE	= $07
+
 .endif

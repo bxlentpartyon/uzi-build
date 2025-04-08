@@ -155,7 +155,7 @@ set_palette:
 	lda #$30
 	sta PPU_DATA
 
-	ldx #$07		; Kernel stack space
+	ldx #KERNEL_STACK_PAGE	; Kernel stack space
 	stx MMC5_PRG_RAM_PM	; PRG-RAM permanent page to bank 7
 
 	ldx #$00
