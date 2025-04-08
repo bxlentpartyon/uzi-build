@@ -57,6 +57,10 @@ UZI (Unix Z80 Implementation) Kernel:  unix.h
 
 
 
+/*
+ * TODO the CPM stuff is meaningless any more.  This should probably
+ * use the UZI define or something.
+ */
 #ifdef CPM
     typedef unsigned uint16;
     typedef int int16;
