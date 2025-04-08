@@ -17,6 +17,7 @@ DMC_CTRL	= $4010
 ; Must be kept in sync with PROGBASE definition in include/unix.h
 PROGBASE	= $6000
 
+; Offsets into udata structure
 OSYS		= $02
 
 .endif
