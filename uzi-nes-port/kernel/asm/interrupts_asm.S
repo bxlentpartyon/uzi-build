@@ -59,10 +59,10 @@ irq_stack_start: .addr $6f00
 .macro activate_irq_stack
 	lda stack_setup
 	beq skip_stack_check
-; make sure current stack pointer is above 0x400
+; make sure current stack pointer is above 0x6f00
 	lda sp+1
 	cmp irq_stack_start+1
-; if the carry is clear then sp+1 <= 0x9f, which is to low in memory
+; if the carry is clear then sp+1 <= 0x6f, which is too low in memory
 	bcc bad_stack
 
 skip_stack_check:
