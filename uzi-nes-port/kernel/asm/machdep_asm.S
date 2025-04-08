@@ -1,7 +1,10 @@
 	.importzp	sp
+	.import		_di, _ei, _disable_vblank_nmi, _enable_vblank_nmi
+	.import		cur_stack_page
 	.export		_udata
 	.export		_tempstack, _doexec
 
+	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
 
 .segment "UDATA"
@@ -29,6 +32,23 @@ temp_stack:
 	sta sp
 	lda >temp_stack
 	sta sp+1
+
+	; TODO these should be macros
+	jsr _di
+	jsr _disable_vblank_nmi
+
+	; swap to process memory banks (only one process for now)
+	ldx #$09
+	stx cur_stack_page
+	stx MMC5_PRG_RAM_PM
+	inx
+	stx MMC5_PRG_MODE3_P0
+	inx
+	stx MMC5_PRG_MODE3_P1
+
+	; TODO these should be macros
+	jsr _enable_vblank_nmi
+	jsr _ei
 
 	jmp (jump_temp)
 .endproc

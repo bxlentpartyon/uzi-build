@@ -6,7 +6,9 @@
 	.import		stack_setup
 	.export		_ei, _di, nmi, irq, _in_interrupt
 	.export		_enable_vblank_nmi, _disable_vblank_nmi
+	.export		cur_stack_page
 
+	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
 	.include	"zeropage.inc"
 
@@ -16,6 +18,7 @@
 zpsave:		.res zpsavespace
 _in_interrupt:	.byte 0
 irq_stack_start: .addr $6f00
+cur_stack_page:	.byte $00
 
 .segment "CODE"
 
@@ -164,9 +167,15 @@ storeoff:
 	lda APU_STATUS
 	sta _apu_status_byte
 
+	ldx #KERNEL_STACK_PAGE
+	stx MMC5_PRG_RAM_PM
+
 	activate_irq_stack
 	jsr _handle_irq
 	deacivate_irq_stack
+
+	ldx cur_stack_page
+	stx MMC5_PRG_RAM_PM
 
 	end_interrupt
 	restore_regs

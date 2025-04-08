@@ -1,7 +1,7 @@
 	.importzp	sp
 	.import 	_start_kernel, _stop_clock
 	.import		ppu_ctrl_val
-	.import		cur_code_bank
+	.import		cur_code_bank, cur_stack_page
 	.export		reset
 	.export		stack_setup
 
@@ -156,8 +156,10 @@ set_palette:
 	sta PPU_DATA
 
 	ldx #KERNEL_STACK_PAGE	; Kernel stack space
+	stx cur_stack_page
 	stx MMC5_PRG_RAM_PM	; PRG-RAM permanent page to bank 7
 
+	; clear the kernel stack data
 	ldx #$00
 clrmem2:
 	lda #$00
