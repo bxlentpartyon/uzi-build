@@ -257,7 +257,7 @@ void exec2(inoptr initbuf)
     register blkno_t blk;
     register char **argv;
     register char **envp;
-    register int (**sp)();
+    register int (**sigp)();
     int argc;
     register char *progptr;
     register inoptr ino = udata.u_ino;
@@ -303,9 +303,9 @@ void exec2(inoptr initbuf)
     bcopy(*argv,udata.u_name,8);
 
     /* Turn off caught signals */
-    for (sp= udata.u_sigvec; sp < (udata.u_sigvec+NSIGS); ++sp)
-	if (*sp != SIG_IGN)
-	    *sp = SIG_DFL;
+    for (sigp= udata.u_sigvec; sigp < (udata.u_sigvec+NSIGS); ++sigp)
+	if (*sigp != SIG_IGN)
+	    *sigp = SIG_DFL;
 
     /* Shove argc and the address of argv just below envp */
     *(envp - 1) = (char *)argc;
