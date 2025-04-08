@@ -21,7 +21,7 @@ jump_temp:
 temp_stack:
 	.res templen, $00
 
-.segment "SCALL2_CODE"
+.segment "CODE"
 .proc _tempstack
 	pla
 	sta jump_temp+1

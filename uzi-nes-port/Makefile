@@ -24,7 +24,9 @@ FS_OBJS := filesys.o
 FS_OBJ_DIR := fs
 FS_DEPS := $(patsubst %, $(FS_OBJ_DIR)/%, $(FS_OBJS))
 
-DRIVER_OBJS := devio.o devtty.o devppuwd.o kb/kb_asm.o kb/kb.o
+# The keyboard stuff is temporarily compiled out to make room in the CODE
+# segment.
+DRIVER_OBJS := devio.o devtty.o devppuwd.o #kb/kb_asm.o kb/kb.o
 DRIVER_OBJ_DIR := drivers
 DRIVER_DEPS := $(patsubst %, $(DRIVER_OBJ_DIR)/%, $(DRIVER_OBJS))
 
