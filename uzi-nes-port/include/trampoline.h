@@ -12,6 +12,7 @@ extern void trampoline(void);
 #define PROCESS_PAGE	6
 #define FS_PAGE		7
 #define PPU_PAGE	8
+#define SCALL1B_PAGE	9
 #define CORE_PAGE	15
 #define NUM_CODE_PAGES	16
 
