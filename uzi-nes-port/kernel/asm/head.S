@@ -76,69 +76,69 @@ clrmem:
 	ldx #$00
 copy_to_ram:
 	lda $8000, x
-	sta $c000, x
+	sta $a000, x
 	lda $8100, x
-	sta $c100, x
+	sta $a100, x
 	lda $8200, x
-	sta $c200, x
+	sta $a200, x
 	lda $8300, x
-	sta $c300, x
+	sta $a300, x
 	lda $8400, x
-	sta $c400, x
+	sta $a400, x
 	lda $8500, x
-	sta $c500, x
+	sta $a500, x
 	lda $8600, x
-	sta $c600, x
+	sta $a600, x
 	lda $8700, x
-	sta $c700, x
+	sta $a700, x
 	lda $8800, x
-	sta $c800, x
+	sta $a800, x
 	lda $8900, x
-	sta $c900, x
+	sta $a900, x
 	lda $8a00, x
-	sta $ca00, x
+	sta $aa00, x
 	lda $8b00, x
-	sta $cb00, x
+	sta $ab00, x
 	lda $8c00, x
-	sta $cc00, x
+	sta $ac00, x
 	lda $8d00, x
-	sta $cd00, x
+	sta $ad00, x
 	lda $8e00, x
-	sta $ce00, x
+	sta $ae00, x
 	lda $8f00, x
-	sta $cf00, x
+	sta $af00, x
 	lda $9000, x
-	sta $d000, x
+	sta $b000, x
 	lda $9100, x
-	sta $d100, x
+	sta $b100, x
 	lda $9200, x
-	sta $d200, x
+	sta $b200, x
 	lda $9300, x
-	sta $d300, x
+	sta $b300, x
 	lda $9400, x
-	sta $d400, x
+	sta $b400, x
 	lda $9500, x
-	sta $d500, x
+	sta $b500, x
 	lda $9600, x
-	sta $d600, x
+	sta $b600, x
 	lda $9700, x
-	sta $d700, x
+	sta $b700, x
 	lda $9800, x
-	sta $d800, x
+	sta $b800, x
 	lda $9900, x
-	sta $d900, x
+	sta $b900, x
 	lda $9a00, x
-	sta $da00, x
+	sta $ba00, x
 	lda $9b00, x
-	sta $db00, x
+	sta $bb00, x
 	lda $9c00, x
-	sta $dc00, x
+	sta $bc00, x
 	lda $9d00, x
-	sta $dd00, x
+	sta $bd00, x
 	lda $9e00, x
-	sta $de00, x
+	sta $be00, x
 	lda $9f00, x
-	sta $df00, x
+	sta $bf00, x
 	inx
 	beq vblankwait2
 	jmp copy_to_ram

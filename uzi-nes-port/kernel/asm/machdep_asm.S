@@ -43,8 +43,6 @@ temp_stack:
 	stx MMC5_PRG_RAM_PM
 	inx
 	stx MMC5_PRG_MODE3_P0
-	inx
-	stx MMC5_PRG_MODE3_P1
 
 	; TODO these should be macros
 	jsr _enable_vblank_nmi
