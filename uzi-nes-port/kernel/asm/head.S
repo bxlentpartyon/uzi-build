@@ -157,51 +157,51 @@ set_palette:
 
 	ldx #KERNEL_STACK_PAGE	; Kernel stack space
 	stx cur_stack_page
-	stx MMC5_PRG_RAM_PM	; PRG-RAM permanent page to bank 7
+	stx MMC5_PRG_MODE3_P0	; RAM Page 0 to bank 7
 
 	; clear the kernel stack data
 	ldx #$00
 clrmem2:
 	lda #$00
-	sta $6000, x
-	sta $6100, x
-	sta $6200, x
-	sta $6300, x
-	sta $6400, x
-	sta $6500, x
-	sta $6600, x
-	sta $6700, x
-	sta $6800, x
-	sta $6900, x
-	sta $6a00, x
-	sta $6b00, x
-	sta $6c00, x
-	sta $6d00, x
-	sta $6e00, x
-	sta $6f00, x
-	sta $7000, x
-	sta $7100, x
-	sta $7200, x
-	sta $7300, x
-	sta $7400, x
-	sta $7500, x
-	sta $7600, x
-	sta $7700, x
-	sta $7800, x
-	sta $7900, x
-	sta $7a00, x
-	sta $7b00, x
-	sta $7c00, x
-	sta $7d00, x
-	sta $7e00, x
-	sta $7f00, x
+	sta $8000, x
+	sta $8100, x
+	sta $8200, x
+	sta $8300, x
+	sta $8400, x
+	sta $8500, x
+	sta $8600, x
+	sta $8700, x
+	sta $8800, x
+	sta $8900, x
+	sta $8a00, x
+	sta $8b00, x
+	sta $8c00, x
+	sta $8d00, x
+	sta $8e00, x
+	sta $8f00, x
+	sta $9000, x
+	sta $9100, x
+	sta $9200, x
+	sta $9300, x
+	sta $9400, x
+	sta $9500, x
+	sta $9600, x
+	sta $9700, x
+	sta $9800, x
+	sta $9900, x
+	sta $9a00, x
+	sta $9b00, x
+	sta $9c00, x
+	sta $9d00, x
+	sta $9e00, x
+	sta $9f00, x
 	inx
 	beq init_stack
 	jmp clrmem2
 
 init_stack:
 	lda #$00
-	ldx #$7f
+	ldx #$9f
 	sta sp
 	stx sp+1
 

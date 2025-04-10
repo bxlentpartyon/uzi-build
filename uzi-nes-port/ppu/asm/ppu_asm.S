@@ -3,6 +3,7 @@
 	.export		_wait_frame, _frame_wait_sleep, _y_scroll_coarse, _y_scroll_fine
 	.import		dump_screenbuf
 	.import		process_ppubuf
+	.import		cur_stack_page
 	.export		_ppu_locked
 
 	.include "uzi_nes.inc"
@@ -89,6 +90,10 @@ font_load_loop:
 	inc font_load_ptr+1
 	dex
 	bne font_load_loop
+
+	; put the stack page back when we're done
+	ldx cur_stack_page
+	stx MMC5_PRG_MODE3_P0
 
 	rts
 .endproc

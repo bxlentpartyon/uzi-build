@@ -17,7 +17,7 @@
 .segment "DATA"
 zpsave:		.res zpsavespace
 _in_interrupt:	.byte 0
-irq_stack_start: .addr $6f00
+irq_stack_start: .addr $8f00
 cur_stack_page:	.byte $00
 
 .segment "CODE"
@@ -173,7 +173,7 @@ storeoff:
 	sta _apu_status_byte
 
 	ldx #KERNEL_STACK_PAGE
-	stx MMC5_PRG_RAM_PM
+	stx MMC5_PRG_MODE3_P0
 
 	activate_irq_stack
 	jsr _handle_irq
