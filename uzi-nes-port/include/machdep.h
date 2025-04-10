@@ -5,6 +5,7 @@
 #include <nes/mmc5.h>
 
 void kprintf(char *fmt, ...);
+void panic(char *fmt, ...);
 void sprintf(char *str, char *fmt, ...);
 void ei(void);
 void di(void);

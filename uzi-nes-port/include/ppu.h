@@ -28,9 +28,6 @@ extern char ppu_locked;
 extern char ppu_readbuf_dirty;
 extern char ppu_readbuf[];
 
-/* This doesn't really belong here... */
-void panic(char *s);
-
 #define BUG_ON(cond)				\
 	do {					\
 		if (cond) {			\

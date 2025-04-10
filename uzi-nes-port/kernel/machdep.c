@@ -129,6 +129,23 @@ void warning(char *s)
     kprintf("WARNING: %s\n",s);
 }
 
+void panic(char *fmt, ...)
+{
+	va_list ap;
+
+	puts("PANIC: ");
+
+	bzero(&printbuf, SCREEN_VIS_SIZE);
+
+	va_start(ap, fmt);
+	vsprintf(printbuf, fmt, ap);
+	va_end(ap);
+
+	puts(printbuf);
+
+	while(1);
+}
+
 void start_kernel(void)
 {
 	di();

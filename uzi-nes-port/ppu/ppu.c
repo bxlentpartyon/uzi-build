@@ -1,4 +1,5 @@
 #include <interrupts.h>
+#include <machdep.h>
 #include <ppu.h>
 
 extern void ppu_load_font(void);
@@ -57,6 +58,8 @@ void ppu_puts(char *s)
 	}
 }
 
+#ifdef PPU_PANIC
+/* I'm leaving this around, but I'm moving to a more robust panic function */
 void panic(char *msg)
 {
 	/* prevent recursion from ppu_put* functions */
@@ -70,3 +73,4 @@ void panic(char *msg)
 		while(1);
 	}
 }
+#endif
