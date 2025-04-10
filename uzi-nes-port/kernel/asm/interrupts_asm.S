@@ -180,7 +180,7 @@ storeoff:
 	deacivate_irq_stack
 
 	ldx cur_stack_page
-	stx MMC5_PRG_RAM_PM
+	stx MMC5_PRG_MODE3_P0
 
 	end_interrupt
 	restore_regs

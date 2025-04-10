@@ -2,7 +2,7 @@
 	.import		_di, _ei, _disable_vblank_nmi, _enable_vblank_nmi
 	.import		cur_stack_page
 	.export		_udata, _break_addr
-	.export		_tempstack, _doexec, _debug_break
+	.export		_user_bank_setup, _tempstack, _doexec, _debug_break
 
 	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
@@ -24,32 +24,45 @@ temp_stack:
 	.res templen, $00
 
 .segment "CODE"
+.proc _user_bank_setup
+	; TODO these should be macros
+	jsr _di
+
+	; swap in first process memory bank (only one process for now)
+	ldx #$09
+	stx MMC5_PRG_RAM_PM
+
+	; TODO these should be macros
+	jsr _ei
+
+	rts
+.endproc
+
 .proc _tempstack
 	pla
 	sta jump_temp
 	pla
 	sta jump_temp+1
 
-	lda <temp_stack
+	lda #<temp_stack
 	sta sp
-	lda >temp_stack
+	lda #>temp_stack
 	sta sp+1
 
 	; TODO these should be macros
 	jsr _di
-	jsr _disable_vblank_nmi
 
-	; swap to process memory banks (only one process for now)
-	ldx #$09
+	; swap in first process memory bank (only one process for now)
+	ldx #$0a
 	stx cur_stack_page
-	stx MMC5_PRG_RAM_PM
-	inx
 	stx MMC5_PRG_MODE3_P0
 
 	; TODO these should be macros
-	jsr _enable_vblank_nmi
 	jsr _ei
 
+	; we need to increment the "return" address by 1 to get to a proper
+	; instruction offset
+	inc jump_temp
 	jmp (jump_temp)
 .endproc
 

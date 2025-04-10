@@ -221,6 +221,7 @@ int _execve(char *name, char *argv[], char *envp[])
     if (ino->c_node.i_mode & SET_GID)
 	udata.u_egid = ino->c_node.i_gid;
 
+    user_bank_setup();
     bcopy(buf,PROGBASE,512);
     bfree(buf, 0);
 

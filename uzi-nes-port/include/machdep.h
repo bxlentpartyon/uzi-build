@@ -10,6 +10,7 @@ void sprintf(char *str, char *fmt, ...);
 void ei(void);
 void di(void);
 int valadr(char *base, uint16 size);
+void user_bank_setup(void);
 void tempstack(void);
 void warning(char *s);
 void start_clock(void);
