@@ -63,7 +63,7 @@ all: $(TARGET)
 	$(CA) -o $@ $<
 
 $(TARGET): $(ALL_DEPS) $(LINKER_SCRIPT) $(FONT)
-	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(ALL_DEPS) uzi.lib
+	$(LD) -v -m link.map -vm -C $(LINKER_SCRIPT) -o $@ $(ALL_DEPS) uzi.lib
 
 clean:
 	rm -f $(ALL_DEPS) $(ALL_EXTRA) uzi.nes link.map
