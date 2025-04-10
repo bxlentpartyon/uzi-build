@@ -173,7 +173,7 @@ char *envp[];
 */
 
 int wargs(char **argv, int blk);
-void exec2(inoptr initbuf);
+void exec2(void);
 
 int _execve(char *name, char *argv[], char *envp[])
 {
@@ -213,6 +213,17 @@ int _execve(char *name, char *argv[], char *envp[])
 	goto nogood2;
     }
 
+    /* Here, check the setuid stuff. No other changes need be made in
+    the user data */
+    if (ino->c_node.i_mode & SET_UID)
+	udata.u_euid = ino->c_node.i_uid;
+
+    if (ino->c_node.i_mode & SET_GID)
+	udata.u_egid = ino->c_node.i_gid;
+
+    bcopy(buf,PROGBASE,512);
+    bfree(buf, 0);
+
     /* At this point, we are committed to reading in and executing
     the program. We switch to a local stack, and pass to it
     the necessary parameter: ino */
@@ -220,7 +231,7 @@ int _execve(char *name, char *argv[], char *envp[])
     udata.u_ino = ino;     /* Termorarily stash these here */
 
     tempstack();
-    exec2(buf);   /* Never returns */
+    exec2();   /* Never returns */
 
 nogood2:
     bfree(buf, 0);
@@ -233,7 +244,7 @@ nogood:
 char *rargs(char *ptr, int blk, int *cnt);
 extern void __fastcall__ doexec(int16 *newsp);
 
-void exec2(inoptr initbuf)
+void exec2(void)
 {
     register blkno_t blk;
     register char **argv;
@@ -241,36 +252,23 @@ void exec2(inoptr initbuf)
     register int (**sigp)();
     int argc;
     register char *progptr;
-    register inoptr ino = udata.u_ino;
     char *buf;
     blkno_t pblk;
 
-    /* Here, check the setuid stuff. No other changes need be made in
-    the user data */
-    if (ino->c_node.i_mode & SET_UID)
-	udata.u_euid = ino->c_node.i_uid;
-
-    if (ino->c_node.i_mode & SET_GID)
-	udata.u_egid = ino->c_node.i_gid;
-
-    /* Read in the first block from initbuf */
-    bcopy(initbuf, PROGBASE, 512);
-    bfree(initbuf, 0);
-
     /* Read in the rest of the program */
-    progptr = PROGBASE + 512;
-    for (blk = 0; blk <= ino->c_node.i_size.o_blkno; ++blk)
+    progptr = PROGBASE+512;
+    for (blk = 1; blk <= udata.u_ino->c_node.i_size.o_blkno; ++blk)
     {
-	pblk = bmap(ino, blk, 1);
+	pblk = bmap(udata.u_ino, blk, 1);
 	if (pblk != -1)
 	{
-	    buf = bread(ino->c_dev, pblk, 0);
+	    buf = bread( udata.u_ino->c_dev, pblk, 0);
 	    bcopy(buf, progptr, 512);
 	    bfree(buf, 0);
 	}
 	progptr += 512;
     }
-    i_deref(ino);
+    i_deref(udata.u_ino);
 
     /* Zero out the free memory */
     bzero(progptr, (uint16) ((char *) MMC5_PRG_MODE3_BANK0_START - progptr));
