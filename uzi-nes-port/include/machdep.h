@@ -14,6 +14,7 @@ void tempstack(void);
 void warning(char *s);
 void start_clock(void);
 void stop_clock(void);
+void debug_break(void);
 
 #define MAX_PROGRAM_SIZE	MMC5_PRG_MODE3_BANK_SIZE
 

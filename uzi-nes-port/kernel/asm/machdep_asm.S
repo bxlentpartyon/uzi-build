@@ -1,8 +1,8 @@
 	.importzp	sp
 	.import		_di, _ei, _disable_vblank_nmi, _enable_vblank_nmi
 	.import		cur_stack_page
-	.export		_udata
-	.export		_tempstack, _doexec
+	.export		_udata, _break_addr
+	.export		_tempstack, _doexec, _debug_break
 
 	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
@@ -14,6 +14,8 @@ _udata:
 
 .segment "DATA"
 jump_temp:
+	.addr $0000
+_break_addr:
 	.addr $0000
 
 .segment "TMP_STACK"
@@ -62,4 +64,13 @@ temp_stack:
 
 	; jump into the new program
 	jmp PROGBASE
+.endproc
+
+.proc _debug_break
+	pla
+	sta _break_addr
+	pla
+	sta _break_addr+1
+
+	brk
 .endproc
