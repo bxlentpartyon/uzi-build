@@ -116,13 +116,14 @@ UZI-NES WIP
 
 int nr_apu_irqs = 0;
 extern void *break_addr;
+extern int break_state;
 extern unsigned char apu_status_byte;
 #pragma zpsym ("apu_status_byte");
 
 void handle_irq(void)
 {
 	if (break_addr) {
-		panic("break @ %x\n", break_addr);
+		panic("break @ %x (%d)\n", break_addr, break_state);
 	}
 
 	if (apu_status_byte & 0x40) {

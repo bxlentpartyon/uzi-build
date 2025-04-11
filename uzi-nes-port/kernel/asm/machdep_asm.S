@@ -1,7 +1,7 @@
 	.importzp	sp
 	.import		_di, _ei, _disable_vblank_nmi, _enable_vblank_nmi
 	.import		cur_stack_page
-	.export		_udata, _break_addr
+	.export		_udata, _break_addr, _break_state
 	.export		_user_bank_setup, _tempstack, _doexec, _debug_break
 
 	.include	"mmc5.inc"
@@ -16,6 +16,8 @@ _udata:
 jump_temp:
 	.addr $0000
 _break_addr:
+	.addr $0000
+_break_state:
 	.addr $0000
 
 .segment "TMP_STACK"
@@ -80,6 +82,9 @@ temp_stack:
 .endproc
 
 .proc _debug_break
+	sta _break_state
+	stx _break_state+1	
+	
 	pla
 	sta _break_addr
 	pla
