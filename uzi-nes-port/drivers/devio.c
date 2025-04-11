@@ -54,6 +54,8 @@ char *bread(int dev, blkno_t blk, int rewrite)
 	register bufptr bp;
 	bufptr freebuf();
 
+	kprintf("rd dev %d blk %d rw %d\n", dev, blk, rewrite);
+
 	if (bp = bfind(dev, blk)) {
 		if (bp->bf_busy)
 			panic("want busy block");
@@ -79,6 +81,7 @@ char *bread(int dev, blkno_t blk, int rewrite)
 done:
 	bp->bf_busy = 1;
 	bp->bf_time = ++bufclock;  /* Time stamp it */
+	kprintf("return %x\n",bp->bf_data);
 	return (bp->bf_data);
 }
 
