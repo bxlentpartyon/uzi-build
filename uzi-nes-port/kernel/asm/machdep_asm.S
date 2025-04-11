@@ -47,6 +47,7 @@ temp_stack:
 	sta jump_temp+1
 
 	lda #<temp_stack
+	adc #$ff
 	sta sp
 	lda #>temp_stack
 	sta sp+1
