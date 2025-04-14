@@ -81,7 +81,7 @@ int ppuwd_write(int minor, int rawflag)
 	populate_bank_desc(blk, &bankdesc);
 
 	ppudesc.size = CHUNK_BUF_SIZE;
-	ppudesc.flags = bankdesc.upper_bits | PPU_DESC_FLAG_READ;
+	ppudesc.flags = bankdesc.upper_bits | PPU_DESC_FLAG_WRITE;
 	write_chunk[0] = bankdesc.lower_byte;
 
 	for (pass = 0; pass < RW_PASSES; pass++) {
