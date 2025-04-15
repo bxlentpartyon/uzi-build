@@ -13,16 +13,6 @@ UZI (Unix Z80 Implementation) Kernel:  process.c
 #include <machdep.h>
 #include <scall.h>
 
-void init2(void)
-{
-    kprintf("boot: ");
-
-    udata.u_argn2 = (int16)("/init");
-    udata.u_argn1 = (int16)(&arg[0]);
-    udata.u_argn = (int16)(&arg[1]);
-    _execve();
-}
-
 /* This actually writes out the image */
 void swrite(void)
 {
