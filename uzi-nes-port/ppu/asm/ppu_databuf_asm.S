@@ -45,7 +45,7 @@ cur_databuf_ptr:
 ;		   |  |\-- Read descriptor
 ;		   |  \--- Write descriptor
 ;		   \------ PPU upper CHR bank bits
-; bytes 5-X:	   video write desc:	the data to draw (number of bytes determined by the length)
+; bytes 4-X:	   video write desc:	the data to draw (number of bytes determined by the length)
 ;		 non-video r/w desc:	PPU lower CHR bank bits (followed by data for writes)
 ;
 ;  Original idea borrowed from:
