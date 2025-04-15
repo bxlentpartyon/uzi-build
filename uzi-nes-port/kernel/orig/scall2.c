@@ -14,34 +14,10 @@ UZI (Unix Z80 Implementation) Kernel:  scall2.c
 #include <process.h>
 #include <scall.h>
 
-/**************************************
-_exit(val)
-int16 val;
-**************************************/
-
-#define val (int16)udata.u_argn
-
-__exit()
-{
-    doexit(val,0);
-}
-
-#undef val
-
 _fork()
 {
    return (dofork());
 }
-
-
-
-_pause()
-{
-    psleep(0);
-    udata.u_error = EINTR;
-    return(-1);
-}
-
 
 /*************************************
 signal(sig, func)

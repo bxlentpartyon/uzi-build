@@ -484,6 +484,26 @@ ok:
 #undef statloc
 */
 
+/**************************************
+_exit(val)
+int16 val;
+**************************************/
+
+/*
+#define val (int16)udata.u_argn
+*/
+
+void doexit(int16 val, int16 val2);
+
+int __exit(int16 val)
+{
+    doexit(val,0);
+}
+
+/*
+#undef val
+*/
+
 void doexit(int16 val, int16 val2)
 {
 	register int16 j;
@@ -519,6 +539,13 @@ void doexit(int16 val, int16 val2)
 	ei();
 	swapin(getproc());
 	panic("doexit:won't exit");
+}
+
+int _pause(void)
+{
+    psleep(0);
+    udata.u_error = EINTR;
+    return(-1);
 }
 
 #pragma code-name (pop)
