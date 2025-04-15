@@ -3,9 +3,9 @@
 #include <ppu.h>
 #include <lib/string.h>
 
-#define	PPU_MAX_WRITE	16				// Max number of bytes we can write to the PPU in one VBlank
+#define	PPU_MAX_CHAR_WRITE	16			// Max number of bytes we can write to the PPU in one VBlank
 #define PPU_BUF_BYTE	sizeof(struct ppu_desc) + 1	// Write buffer entry size for a single byte
-#define PPU_BUF_SIZE	(PPU_MAX_WRITE * PPU_BUF_BYTE)
+#define PPU_BUF_SIZE	(PPU_MAX_CHAR_WRITE * PPU_BUF_BYTE)
 
 #pragma code-name (push, "PPU_CODE")
 
@@ -103,6 +103,10 @@ int __queue_descriptor(struct ppu_desc *desc, char *data)
 		datalen = 1;
 	else if (desc->flags & PPU_DESC_FLAG_NULL)
 		datalen = 0;
+	else if (desc->flags & PPU_DESC_FLAG_WRITE)
+		/* Add one for the bank byte here */
+		/* FIXME this should use a macro like BANK_BYTE_PAD */
+		datalen = desc->size + 1;
 	else
 		datalen = desc->size;
 

@@ -10,6 +10,7 @@ int ppuwd_open(int minor)
 	return (0);
 }
 
+/* General PPU bank descriptive data */
 #define NUM_BANKS		1024
 #define BANK_SIZE		4096
 #define BANK_UPPER_SHIFT	8
@@ -18,16 +19,23 @@ int ppuwd_open(int minor)
 #define BLOCKS_PER_BANK		(BANK_SIZE / BLOCK_SIZE)
 #define DISK_BANK_START		0x1000
 #define BANK_BYTE_PAD		1
-#define	CHUNK_SIZE		PPU_MAX_RW
-#define CHUNK_BUF_SIZE		CHUNK_SIZE + BANK_BYTE_PAD
 
+/* R/W specific data */
+#define READ_CHUNK_SIZE		PPU_MAX_READ
+#define WRITE_CHUNK_SIZE	PPU_MAX_WRITE
+#define WRITE_CHUNK_BUF_SIZE	WRITE_CHUNK_SIZE + BANK_BYTE_PAD
+#define READ_PASSES		(BLOCK_SIZE / PPU_MAX_READ)
+#define WRITE_PASSES		(BLOCK_SIZE / PPU_MAX_WRITE)
+
+/* General block location macros */
 #define blk_bank(blkno)			(blkno / BLOCKS_PER_BANK)
 #define blk_base_addr(blkno)		(DISK_BANK_START + ((blkno % BLOCKS_PER_BANK) * BLOCK_SIZE))
-#define blk_chunk_addr(blkno, chunk)	(blk_base_addr(blkno) + (chunk * CHUNK_SIZE))
 #define	bank_upper_bits(ppu_bank)	((ppu_bank >> BANK_UPPER_SHIFT) & BANK_UPPER_MASK)
 #define bank_lower_byte(ppu_bank)	(ppu_bank & BANK_LOWER_MASK)
 
-#define RW_PASSES	(BLOCK_SIZE / PPU_MAX_RW)
+/* R/W specific macros */
+#define blk_chunk_addr_rd(blkno, chunk)	(blk_base_addr(blkno) + (chunk * READ_CHUNK_SIZE))
+#define blk_chunk_addr_wr(blkno, chunk)	(blk_base_addr(blkno) + (chunk * WRITE_CHUNK_SIZE))
 
 struct ppuwd_bank_desc
 {
@@ -51,18 +59,18 @@ int ppuwd_read(int minor, int rawflag)
 
 	populate_bank_desc(blk, &bankdesc);
 
-	ppudesc.size = CHUNK_SIZE;
+	ppudesc.size = READ_CHUNK_SIZE;
 	ppudesc.flags = bankdesc.upper_bits | PPU_DESC_FLAG_READ;
 
-	for (pass = 0; pass < RW_PASSES; pass++) {
-		ppudesc.target = (char *) blk_chunk_addr(blk, pass);
+	for (pass = 0; pass < READ_PASSES; pass++) {
+		ppudesc.target = (char *) blk_chunk_addr_rd(blk, pass);
 		queue_descriptor(&ppudesc, &bankdesc.lower_byte);
 
 		while (!ppu_readbuf_dirty);
 
 		bcopy(ppu_readbuf,
-		      (char * ) &udata.u_buf->bf_data + CHUNK_SIZE * pass,
-		      CHUNK_SIZE);
+		      (char * ) &udata.u_buf->bf_data + READ_CHUNK_SIZE * pass,
+		      READ_CHUNK_SIZE);
 
 		ppu_readbuf_dirty = 0;
 	}
@@ -70,26 +78,29 @@ int ppuwd_read(int minor, int rawflag)
 	return 0;
 }
 
+extern void wait_frame(void);
+
 int ppuwd_write(int minor, int rawflag)
 {
 	struct ppu_desc ppudesc;
 	struct ppuwd_bank_desc bankdesc;
 	char pass;
-	char write_chunk[CHUNK_BUF_SIZE] = { 0 };
+	char write_chunk[WRITE_CHUNK_BUF_SIZE] = { 0 };
 	blkno_t blk = udata.u_buf->bf_blk + minor;
 
 	populate_bank_desc(blk, &bankdesc);
 
-	ppudesc.size = CHUNK_BUF_SIZE;
+	ppudesc.size = WRITE_CHUNK_SIZE;
 	ppudesc.flags = bankdesc.upper_bits | PPU_DESC_FLAG_WRITE;
 	write_chunk[0] = bankdesc.lower_byte;
 
-	for (pass = 0; pass < RW_PASSES; pass++) {
-		bcopy((char * ) &udata.u_buf->bf_data + CHUNK_SIZE * pass,
+	for (pass = 0; pass < WRITE_PASSES; pass++) {
+		bcopy((char * ) &udata.u_buf->bf_data + WRITE_CHUNK_SIZE * pass,
 		      write_chunk + BANK_BYTE_PAD,
-		      CHUNK_SIZE);
+		      WRITE_CHUNK_SIZE);
 
-		ppudesc.target = (char *) blk_chunk_addr(blk, pass);
+		ppudesc.target = (char *) blk_chunk_addr_wr(blk, pass);
 		queue_descriptor(&ppudesc, write_chunk);
+		wait_frame();
 	}
 }
