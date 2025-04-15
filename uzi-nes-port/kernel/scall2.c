@@ -397,12 +397,12 @@ uint16 incr;
 #define incr (uint16)udata.u_argn
 */
 
-_sbrk(uint16 incr)
+int _sbrk(uint16 incr)
 {
     register char *oldbrk = udata.u_break;
+    char *newbrk = (int) oldbrk + incr;
 
-    udata.u_argn += (int) oldbrk;
-    if (_brk())
+    if (_brk(newbrk))
 	return(-1);
 
     return((int)oldbrk);
