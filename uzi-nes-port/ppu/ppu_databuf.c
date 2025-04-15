@@ -3,7 +3,7 @@
 #include <ppu.h>
 #include <lib/string.h>
 
-#define	PPU_MAX_CHAR_WRITE	16			// Max number of bytes we can write to the PPU in one VBlank
+#define	PPU_MAX_CHAR_WRITE	16	// Max number of bytes we can write to the PPU in one VBlank
 #define PPU_BUF_BYTE	sizeof(struct ppu_desc) + 1	// Write buffer entry size for a single byte
 #define PPU_BUF_SIZE	(PPU_MAX_CHAR_WRITE * PPU_BUF_BYTE)
 
@@ -74,22 +74,22 @@ unsigned int calc_desc_weight(struct ppu_desc *desc)
 	unsigned int desc_cycles, perbyte_cycles;
 
 	switch (get_desc_type(desc)) {
-		case PPU_VIDEO_DESC:
-			desc_cycles = VIDEO_DESC_OVERHEAD_CYCLES;
-			perbyte_cycles = VIDEO_DESC_PERBYTE_CYCLES;
-			break;
-		case PPU_READ_DESC:
-			/* fall through */
-		case PPU_WRITE_DESC:
-			desc_cycles = RW_DESC_OVERHEAD_CYCLES;
-			perbyte_cycles = RW_DESC_PERBYTE_CYCLES;
-			break;
-		case PPU_NULL_DESC:
-			desc_cycles = NULL_DESC_OVERHEAD_CYCLES;
-			perbyte_cycles = NULL_DESC_OVERHEAD_CYCLES;
-			break;
-		case PPU_BAD_DESC:
-			panic("bad PPU desc");
+	case PPU_VIDEO_DESC:
+		desc_cycles = VIDEO_DESC_OVERHEAD_CYCLES;
+		perbyte_cycles = VIDEO_DESC_PERBYTE_CYCLES;
+		break;
+	case PPU_READ_DESC:
+		/* fall through */
+	case PPU_WRITE_DESC:
+		desc_cycles = RW_DESC_OVERHEAD_CYCLES;
+		perbyte_cycles = RW_DESC_PERBYTE_CYCLES;
+		break;
+	case PPU_NULL_DESC:
+		desc_cycles = NULL_DESC_OVERHEAD_CYCLES;
+		perbyte_cycles = NULL_DESC_OVERHEAD_CYCLES;
+		break;
+	case PPU_BAD_DESC:
+		panic("bad PPU desc");
 	}
 
 	return desc_cycles + desc->size * perbyte_cycles;
@@ -117,7 +117,7 @@ int __queue_descriptor(struct ppu_desc *desc, char *data)
 	if (calc_desc_weight(desc) + BASE_PPU_LOOP_CYCLES > PPU_LOOP_MAX_CYCLES)
 		goto unlock_again;
 
-	bcopy((char *) desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
+	bcopy((char *)desc, ppu_databuf + databuf_pos, sizeof(struct ppu_desc));
 	databuf_pos += sizeof(struct ppu_desc);
 
 	if (datalen) {
@@ -131,7 +131,7 @@ int __queue_descriptor(struct ppu_desc *desc, char *data)
 
 	return 0;
 
-unlock_again:
+ unlock_again:
 	ppu_unlock();
 	return -EAGAIN;
 }
@@ -140,7 +140,7 @@ void queue_descriptor(struct ppu_desc *desc, char *data)
 {
 	int ret = 0;
 
-queue_again:
+ queue_again:
 	ret = __queue_descriptor(desc, data);
 
 	if (ret == -EAGAIN) {
@@ -207,7 +207,8 @@ void update_screen_ptrs(short dist)
 	 * an extra row here (i.e. SCREEN_COLS) to account for the initially
 	 * non-visible first row.
 	 */
-	if (!scroll_started && cur_nametable_pos >= SCREEN_VIS_SIZE + SCREEN_COLS)
+	if (!scroll_started
+	    && cur_nametable_pos >= SCREEN_VIS_SIZE + SCREEN_COLS)
 		scroll_started = 1;
 
 	if (scroll_started) {
@@ -230,7 +231,7 @@ void next_line(void)
 {
 	int chars_left;
 
-	chars_left = SCREEN_COLS - ((unsigned int) cur_screen_ptr % SCREEN_COLS);
+	chars_left = SCREEN_COLS - ((unsigned int)cur_screen_ptr % SCREEN_COLS);
 	update_screen_ptrs(chars_left);
 }
 

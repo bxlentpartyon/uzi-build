@@ -70,7 +70,7 @@ void panic(char *msg)
 #endif
 		ppu_puts("PANIC: ");
 		ppu_puts(msg);
-		while(1);
+		while (1) ;
 	}
 }
 #endif
