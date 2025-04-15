@@ -10,10 +10,11 @@
 .segment "DATA"
 _ppu_databuf:
 	.align $100
-	.res $200, $00	; this is more than we can actually write in one
-			; vblank, but it simplifies the logic to assume that
-			; we have 2 full pages, but know that we will hit a \0
-			; before we get past 64-bytes-worth of buffer entries
+	.res $100, $00	; We use the Y register to track our progress through the
+			; buffer during process_ppubuf.  We have to be sure that the
+			; buffer is a maximum of one page long, because the loop in
+			; that procedure can't handle an overflow in the Y register
+			; at an arbitrary point in the loop
 _databuf_pos:
 	.addr $0000
 _ppu_readbuf:
@@ -167,12 +168,7 @@ write_bytes_loop:
 	bne write_bytes_loop
 ; end handle write descriptor
 
-	; increment cur_databuf_ptr if necessary
-	iny				; iny from the byte read is delay until here
-					; to avoid polluting the carry flag early
-	bne buf_write_loop
-	inc cur_databuf_ptr+1
-	jmp buf_write_loop_reset
+	jmp buf_write_loop
 ; end buf_write_loop
 
 out_reset_counters:
