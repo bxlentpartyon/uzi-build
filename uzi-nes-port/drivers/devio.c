@@ -45,7 +45,7 @@ pointer to the data.  This is very important.
 
 ********************************************************/
 
-unsigned bufclock = 0;  /* Time-stamp counter for LRU */
+unsigned bufclock = 0;		/* Time-stamp counter for LRU */
 
 bufptr bfind(int dev, blkno_t blk);
 
@@ -67,21 +67,21 @@ char *bread(int dev, blkno_t blk, int rewrite)
 	bp->bf_blk = blk;
 
 	/* If rewrite is set, we are about to write over the entire block,
-	so we don't need the previous contents */
+	   so we don't need the previous contents */
 
-	ifnot (rewrite)
-		if (bdread(bp) == -1) {
-			udata.u_error = EIO;
-			return (NULL);
-		}
+	ifnot(rewrite)
+	    if (bdread(bp) == -1) {
+		udata.u_error = EIO;
+		return (NULL);
+	}
 
 	if (rewrite == 2)
 		bzero(bp->bf_data, 512);
 
-done:
+ done:
 	bp->bf_busy = 1;
-	bp->bf_time = ++bufclock;  /* Time stamp it */
-	kprintf("return %x\n",bp->bf_data);
+	bp->bf_time = ++bufclock;	/* Time stamp it */
+	kprintf("return %x\n", bp->bf_data);
 	return (bp->bf_data);
 }
 
@@ -100,7 +100,7 @@ int bfree(register bufptr bp, int dirty)
 	bp->bf_dirty |= dirty;
 	bp->bf_busy = 0;
 
-	if (dirty == 2) {  /* Extra dirty */
+	if (dirty == 2) {	/* Extra dirty */
 		if (bdwrite(bp) == -1)
 			udata.u_error = EIO;
 		bp->bf_dirty = 0;
@@ -111,31 +111,30 @@ int bfree(register bufptr bp, int dirty)
 
 char *zerobuf(void)
 {
-    bufptr bp;
-    bufptr freebuf();
+	bufptr bp;
+	bufptr freebuf();
 
-    bp = freebuf();
-    bp->bf_dev = -1;
-    bzero(bp->bf_data,512);
-    return(bp->bf_data);
+	bp = freebuf();
+	bp->bf_dev = -1;
+	bzero(bp->bf_data, 512);
+	return (bp->bf_data);
 }
 
 void bufsync(void)
 {
-    register bufptr bp;
+	register bufptr bp;
 
-    for (bp=bufpool; bp < bufpool+NBUFS; ++bp)
-    {
-        if (bp->bf_dev != -1 && bp->bf_dirty)
-            bdwrite(bp);
-    }
+	for (bp = bufpool; bp < bufpool + NBUFS; ++bp) {
+		if (bp->bf_dev != -1 && bp->bf_dirty)
+			bdwrite(bp);
+	}
 }
 
 bufptr bfind(int dev, blkno_t blk)
 {
 	register bufptr bp;
 
-	for (bp=bufpool; bp < bufpool+NBUFS; ++bp) {
+	for (bp = bufpool; bp < bufpool + NBUFS; ++bp) {
 		if (bp->bf_dev == dev && bp->bf_blk == blk)
 			return (bp);
 	}
@@ -150,19 +149,19 @@ bufptr freebuf()
 	register int oldtime;
 
 	/* Try to find a non-busy buffer 
-	and write out the data if it is dirty */
+	   and write out the data if it is dirty */
 
 	oldest = NULL;
 	oldtime = 0;
-	for (bp=bufpool; bp < bufpool+NBUFS; ++bp) {
+	for (bp = bufpool; bp < bufpool + NBUFS; ++bp) {
 		if (bufclock - bp->bf_time >= oldtime && !bp->bf_busy) {
 			oldest = bp;
 			oldtime = bufclock - bp->bf_time;
 		}
 	}
 
-	ifnot (oldest)
-		panic("no free buffers");
+	ifnot(oldest)
+	    panic("no free buffers");
 
 	if (oldest->bf_dirty) {
 		if (bdwrite(oldest) == -1)
@@ -194,34 +193,35 @@ Udata.u_base, count, and offset have the rest of the data.
 
 int bdread(bufptr bp)
 {
-	ifnot (validdev(bp->bf_dev))
-		panic("bdread: invalid dev");
+	ifnot(validdev(bp->bf_dev))
+	    panic("bdread: invalid dev");
 
 	udata.u_buf = bp;
-	return ((*dev_tab[bp->bf_dev].dev_read)(dev_tab[bp->bf_dev].minor, 0));
+	return ((*dev_tab[bp->bf_dev].dev_read) (dev_tab[bp->bf_dev].minor, 0));
 }
 
 int bdwrite(bufptr bp)
 {
-	ifnot (validdev(bp->bf_dev))
-		panic("bdwrite: invalid dev");
+	ifnot(validdev(bp->bf_dev))
+	    panic("bdwrite: invalid dev");
 
 	udata.u_buf = bp;
-	return ((*dev_tab[bp->bf_dev].dev_write)(dev_tab[bp->bf_dev].minor, 0));
+	return ((*dev_tab[bp->bf_dev].dev_write) (dev_tab[bp->bf_dev].minor,
+						  0));
 }
 
 int cdread(int dev)
 {
-	ifnot (validdev(dev))
-		panic("cdread: invalid dev");
-	return ((*dev_tab[dev].dev_read)(dev_tab[dev].minor, 1));
+	ifnot(validdev(dev))
+	    panic("cdread: invalid dev");
+	return ((*dev_tab[dev].dev_read) (dev_tab[dev].minor, 1));
 }
 
 int cdwrite(int dev)
 {
-    ifnot (validdev(dev))
-        panic("cdwrite: invalid dev");
-    return ((*dev_tab[dev].dev_write)(dev_tab[dev].minor, 1));
+	ifnot(validdev(dev))
+	    panic("cdwrite: invalid dev");
+	return ((*dev_tab[dev].dev_write) (dev_tab[dev].minor, 1));
 }
 
 /**************************************************
@@ -237,31 +237,29 @@ Any device other than a disk will have only raw access.
 
 int d_open(int dev)
 {
-	ifnot (validdev(dev))
-		return(-1);
-	return ((*dev_tab[dev].dev_open)(dev_tab[dev].minor));
+	ifnot(validdev(dev))
+	    return (-1);
+	return ((*dev_tab[dev].dev_open) (dev_tab[dev].minor));
 }
 
 void d_close(int dev)
 {
-    ifnot (validdev(dev))
-        panic("d_close: bad device");
-    (*dev_tab[dev].dev_close)(dev_tab[dev].minor);
+	ifnot(validdev(dev))
+	    panic("d_close: bad device");
+	(*dev_tab[dev].dev_close) (dev_tab[dev].minor);
 }
 
 int d_ioctl(int dev, int request, char *data)
 {
-    ifnot (validdev(dev))
-    {
-        udata.u_error = ENXIO;
-        return(-1);
-    }
-    if((*dev_tab[dev].dev_ioctl)(dev_tab[dev].minor,request,data))
-    {
-        udata.u_error = EINVAL;
-        return(-1);
-    }
-        return(0);
+	ifnot(validdev(dev)) {
+		udata.u_error = ENXIO;
+		return (-1);
+	}
+	if ((*dev_tab[dev].dev_ioctl) (dev_tab[dev].minor, request, data)) {
+		udata.u_error = EINVAL;
+		return (-1);
+	}
+	return (0);
 }
 
 int validdev(int dev)
@@ -279,35 +277,33 @@ Character queue management routines
 /* add something to the tail */
 int insq(register struct s_queue *q, char c)
 {
-    di();
-    if (q->q_count == q->q_size)
-    {
-        ei();
-        return(0);
-    }
-    *(q->q_tail) = c;
-    ++q->q_count;
-    if (++q->q_tail >= q->q_base + q->q_size)
-        q->q_tail = q->q_base;
-    ei();
-    return(1);
+	di();
+	if (q->q_count == q->q_size) {
+		ei();
+		return (0);
+	}
+	*(q->q_tail) = c;
+	++q->q_count;
+	if (++q->q_tail >= q->q_base + q->q_size)
+		q->q_tail = q->q_base;
+	ei();
+	return (1);
 }
 
 /* Remove something from the head. */
 int remq(struct s_queue *q, char *cp)
 {
-    di();
-    ifnot (q->q_count)
-    {
-        ei();
-        return(0);
-    }
-    *cp = *(q->q_head);
-    --q->q_count;
-    if (++q->q_head >= q->q_base + q->q_size)
-        q->q_head = q->q_base;
-    ei();
-    return(1);
+	di();
+	ifnot(q->q_count) {
+		ei();
+		return (0);
+	}
+	*cp = *(q->q_head);
+	--q->q_count;
+	if (++q->q_head >= q->q_base + q->q_size)
+		q->q_head = q->q_base;
+	ei();
+	return (1);
 }
 
 #pragma code-name (pop)
@@ -319,10 +315,10 @@ int remq(struct s_queue *q, char *cp)
 
 int ok(void)
 {
-	return(0);
+	return (0);
 }
 
 int nogood(void)
 {
-	return(-1);
+	return (-1);
 }
