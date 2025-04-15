@@ -78,25 +78,6 @@ void initvec(void)
 extern int unix();
 
 
-void doexec(void *new_stack)
-{
-/*
-#asm 8080
-        POP     H
-        POP     H       ;get argument
-        SPHL            ;set stack pointer to it
-        MVI     A,0C3H  ;jump inst
-        STA     0030H   ;dest of RST6 instruction.
-        LXI     H,unix? ;entry address
-        SHLD    0031H
-        XRA     A
-        STA     udata? + ?OSYS
-        JMP     0100H
-#endasm
-*/
-}
-
-
 static int cursig;
 static int (*curvec)();
 
@@ -194,17 +175,6 @@ shift8()
         PUSH    D       ;restore stack
 #endasm
 */
-}
-
-/* This prints an error message and dies. */
-
-void panic(char *s)
-{
-    di();
-    inint = 1;
-    kprintf("PANIC: %s\n",s);
-    idump();
-    abort();
 }
 
 void idump(void)
