@@ -361,6 +361,57 @@ char *rargs(char *ptr, int blk, int *cnt)
 #pragma code-name (pop)
 #pragma code-name (push, "SCALL2_CODE")
 
+/**********************************
+brk(addr)
+char *addr;
+************************************/
+
+/*
+#define addr (char *)udata.u_argn
+*/
+
+int _brk(char *addr)
+{
+    char dummy;   /* A thing to take address of */
+
+    /* A hack to get approx val of stack ptr. */
+    if (addr < PROGBASE || (addr+64) >= (char *)&dummy)
+    {
+	udata.u_error = ENOMEM;
+	return(-1);
+    }
+    udata.u_break = addr;
+    return(0);
+}
+
+/*
+#undef addr
+*/
+
+/************************************
+sbrk(incr)
+uint16 incr;
+***************************************/
+
+/*
+#define incr (uint16)udata.u_argn
+*/
+
+_sbrk(uint16 incr)
+{
+    register char *oldbrk = udata.u_break;
+
+    udata.u_argn += (int) oldbrk;
+    if (_brk())
+	return(-1);
+
+    return((int)oldbrk);
+}
+
+/*
+#undef incr
+*/
+
 void doexit(int16 val, int16 val2)
 {
 	register int16 j;

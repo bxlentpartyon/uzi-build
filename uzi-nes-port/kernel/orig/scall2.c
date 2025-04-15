@@ -14,53 +14,6 @@ UZI (Unix Z80 Implementation) Kernel:  scall2.c
 #include <process.h>
 #include <scall.h>
 
-/**********************************
-brk(addr)
-char *addr;
-************************************/
-
-#define addr (char *)udata.u_argn
-
-_brk()
-{
-    char dummy;   /* A thing to take address of */
-
-    /* A hack to get approx val of stack ptr. */
-    if (addr < PROGBASE || (addr+64) >= (char *)&dummy)
-    {
-	udata.u_error = ENOMEM;
-	return(-1);
-    }
-    udata.u_break = addr;
-    return(0);
-}
-
-#undef addr
-
-
-
-/************************************
-sbrk(incr)
-uint16 incr;
-***************************************/
-
-#define incr (uint16)udata.u_argn
-
-_sbrk()
-{
-    register char *oldbrk = udata.u_break;
-
-    udata.u_argn += (int) oldbrk;
-    if (_brk())
-	return(-1);
-
-    return((int)oldbrk);
-}
-
-#undef incr
-
-
-
 /**************************************
 wait(statloc)
 int *statloc;
