@@ -1,4 +1,5 @@
 *.swp
+*.swo
 *.s
 *.o
 *.nes
@@ -8,3 +9,4 @@ cscope.out
 *~
 
 uzi-nes-port/include/generated/*.h
+uzi-nes-utils/fs/images/*
