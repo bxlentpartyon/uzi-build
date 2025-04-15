@@ -9,4 +9,4 @@ extern char in_interrupt;
 extern uint16 clk_int_count;
 extern uint16 tick_count;
 
-#endif /* __INTERRUPTS_H__ */
+#endif				/* __INTERRUPTS_H__ */

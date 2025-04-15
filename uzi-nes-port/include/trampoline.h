@@ -16,4 +16,4 @@ extern void trampoline(void);
 #define CORE_PAGE	15
 #define NUM_CODE_PAGES	16
 
-#endif /* __TRAMPOLINE_H__ */
+#endif				/* __TRAMPOLINE_H__ */

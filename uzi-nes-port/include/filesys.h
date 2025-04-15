@@ -16,7 +16,7 @@ int getmode(inoptr ino);
 inoptr getinode(int uindex);
 int isdevice(inoptr ino);
 inoptr i_open(int dev, unsigned ino);
-inoptr n_open(char *name, inoptr *parent);
+inoptr n_open(char *name, inoptr * parent);
 void i_ref(inoptr ino);
 void i_deref(inoptr ino);
 void f_trunc(register inoptr ino);
@@ -31,4 +31,4 @@ void setftime(register inoptr ino, register int flag);
 
 #define BLOCK_SIZE	512
 
-#endif /* __FILESYS_H__ */
+#endif				/* __FILESYS_H__ */

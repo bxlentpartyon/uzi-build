@@ -58,4 +58,4 @@ extern char ppu_readbuf[];
 #define PPU_MAX_READ	64
 #define PPU_MAX_WRITE	32
 
-#endif /* __PPU_H__ */
+#endif				/* __PPU_H__ */

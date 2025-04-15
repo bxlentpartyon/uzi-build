@@ -25,4 +25,4 @@ void d_close(int dev);
 int ok(void);
 int nogood(void);
 
-#endif /* __DEVIO_H__ */
+#endif				/* __DEVIO_H__ */

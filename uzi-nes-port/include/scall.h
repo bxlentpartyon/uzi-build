@@ -19,6 +19,6 @@ void doexit(int16 val, int16 val2);
 /* stuff below is static to scall1.c and should be pulled out of the header */
 int min(int a, int b);
 int psize(inoptr ino);
-void addoff(off_t *ofptr, int amount);
+void addoff(off_t * ofptr, int amount);
 
-#endif /* __SCALL_H__ */
+#endif				/* __SCALL_H__ */

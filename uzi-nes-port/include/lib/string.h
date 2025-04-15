@@ -6,4 +6,4 @@ void bcopy(char *src, char *dest, unsigned int n);
 void itob(int n, char *s, int b);
 int strlen(char *s);
 
-#endif /* __STRING_H__ */
+#endif				/* __STRING_H__ */

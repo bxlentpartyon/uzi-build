@@ -14,4 +14,4 @@ void init2(void);
 ptptr getproc(void);
 #pragma wrapped-call (pop)
 
-#endif /* __PROCESS_H__ */
+#endif				/* __PROCESS_H__ */

@@ -19,4 +19,4 @@ void __fastcall__ debug_break(int state);
 
 #define MAX_PROGRAM_SIZE	MMC5_PRG_MODE3_BANK_SIZE
 
-#endif /* __MACHDEP_H__ */
+#endif				/* __MACHDEP_H__ */

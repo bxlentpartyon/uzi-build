@@ -5,4 +5,4 @@ int ppuwd_open(int minor);
 int ppuwd_read(int minor, int rawflag);
 int ppuwd_write(int minor, int rawflag);
 
-#endif /* __DEVPPUWD_H__ */
+#endif				/* __DEVPPUWD_H__ */

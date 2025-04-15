@@ -9,4 +9,4 @@ int tty_close(int minor);
 void tty_init(void);
 #pragma wrapped-call(pop)
 
-#endif /* __DEVTTY_H__ */
+#endif				/* __DEVTTY_H__ */
