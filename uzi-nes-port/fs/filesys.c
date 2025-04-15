@@ -31,7 +31,7 @@ blkno_t blk_alloc(int devno);
   the file did not exist.  If the parent existed,
   and parent is not null, parent will be filled in with
   the parents inoptr. Otherwise, parent will be set to NULL. */
-inoptr n_open(char *name, inoptr *parent)
+inoptr n_open(char *name, inoptr * parent)
 {
 
 	register inoptr wd;	/* the directory we are currently searching. */
@@ -57,7 +57,7 @@ inoptr n_open(char *name, inoptr *parent)
 		while (*name == '/')	/* Skip (possibly repeated) slashes */
 			++name;
 		ifnot(*name)	/* No more components of path? */
-			break;
+		    break;
 		ifnot(ninode) {
 			udata.u_error = ENOENT;
 			goto nodir;
@@ -94,7 +94,7 @@ inoptr n_open(char *name, inoptr *parent)
 		i_deref(wd);
 
 	ifnot(parent || ninode)
-		udata.u_error = ENOENT;
+	    udata.u_error = ENOENT;
 
 	return (ninode);
 
@@ -194,7 +194,7 @@ inoptr i_open(int dev, unsigned ino)
 			j = i_tab;
 
 		ifnot(j->c_refs)
-			nindex = j;
+		    nindex = j;
 
 		if (j->c_dev == dev && j->c_num == ino) {
 			nindex = j;
@@ -223,7 +223,7 @@ inoptr i_open(int dev, unsigned ino)
 			goto badino;
 	} else {
 		ifnot(nindex->c_node.i_nlink && nindex->c_node.i_mode & F_MASK)
-			goto badino;
+		    goto badino;
 	}
 
 	++nindex->c_refs;
@@ -326,7 +326,7 @@ int namecomp(register char *n1, register char *n2)
 		if (*n1++ != *n2++)
 			return (0);
 		ifnot(--n)
-			return (-1);
+		    return (-1);
 	}
 	return (*n2 == '\0' || *n2 == '/');
 }
@@ -346,7 +346,7 @@ inoptr newfile(inoptr pino, char *name)
 	register int j;
 
 	ifnot(nindex = i_open(pino->c_dev, 0))
-		goto nogood;
+	    goto nogood;
 
 	nindex->c_node.i_mode = F_REG;	/* For the time being */
 	nindex->c_node.i_nlink = 1;
@@ -407,7 +407,7 @@ unsigned i_alloc(int devno)
  tryagain:
 	if (dev->s_ninode) {
 		ifnot(dev->s_tinode)
-			goto corrupt;
+		    goto corrupt;
 		ino = dev->s_inode[--dev->s_ninode];
 		if (ino < 2 || ino >= (dev->s_isize - 2) * 8)
 			goto corrupt;
@@ -423,7 +423,7 @@ unsigned i_alloc(int devno)
 		buf = (struct dinode *)bread(devno, blk, 0);
 		for (j = 0; j < 8; j++) {
 			ifnot(buf[j].i_mode || buf[j].i_nlink)
-				dev->s_inode[k++] = 8 * (blk - 2) + j;
+			    dev->s_inode[k++] = 8 * (blk - 2) + j;
 			if (k == 50) {
 				brelse(buf);
 				goto done;
@@ -508,7 +508,7 @@ blkno_t blk_alloc(int devno)
 	validblk(devno, newno);
 
 	ifnot(dev->s_tfree)
-		goto corrupt;
+	    goto corrupt;
 	--dev->s_tfree;
 
 	/* Zero out the new block */
@@ -533,7 +533,7 @@ void blk_free(int devno, blkno_t blk)
 	register char *buf;
 
 	ifnot(blk)
-		return;
+	    return;
 
 	if (baddev(dev = getdev(devno)))
 		return;
@@ -610,7 +610,7 @@ void i_deref(register inoptr ino)
 	magic(ino);
 
 	ifnot(ino->c_refs)
-		panic("inode freed.");
+	    panic("inode freed.");
 
 	if ((ino->c_node.i_mode & F_MASK) == F_PIPE)
 		wakeup((char *)ino);
@@ -619,7 +619,7 @@ void i_deref(register inoptr ino)
 	   its blocks freed. */
 
 	ifnot(--ino->c_refs || ino->c_node.i_nlink)
-		f_trunc(ino);
+	    f_trunc(ino);
 
 	/* If the inode was modified, we must write it to disk. */
 	if (!(ino->c_refs) && ino->c_dirty) {
@@ -693,7 +693,7 @@ void freeblk(int dev, blkno_t blk, int level)
 	int j;
 
 	ifnot(blk)
-		return;
+	    return;
 
 	if (level) {
 		buf = (blkno_t *) bread(dev, blk, 0);
