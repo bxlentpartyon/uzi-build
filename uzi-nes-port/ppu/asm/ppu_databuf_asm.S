@@ -158,6 +158,7 @@ out_options_byte:
 	ldx #0
 write_bytes_loop:
 	lda (cur_databuf_ptr), y
+	iny
 	sta PPU_DATA
 
 	inx
