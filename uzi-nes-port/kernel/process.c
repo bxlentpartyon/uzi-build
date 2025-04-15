@@ -22,21 +22,21 @@ void newproc(ptptr p)
 
 	/* Note that ptab_alloc clears most of the entry */
 	di();
-	p->p_swap = (p - ptab) * 65  + 1;  /* Allow 65 blocks per process */
+	p->p_swap = (p - ptab) * 65 + 1;	/* Allow 65 blocks per process */
 	p->p_status = P_RUNNING;
 
 	p->p_pptr = udata.u_ptab;
 	p->p_ignored = udata.u_ptab->p_ignored;
 	p->p_uid = udata.u_ptab->p_uid;
 	udata.u_ptab = p;
-	bzero((char *) &udata.u_utime, 4 * sizeof(time_t)); /* Clear tick counters */
+	bzero((char *)&udata.u_utime, 4 * sizeof(time_t));	/* Clear tick counters */
 	ei();
 
 	rdtime(&udata.u_time);
 	i_ref(udata.u_cwd);
 	udata.u_cursig = udata.u_error = 0;
 
-	for (j=udata.u_files; j < (udata.u_files+UFTSIZE); ++j)
+	for (j = udata.u_files; j < (udata.u_files + UFTSIZE); ++j)
 		if (*j >= 0)
 			++of_tab[*j].o_refs;
 }
@@ -48,23 +48,22 @@ system. */
 
 ptptr getproc(void)
 {
-    register status;
-    static ptptr pp = ptab;    /* Pointer for round-robin scheduling */
+	register status;
+	static ptptr pp = ptab;	/* Pointer for round-robin scheduling */
 
-    for (;;)
-    {
-	if (++pp >= ptab + PTABSIZE)
-	    pp = ptab;
+	for (;;) {
+		if (++pp >= ptab + PTABSIZE)
+			pp = ptab;
 
-	di();
-	status = pp->p_status;
-	ei();
+		di();
+		status = pp->p_status;
+		ei();
 
-	if (status == P_RUNNING)
-	    panic("getproc: extra running");
-	if (status == P_READY)
-	    return(pp);
-    }
+		if (status == P_RUNNING)
+			panic("getproc: extra running");
+		if (status == P_READY)
+			return (pp);
+	}
 }
 
 void swrite(void)
@@ -79,34 +78,32 @@ void swapin(ptptr pp)
 
 /* This allocates a new process table slot, and fills
 in its p_pid field with a unique number.  */
-ptptr
-ptab_alloc()
+ptptr ptab_alloc()
 {
 	register ptptr p;
 	register ptptr pp;
 	static int nextpid = 0;
 
 	di();
-	for(p=ptab;p < ptab+PTABSIZE; ++p) {
+	for (p = ptab; p < ptab + PTABSIZE; ++p) {
 		if (p->p_status == P_EMPTY)
 			goto found;
 	}
 	ei();
-	return(NULL);
+	return (NULL);
 
-found:
+ found:
 
 	/* See if next pid number is unique */
-nogood:
+ nogood:
 	if (nextpid++ > 32000)
 		nextpid = 1;
-	for (pp=ptab; pp < ptab+PTABSIZE; ++pp)
-	{
+	for (pp = ptab; pp < ptab + PTABSIZE; ++pp) {
 		if (pp->p_status != P_EMPTY && pp->p_pid == nextpid)
 			goto nogood;
 	}
 
-	bzero((char *) p, sizeof(struct p_tab));
+	bzero((char *)p, sizeof(struct p_tab));
 	p->p_pid = nextpid;
 	p->p_status = P_FORKING;
 	ei();
@@ -137,7 +134,7 @@ void init2(void)
 	initproc->p_status = P_RUNNING;
 
 	/* User's file table */
-	for (j=udata.u_files; j < (udata.u_files+UFTSIZE); ++j)
+	for (j = udata.u_files; j < (udata.u_files + UFTSIZE); ++j)
 		*j = -1;
 
 	/* Turn on the clock */
@@ -145,7 +142,7 @@ void init2(void)
 	ei();
 
 	/* Wait until the clock has interrupted, to set tod */
-	while (!tod.t_date);
+	while (!tod.t_date) ;
 
 	/* Open the console tty device */
 	tty_init();
@@ -159,14 +156,14 @@ void init2(void)
 	ROOTDEV = bootchar - '0';
 
 	/* Mount the root device */
-	if (fmount(ROOTDEV,NULLINODE)) {
+	if (fmount(ROOTDEV, NULLINODE)) {
 		panic("no filesys");
 	} else {
 		kprintf("root fs mounted!\n");
 	}
 
-	ifnot (root = i_open(ROOTDEV,ROOTINODE))
-		panic("no root");
+	ifnot(root = i_open(ROOTDEV, ROOTINODE))
+	    panic("no root");
 
 	i_ref(udata.u_cwd = root);
 	rdtime(&udata.u_time);
@@ -175,7 +172,7 @@ void init2(void)
 
 	dump_proc(initproc);
 
-	_execve("/init",&arg[0],&arg[1]);
+	_execve("/init", &arg[0], &arg[1]);
 
 	panic("no /init");
 }
@@ -189,25 +186,25 @@ to the process's own ptab address is a wait().   */
 
 void psleep(void *event)
 {
-    register dummy;  /* Force saving of registers */
+	register dummy;		/* Force saving of registers */
 
-    di();
-    if (udata.u_ptab->p_status != P_RUNNING)
-	panic("psleep: voodoo");
-    if (!event)
-	udata.u_ptab->p_status = P_PAUSE;
-    else if (event == (char *)udata.u_ptab)
-	udata.u_ptab->p_status = P_WAIT;
-    else
-	udata.u_ptab->p_status = P_SLEEP;
+	di();
+	if (udata.u_ptab->p_status != P_RUNNING)
+		panic("psleep: voodoo");
+	if (!event)
+		udata.u_ptab->p_status = P_PAUSE;
+	else if (event == (char *)udata.u_ptab)
+		udata.u_ptab->p_status = P_WAIT;
+	else
+		udata.u_ptab->p_status = P_SLEEP;
 
-    udata.u_ptab->p_wait = event;
+	udata.u_ptab->p_wait = event;
 
-    ei();
+	ei();
 
-    swapout();          /* Swap us out, and start another process */
+	swapout();		/* Swap us out, and start another process */
 
-    /* Swapout doesn't return until we have been swapped back in */
+	/* Swapout doesn't return until we have been swapped back in */
 }
 
 /* wakeup() looks for any process waiting on the event,
@@ -215,20 +212,17 @@ and make them runnable */
 
 void wakeup(char *event)
 {
-    register ptptr p;
+	register ptptr p;
 
-    di();
-    for(p=ptab;p < ptab+PTABSIZE; ++p)
-    {
-	if (p->p_status > P_RUNNING && p->p_wait == event)
-	{
-	    p->p_status = P_READY;
-	    p->p_wait = (char *)NULL;
+	di();
+	for (p = ptab; p < ptab + PTABSIZE; ++p) {
+		if (p->p_status > P_RUNNING && p->p_wait == event) {
+			p->p_status = P_READY;
+			p->p_wait = (char *)NULL;
+		}
 	}
-    }
-    ei();
+	ei();
 }
-
 
 /* Temp storage for swapout() */
 char *stkptr;
@@ -241,25 +235,22 @@ it thinks it has just returned from swapout(). */
 /* This function can have no arguments or auto variables */
 int swapout(void)
 {
-    static ptptr newp;
-    ptptr getproc();
+	static ptptr newp;
+	ptptr getproc();
 
+	/* See if any signals are pending */
+	chksigs();
 
-    /* See if any signals are pending */
-    chksigs();
+	/* Get a new process */
+	newp = getproc();
 
-    /* Get a new process */
-    newp = getproc();
-
-    /* If there is nothing else to run, just return */
-    if (newp == udata.u_ptab)
-    {
-	udata.u_ptab->p_status = P_RUNNING;
-	return (runticks = 0);
-    }
-
-    ;
-    /* Save the stack pointer and critical registers */
+	/* If there is nothing else to run, just return */
+	if (newp == udata.u_ptab) {
+		udata.u_ptab->p_status = P_RUNNING;
+		return (runticks = 0);
+	}
+	;
+	/* Save the stack pointer and critical registers */
 /*
 #asm
 	LD      HL,01   ;this will return 1 if swapped.
@@ -271,79 +262,75 @@ int swapout(void)
 	LD      (stkptr?),HL
 #endasm
 */
-    udata.u_sp = stkptr;
+	udata.u_sp = stkptr;
 
-    swrite();
-    /* Read the new process in, and return into its context. */
-    swapin(newp);
+	swrite();
+	/* Read the new process in, and return into its context. */
+	swapin(newp);
 
-    /* We should never get here. */
-    panic("swapin failed");
+	/* We should never get here. */
+	panic("swapin failed");
 }
 
 /* This sees if the current process has any signals set, and deals with them */
 void chksigs(void)
 {
-    register j;
+	register j;
 
-    di();
-    ifnot (udata.u_ptab->p_pending)
-    {
+	di();
+	ifnot(udata.u_ptab->p_pending) {
+		ei();
+		return;
+	}
+
+	for (j = 1; j < NSIGS; ++j) {
+		ifnot(sigmask(j) & udata.u_ptab->p_pending)
+		    continue;
+		if (udata.u_sigvec[j] == SIG_DFL) {
+			ei();
+			doexit(0, j);
+		}
+
+		if (udata.u_sigvec[j] != SIG_IGN) {
+			/* Arrange to call the user routine at return */
+			udata.u_ptab->p_pending &= !sigmask(j);
+			udata.u_cursig = j;
+		}
+	}
 	ei();
-	return;
-    }
-
-    for (j=1; j < NSIGS; ++j)
-    {
-	ifnot (sigmask(j) & udata.u_ptab->p_pending)
-	    continue;
-	if (udata.u_sigvec[j] == SIG_DFL)
-	{
-	    ei();
-	    doexit(0,j);
-	}
-
-	if (udata.u_sigvec[j] != SIG_IGN)
-	{
-	    /* Arrange to call the user routine at return */
-	    udata.u_ptab->p_pending &= !sigmask(j);
-	    udata.u_cursig = j;
-	}
-    }
-    ei();
 }
 
 void sendsig(ptptr proc, int16 sig)
 {
-    register ptptr p;
+	register ptptr p;
 
-    if (proc)
-	ssig(proc,sig);
-    else
-	for (p=ptab; p < ptab+PTABSIZE; ++p)
-	    if (p->p_status)
-	        ssig(p,sig);
+	if (proc)
+		ssig(proc, sig);
+	else
+		for (p = ptab; p < ptab + PTABSIZE; ++p)
+			if (p->p_status)
+				ssig(p, sig);
 }
 
 void ssig(register ptptr proc, int16 sig)
 {
-    register stat;
+	register stat;
 
-    di();
-    ifnot(proc->p_status)
-	goto done;              /* Presumably was killed just now */
+	di();
+	ifnot(proc->p_status)
+	    goto done;		/* Presumably was killed just now */
 
-    if (proc->p_ignored & sigmask(sig))
-	goto done;
+	if (proc->p_ignored & sigmask(sig))
+		goto done;
 
-    stat = proc->p_status;
-    if (stat == P_PAUSE || stat == P_WAIT || stat == P_SLEEP)
-	proc->p_status = P_READY;
+	stat = proc->p_status;
+	if (stat == P_PAUSE || stat == P_WAIT || stat == P_SLEEP)
+		proc->p_status = P_READY;
 
-    proc->p_wait = (char *)NULL;
-    proc->p_pending |= sigmask(sig);
-done:
-    ei();
+	proc->p_wait = (char *)NULL;
+	proc->p_pending |= sigmask(sig);
+ done:
+	ei();
 }
 
 #pragma code-name (pop)

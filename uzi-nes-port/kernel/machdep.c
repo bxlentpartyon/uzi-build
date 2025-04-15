@@ -40,7 +40,7 @@ void strcpy_idx(char *dest, char *src, int *idx)
 {
 	int copy_idx = 0;
 
-	while(src[copy_idx]) {
+	while (src[copy_idx]) {
 		dest[copy_idx] = src[copy_idx];
 		copy_idx++;
 	}
@@ -53,54 +53,54 @@ void strcpy_idx(char *dest, char *src, int *idx)
 
 /* Short version of printf to save space */
 void vsprintf(char *str, char *fmt, va_list ap)
-        {
-        register int c, base;
+{
+	register int c, base;
 	int idx = 0;
-        char s[KPRINTF_BUF_SIZE];
+	char s[KPRINTF_BUF_SIZE];
 	char ctmp[] = { 0, 0 };
 
-        while (c = *fmt++) {
-                if (c != '%') {
+	while (c = *fmt++) {
+		if (c != '%') {
 			ctmp[0] = c;
 			strcpy_idx(str + idx, &ctmp, &idx);
-                        continue;
-                        }
-                switch (c = *fmt++) {
-                case 'c':
+			continue;
+		}
+		switch (c = *fmt++) {
+		case 'c':
 			ctmp[0] = va_arg(ap, char);
 			strcpy_idx(str + idx, &ctmp, &idx);
-                        continue;
-                case 'd':
-                        base = -10;
-                        goto prt;
-                case 'o':
-                        base = 8;
-                        goto prt;
-                case 'u':
-                        base = 10;
-                        goto prt;
-                case 'x':
-                        base = 16;
+			continue;
+		case 'd':
+			base = -10;
+			goto prt;
+		case 'o':
+			base = 8;
+			goto prt;
+		case 'u':
+			base = 10;
+			goto prt;
+		case 'x':
+			base = 16;
 			goto prt;
 		case 'b':
 			base = 2;
-                prt:
+ prt:
 			bzero(s, KPRINTF_BUF_SIZE);
-                        itob(va_arg(ap, int), s, base);
+			itob(va_arg(ap, int), s, base);
 			strcpy_idx(str + idx, s, &idx);
-                        continue;
-                case 's':
-                        strcpy_idx(str + idx, va_arg(ap, char *), &idx);
-                        continue;
-                default:
+			continue;
+		case 's':
+			strcpy_idx(str + idx, va_arg(ap, char *), &idx);
+			continue;
+		default:
 			bzero(s, KPRINTF_BUF_SIZE);
 			s[0] = '%';
 			s[1] = c;
 			strcpy_idx(str + idx, s, &idx);
-                        continue;
-                        }
-                }
-        }
+			continue;
+		}
+	}
+}
 
 void sprintf(char *str, char *fmt, ...)
 {
@@ -126,7 +126,7 @@ void kprintf(char *fmt, ...)
 
 void warning(char *s)
 {
-    kprintf("WARNING: %s\n",s);
+	kprintf("WARNING: %s\n", s);
 }
 
 void panic(char *fmt, ...)
@@ -143,7 +143,7 @@ void panic(char *fmt, ...)
 
 	puts(printbuf);
 
-	while(1);
+	while (1) ;
 }
 
 void start_kernel(void)
@@ -154,7 +154,7 @@ void start_kernel(void)
 
 	ei();
 
-	init2();	/* in process.c */
+	init2();		/* in process.c */
 }
 
 /* FIXME this needs real math */

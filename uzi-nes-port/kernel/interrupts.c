@@ -57,12 +57,11 @@ int clk_int(void)
 
 	/* Do once-per-second things */
 
-	if (++sec == TICKSPERSEC)
-	{
+	if (++sec == TICKSPERSEC) {
 		/* Update global time counters */
 		sec = 0;
 
-		rdtod();  /* Update time-of-day */
+		rdtod();	/* Update time-of-day */
 
 #ifdef DEBUG_TIME
 		cur_hours = (tod.t_time & 0xf800) >> 11;
@@ -77,39 +76,36 @@ int clk_int(void)
 		else
 			sprintf(tmp_mins, "%d", cur_mins);
 
-		cur_secs =  (tod.t_time & 0x1f) << 1;
+		cur_secs = (tod.t_time & 0x1f) << 1;
 		if (cur_secs < 10)
 			sprintf(tmp_secs, "0%d", cur_secs);
 		else
 			sprintf(tmp_secs, "%d", cur_secs);
 
 		kprintf("%d/%d/%d %s:%s:%s\n", (tod.t_date & 0x3e0) >> 5,
-						tod.t_date & 0x1f,
-					       (tod.t_date & 0xfe00) >> 9,
-						tmp_hours, tmp_mins, tmp_secs);
+			tod.t_date & 0x1f,
+			(tod.t_date & 0xfe00) >> 9,
+			tmp_hours, tmp_mins, tmp_secs);
 #endif
 
 		/* Update process alarm clocks */
-		for (p=ptab; p < ptab+PTABSIZE; ++p)
-		{
+		for (p = ptab; p < ptab + PTABSIZE; ++p) {
 			if (p->p_alarm)
 				ifnot(--p->p_alarm)
-					sendsig(p,SIGALRM);
+				    sendsig(p, SIGALRM);
 		}
 	}
 
-
 #if 0
-UZI-NES WIP
-	/* Check run time of current process */
-	if (++runticks >= MAXTICKS && !udata.u_insys)    /* Time to swap out */
-	{
+	UZI - NES WIP
+	    /* Check run time of current process */
+	    if (++runticks >= MAXTICKS && !udata.u_insys) {	/* Time to swap out */
 		udata.u_insys = 1;
 		inint = 0;
 		udata.u_ptab->p_status = P_READY;
 		swapout();
 		di();
-		udata.u_insys = 0;      /* We have swapped back in */
+		udata.u_insys = 0;	/* We have swapped back in */
 	}
 #endif
 }
