@@ -548,4 +548,53 @@ int _pause(void)
     return(-1);
 }
 
+/*************************************
+signal(sig, func)
+int16 sig;
+int16 (*func)();
+***************************************/
+
+/*
+#define sig (int16)udata.u_argn1
+#define func (int (*)())udata.u_argn
+*/
+
+int _signal(int16 sig, int16 (*func)())
+{
+    int retval;
+
+    di();
+    if (sig < 1 || sig == SIGKILL || sig >= NSIGS)
+    {
+	udata.u_error = EINVAL;
+	goto nogood;
+    }
+
+    if (func == SIG_IGN)
+	udata.u_ptab->p_ignored |= sigmask(sig);
+    else
+    {
+	if (func != SIG_DFL && ((char *)func < PROGBASE ||
+	       (struct u_data *)func >= &udata))
+	{
+	    udata.u_error = EFAULT;
+	    goto nogood;
+	}
+	udata.u_ptab->p_ignored &= ~sigmask(sig);
+    }
+    retval = udata.u_sigvec[sig];
+    udata.u_sigvec[sig] = func;
+    ei();
+    return(retval);
+
+nogood:
+    ei();
+    return(-1);
+}
+
+/*
+#undef sig
+#undef func
+*/
+
 #pragma code-name (pop)
