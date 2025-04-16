@@ -1,10 +1,5 @@
-void di(void);
-void ei(void);
 void idump(void);
 void doexec(void *new_stack);
-void panic(char *s);
-void stkreset(void);
-void initvec(void);
 void calltrap(void);
 
 /* time functions */
