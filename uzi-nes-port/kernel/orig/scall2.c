@@ -18,24 +18,3 @@ _fork()
 {
    return (dofork());
 }
-
-/********************************
-alarm(secs)
-uint16 secs;
-*********************************/
-
-#define secs (int16)udata.u_argn
-
-_alarm()
-{
-    int retval;
-
-    di();
-    retval = udata.u_ptab->p_alarm;
-    udata.u_ptab->p_alarm = secs;
-    ei();
-    return(retval);
-}
-
-#undef secs
-

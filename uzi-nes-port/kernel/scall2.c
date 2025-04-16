@@ -634,4 +634,26 @@ nogood:
 #undef sig
 */
 
+/********************************
+alarm(secs)
+uint16 secs;
+*********************************/
+
+/*
+#define secs (int16)udata.u_argn
+*/
+
+int _alarm(uint16 secs)
+{
+    int retval;
+
+    di();
+    retval = udata.u_ptab->p_alarm;
+    udata.u_ptab->p_alarm = secs;
+    ei();
+    return(retval);
+}
+
+#undef secs
+
 #pragma code-name (pop)
