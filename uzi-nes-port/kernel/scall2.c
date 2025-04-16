@@ -151,9 +151,6 @@ int _times(char *buf)
 #undef buf
 */
 
-#pragma code-name (pop)
-#pragma code-name (push, "CODE")
-
 /* User's execve() call. All other flavors are library routines. */
 
 /*****************************************
@@ -357,9 +354,6 @@ char *rargs(char *ptr, int blk, int *cnt)
 	bfree((char *)argbuf, 0);
 	return (argv);
 }
-
-#pragma code-name (pop)
-#pragma code-name (push, "SCALL2_CODE")
 
 /**********************************
 brk(addr)
