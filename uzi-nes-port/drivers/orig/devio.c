@@ -3,16 +3,6 @@ int ok(), nogood();
 
 #include <string.h>
 
-void bufdump(void)
-{
-    register bufptr j;
-
-    kprintf("\ndev\tblock\tdirty\tbusy\ttime clock %d\n", bufclock);
-    for (j=bufpool; j < bufpool+NBUFS; ++j)
-        kprintf("%d\t%u\t%d\t%d\t%u\n",
-            j->bf_dev,j->bf_blk,j->bf_dirty,j->bf_busy,j->bf_time);
-}
-
 int swapread(int dev, blkno_t blkno, unsigned nbytes, char *buf)
 {
     swapbase = buf;

@@ -177,6 +177,16 @@ void bufinit(void)
 	}
 }
 
+void bufdump(void)
+{
+    register bufptr j;
+
+    kprintf("\ndev\tblock\tdirty\tbusy\ttime clock %d\n", bufclock);
+    for (j=bufpool; j < bufpool+NBUFS; ++j)
+        kprintf("%d\t%u\t%d\t%d\t%u\n",
+            j->bf_dev,j->bf_blk,j->bf_dirty,j->bf_busy,j->bf_time);
+}
+
 /***************************************************
 Bdread() and bdwrite() are the block device interface routines.
 they are given a buffer pointer, which contains the device, block number,
@@ -301,6 +311,46 @@ int remq(struct s_queue *q, char *cp)
 		q->q_head = q->q_base;
 	ei();
 	return (1);
+}
+
+void idump(void)
+{
+    inoptr ip;
+    ptptr pp;
+    extern struct cinode i_tab[];
+
+    kprintf(
+        "\tMAGIC\tDEV\tNUM\tMODE\tNLINK\t(DEV)\tREFS\tDIRTY err %d root %d\n",
+            udata.u_error, root - i_tab);
+
+    for (ip=i_tab; ip < i_tab+ITABSIZE; ++ip)
+    {
+        kprintf("%d\t%d\t%d\t%u\t0%o\t%d\t%d\t%d\t%d\n",
+               ip-i_tab, ip->c_magic, ip->c_dev, ip->c_num,
+               ip->c_node.i_mode, ip->c_node.i_nlink,
+	       ip->c_node.i_addr[0], ip->c_refs,ip->c_dirty);
+/*****
+        ifnot (ip->c_magic)
+            break;
+******/
+    }
+
+    kprintf("\n\tSTAT\tWAIT\tPID\tPPTR\tALARM\tPENDING\tIGNORED\n");
+    for (pp=ptab; pp < ptab+PTABSIZE; ++pp)
+    {
+        kprintf("%d\t%d\t0x%x\t%d\t%d\t%d\t0x%x\t0x%x\n",
+               pp-ptab, pp->p_status, pp->p_wait,  pp->p_pid,
+               pp->p_pptr-ptab, pp->p_alarm, pp->p_pending,
+                pp->p_ignored);
+        ifnot(pp->p_pptr)
+            break;
+    }
+
+    bufdump();
+
+    kprintf("\ninsys %d ptab %d call %d cwd %d sp 0x%x\n",
+        udata.u_insys,udata.u_ptab-ptab, udata.u_callno, udata.u_cwd-i_tab,
+       udata.u_sp);
 }
 
 #pragma code-name (pop)
