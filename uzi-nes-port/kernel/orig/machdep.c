@@ -16,8 +16,6 @@
 void main()
 {
     di();
-    /* Initialize the interrupt vector */
-    initvec();
     inint = 0;
     udata.u_insys = 1;
     ei();
@@ -37,30 +35,6 @@ int valadr(char *base, uint16 size)
     return(1);
 }
 
-
-void initvec(void)
-{
-/*
-#asm 8080
-        LXI     H,vector?
-        INX     H
-        MOV     A,L
-        ANI     0FEH
-        MOV     L,A     ;set hl to first even address in vector[].
-        MOV     A,H
-.Z80
-        LD      I,A     ;SET INTERRUPT REGISTER TO UPPER 8 BITS
-.8080
-        MOV     A,L
-        OUT     076H    ;set external vector register with low order byte
-        LXI     D,service?
-        MOV     M,E
-        INX     H
-        MOV     M,D     ;STORE ADDRESS OF SERVICE ROUTINE IN vector[].
-        RET
-#endasm
-*/
-}
 
 extern int unix();
 
