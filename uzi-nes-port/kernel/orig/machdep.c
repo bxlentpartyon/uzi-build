@@ -16,7 +16,6 @@
 void main()
 {
     di();
-    inint = 0;
     udata.u_insys = 1;
     ei();
 
@@ -47,8 +46,6 @@ service()
 .8080
 #endasm
 */
-
-    inint = 1;
 
     if (tty_int())
         goto found;
