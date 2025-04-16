@@ -49,7 +49,10 @@ cur_stack_page:	.byte $00
 
 ; enable interrupts
 .proc _ei
+	lda _in_interrupt
+	bne ei_out
 	cli
+ei_out:
 	rts
 .endproc
 
