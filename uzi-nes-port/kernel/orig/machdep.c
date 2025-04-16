@@ -16,7 +16,6 @@
 void main()
 {
     di();
-    stkreset();
     /* Initialize the interrupt vector */
     initvec();
     inint = 0;
@@ -36,18 +35,6 @@ int valadr(char *base, uint16 size)
         return(0);
     }
     return(1);
-}
-
-
-void stkreset(void)
-{
-/*
-#asm 8080
-        POP     H
-        LXI     SP,udata?-2
-        PCHL
-#endasm
-*/
 }
 
 
