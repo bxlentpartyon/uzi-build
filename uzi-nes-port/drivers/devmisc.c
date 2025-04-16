@@ -2,12 +2,10 @@
 UZI (Unix Z80 Implementation) Kernel:  devmisc.c
 ***************************************************/
 
-#include <unix.h>
 #include <extern.h>
-
-#include <devmisc.h>
-#include <extras.h>
+#include <lib/string.h>
 #include <machdep.h>
+#include <unix.h>
 
 unsigned int mem_read(int minor, int rawflag)
 {
