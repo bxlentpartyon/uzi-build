@@ -157,8 +157,12 @@ void start_kernel(void)
 	init2();		/* in process.c */
 }
 
-/* FIXME this needs real math */
+/* This checks to see if a user-suppled address is legitimate */
 int valadr(char *base, uint16 size)
 {
-	return 1;
+	if (base < PROGBASE || base + size >= (char *)&udata) {
+		udata.u_error = EFAULT;
+		return (0);
+	}
+	return (1);
 }

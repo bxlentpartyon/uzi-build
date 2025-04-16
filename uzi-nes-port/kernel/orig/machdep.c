@@ -24,18 +24,6 @@ void main()
 }
 
 
-/* This checks to see if a user-suppled address is legitimate */
-int valadr(char *base, uint16 size)
-{
-    if (base < PROGBASE || base+size >= (char *)&udata)
-    {
-        udata.u_error = EFAULT;
-        return(0);
-    }
-    return(1);
-}
-
-
 extern int unix();
 
 
