@@ -120,24 +120,6 @@ sttime()
 }
 
 
-/* This shifts an unsigned int right 8 places. */
-
-shift8()
-{
-/*
-#asm 8080
-        POP     D       ;ret addr
-        POP     H
-        MOV     L,H
-        MVI     H,0
-        MOV     A,L
-        ANA     A       ;set Z flag on result
-        PUSH    H
-        PUSH    D       ;restore stack
-#endasm
-*/
-}
-
 void idump(void)
 {
     inoptr ip;
