@@ -55,7 +55,7 @@ temp_stack:
 	; TODO these should be macros
 	jsr _di
 
-	; swap in first process memory bank (only one process for now)
+	; swap in second process memory bank (only one process for now)
 	ldx #$0a
 	stx cur_stack_page
 	stx MMC5_PRG_MODE3_P0
