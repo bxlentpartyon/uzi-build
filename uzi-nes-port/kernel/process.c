@@ -66,11 +66,6 @@ ptptr getproc(void)
 	}
 }
 
-void swrite(void)
-{
-	return;
-}
-
 void swapin(ptptr pp)
 {
 	return;
@@ -226,6 +221,7 @@ void wakeup(char *event)
 
 /* Temp storage for swapout() */
 char *stkptr;
+void swrite(void);
 
 /* Swapout swaps out the current process, finds another that is READY,
 possibly the same process, and swaps it in.
@@ -270,6 +266,29 @@ int swapout(void)
 
 	/* We should never get here. */
 	panic("swapin failed");
+}
+
+/* This actually writes out the image */
+void swrite(void)
+{
+    blkno_t blk;
+    blk = udata.u_ptab->p_swap;
+
+    /* Start by writing out the user data. */
+
+    /* The user data is written so that it is packed to the top of one block */
+    swapwrite(SWAPDEV, blk, 512, ((char *)(&udata+1))-512 );
+
+    /* The user address space is written in two i/o operations,
+       one from 0x100 to the break, and then from the stack up. */
+    /* Notice that this might also include part or all of the user data,
+       but never anything above it. */
+
+    swapwrite(SWAPDEV,
+	        blk+1,
+	        (((char *)(&udata+1))-PROGBASE) & ~511,
+	        PROGBASE);
+
 }
 
 /* This sees if the current process has any signals set, and deals with them */

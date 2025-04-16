@@ -13,29 +13,6 @@ UZI (Unix Z80 Implementation) Kernel:  process.c
 #include <machdep.h>
 #include <scall.h>
 
-/* This actually writes out the image */
-void swrite(void)
-{
-    blkno_t blk;
-    blk = udata.u_ptab->p_swap;
-
-    /* Start by writing out the user data. */
-
-    /* The user data is written so that it is packed to the top of one block */
-    swapwrite(SWAPDEV, blk, 512, ((char *)(&udata+1))-512 );
-
-    /* The user address space is written in two i/o operations,
-       one from 0x100 to the break, and then from the stack up. */
-    /* Notice that this might also include part or all of the user data,
-       but never anything above it. */
-
-    swapwrite(SWAPDEV,
-	        blk+1,
-	        (((char *)(&udata+1))-PROGBASE) & ~511,
-	        PROGBASE);
-
-}
-
 /* No automatics can be used past tempstack(); */
 void swapin(ptptr pp)
 {

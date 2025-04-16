@@ -6,6 +6,7 @@
 
 #pragma wrapped-call (push, trampoline, DEVIO_PAGE)
 int remq(struct s_queue *q, char *cp);
+int uninsq(register struct s_queue *q, char *cp);
 int insq(register struct s_queue *q, char c);
 char *bread(int dev, blkno_t blk, int rewrite);
 void brelse(bufptr bp);
@@ -17,6 +18,8 @@ void bufsync(void);
 int d_ioctl(int dev, int request, char *data);
 int validdev(int dev);
 void bufinit(void);
+int swapread(int dev, blkno_t blkno, unsigned nbytes, char *buf);
+int swapwrite(int dev, blkno_t blkno, unsigned nbytes, char *buf);
 
 int d_open(int dev);
 void d_close(int dev);
