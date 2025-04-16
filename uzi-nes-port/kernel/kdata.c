@@ -35,6 +35,10 @@ struct filesys fs_tab[NDEVS];
 
 /* Driver stuff */
 
+unsigned swapcnt;
+char *swapbase;
+blkno_t swapblk;
+
 /*
  * Put this in its own section so that we can page-align the buffers.
  * This is not strictly necessary, but some instructions perform better

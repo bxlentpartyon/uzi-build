@@ -271,6 +271,23 @@ int cdwrite(int dev)
 	return ((*dev_tab[dev].dev_write) (dev_tab[dev].minor, 1));
 }
 
+int swapread(int dev, blkno_t blkno, unsigned nbytes, char *buf)
+{
+    swapbase = buf;
+    swapcnt = nbytes;
+    swapblk = blkno;
+    return ((*dev_tab[dev].dev_read)(dev_tab[dev].minor, 2));
+}
+
+
+int swapwrite(int dev, blkno_t blkno, unsigned nbytes, char *buf)
+{
+    swapbase = buf;
+    swapcnt = nbytes;
+    swapblk = blkno;
+    return ((*dev_tab[dev].dev_write)(dev_tab[dev].minor, 2));
+}
+
 /**************************************************
 The device driver read and write routines now have
 only two arguments, minor and rawflag.  If rawflag is
