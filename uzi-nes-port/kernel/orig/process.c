@@ -63,65 +63,6 @@ void swapin(ptptr pp)
 }
 
 
-/* Temp storage for dofork */
-int16 newid;
-
-/* dofork implements forking.  */
-/* This function can have no arguments or auto variables */
-
-int dofork(void)
-{
-    static ptptr p;
-    ptptr ptab_alloc();
-
-    ifnot (p = ptab_alloc())
-    {
-	udata.u_error = EAGAIN;
-	return(-1);
-    }
-    di();
-    udata.u_ptab->p_status = P_READY; /* Parent is READY */
-    newid = p->p_pid;
-    ei();
-
-    /* Save the stack pointer and critical registers */
-    /* When the process is swapped back in, it will be as if
-    it returns with the value of the childs pid. */
-
-/*
-#asm
-	LD      HL,(newid?)
-	PUSH    HL
-	PUSH    BC
-	PUSH    IX
-	LD      HL,0
-	ADD     HL,SP   ;get sp into hl
-	LD      (stkptr?),HL
-#endasm
-*/
-
-    udata.u_sp = stkptr;
-    swrite();
-
-/*
-#asm
-	POP     HL              ;repair stack pointer
-	POP     HL
-	POP     HL
-#endasm
-*/
-
-    /* Make a new process table entry, etc. */
-    newproc(p);
-
-    di();
-    runticks = 0;
-    p->p_status = P_RUNNING;
-    ei();
-    return (0);  /* Return to child */
-}
-
-
 extern int (*disp_tab[])();
 
 static int j;

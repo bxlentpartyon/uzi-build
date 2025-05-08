@@ -10,6 +10,7 @@ void wakeup(char *event);
 void ssig(register ptptr proc, int16 sig);
 void chksigs(void);
 void swapin(ptptr pp);
+int dofork(void);
 void init2(void);
 ptptr getproc(void);
 #pragma wrapped-call (pop)

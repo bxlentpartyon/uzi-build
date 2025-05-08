@@ -1,8 +1,10 @@
 	.importzp	sp
 	.import		_di, _ei, _disable_vblank_nmi, _enable_vblank_nmi
 	.import		cur_stack_page
+	.import		pushax, popa
 	.export		_udata, _break_addr, _break_state
 	.export		_user_bank_setup, _tempstack, _doexec, _debug_break
+	.export		_fork_prep_begin, _fork_prep_end
 
 	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
@@ -92,4 +94,19 @@ temp_stack:
 	sta _break_addr+1
 
 	brk
+.endproc
+
+.proc _fork_prep_begin
+	jsr pushax
+	ldy sp+1
+	tya
+	tax
+	ldy sp
+	tya
+	rts
+.endproc
+
+.proc _fork_prep_end
+	jsr popa
+	jsr popa
 .endproc

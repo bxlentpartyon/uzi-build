@@ -1,3 +1,7 @@
+/**************************************************
+UZI (Unix Z80 Implementation) Kernel:  scall2.c
+***************************************************/
+
 #include <devio.h>
 #include <extern.h>
 #include <filesys.h>
@@ -537,14 +541,7 @@ void doexit(int16 val, int16 val2)
 
 int _fork(void)
 {
-	/*
-	 * FIXME This function is just a stub to make the dispatch table
-	 * indices correct for now.  It doesn't actually fork yet.
-	 */
-#if 0
 	return (dofork());
-#endif
-	return 0;
 }
 
 int _pause(void)
