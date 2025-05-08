@@ -146,12 +146,13 @@ void panic(char *fmt, ...)
 	while (1) ;
 }
 
+/* This is called at the very beginning to initialize everything. */
+/* It is the equivalent of main() */
 void start_kernel(void)
 {
 	di();
-
 	init_ppu();
-
+	udata.u_insys = 1;
 	ei();
 
 	init2();		/* in process.c */
