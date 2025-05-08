@@ -26,9 +26,6 @@ void main()
 extern int unix();
 
 
-static int cursig;
-static int (*curvec)();
-
 /* This interrupt device routine calls the service routine of each device
 that could have interrupted. */
 
@@ -77,26 +74,6 @@ found:
         RET
 #endasm
 */
-}
-
-
-
-void calltrap(void)
-{
-    /* Deal with a pending caught signal, if any. */
-        /* udata.u_insys should be false, and interrupts enabled.
-        remember, the user may never return from the trap routine */
-
-    if (udata.u_cursig)
-    {
-        cursig = udata.u_cursig;
-        curvec = udata.u_sigvec[cursig];
-        udata.u_cursig = 0;
-        udata.u_sigvec[cursig] = SIG_DFL;   /* Reset to default */
-        ei();
-        (*curvec)(cursig);
-        di();
-    } 
 }
 
 sttime()

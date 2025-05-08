@@ -16,6 +16,7 @@ void warning(char *s);
 void start_clock(void);
 void stop_clock(void);
 void __fastcall__ debug_break(int state);
+void calltrap(void);
 
 #define MAX_PROGRAM_SIZE	MMC5_PRG_MODE3_BANK_SIZE
 

@@ -1,4 +1,5 @@
 #include <extern.h>
+#include <interrupts.h>
 #include <machdep.h>
 #include <ppu.h>
 #include <process.h>
@@ -128,4 +129,8 @@ void handle_irq(void)
 	} else {
 		panic("spurious IRQ");
 	}
+
+	in_interrupt = 0;
+	if (!udata.u_insys)
+		calltrap();
 }
