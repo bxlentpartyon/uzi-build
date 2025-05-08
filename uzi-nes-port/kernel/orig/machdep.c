@@ -25,57 +25,6 @@ void main()
 
 extern int unix();
 
-
-/* This interrupt device routine calls the service routine of each device
-that could have interrupted. */
-
-service()
-{
-/*
-#asm 8080
-        PUSH    PSW
-        PUSH    B
-        PUSH    D
-        PUSH    H
-.Z80
-        PUSH    IX
-        PUSH    IY
-.8080
-#endasm
-*/
-
-    if (tty_int())
-        goto found;
-    if (clk_int())
-        goto found;
-/*  if (  ) ...   */
-
-    warning("Spurious interrupt");
-
-found:
-    inint = 0;
-
-    /* Deal with a pending caught signal, if any */
-    if (!udata.u_insys)
-        calltrap();
-    ;
-
-/*
-#asm 8080
-.Z80
-        POP     IY
-        POP     IX
-.8080
-        POP     H
-        POP     D
-        POP     B
-        POP     PSW
-        EI
-        RET
-#endasm
-*/
-}
-
 sttime()
 {
     panic("Calling sttime");
