@@ -11,7 +11,7 @@ GENERATED_HEADERS := include/generated/errno.h
 HEADER_DEPS := $(wildcard include/*.h) $(GENERATED_HEADERS)
 
 KERNEL_ASM_OBJS := asm/head.o asm/interrupts_asm.o asm/clock.o asm/trampoline.o asm/reset.o asm/machdep_asm.o
-KERNEL_OBJS := interrupts.o machdep.o process.o kdata.o scall1.o scall1b.o scall2.o time.o
+KERNEL_OBJS := dispatch.o interrupts.o machdep.o process.o kdata.o scall1.o scall1b.o scall2.o time.o
 KERNEL_OBJ_DIR := kernel
 KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS) $(KERNEL_ASM_OBJS))
 

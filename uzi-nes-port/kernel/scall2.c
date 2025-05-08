@@ -535,6 +535,18 @@ void doexit(int16 val, int16 val2)
 	panic("doexit:won't exit");
 }
 
+int _fork(void)
+{
+	/*
+	 * FIXME This function is just a stub to make the dispatch table
+	 * indices correct for now.  It doesn't actually fork yet.
+	 */
+#if 0
+	return (dofork());
+#endif
+	return 0;
+}
+
 int _pause(void)
 {
     psleep(0);
