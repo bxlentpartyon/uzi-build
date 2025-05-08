@@ -130,7 +130,7 @@ void handle_irq(void)
 		panic("spurious IRQ");
 	}
 
-	in_interrupt = 0;
+	inint = 0;
 	if (!udata.u_insys)
 		calltrap();
 }

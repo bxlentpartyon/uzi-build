@@ -27,7 +27,7 @@ extern struct filesys fs_tab[NDEVS];	/* Table entry for each
 extern struct blkbuf bufpool[NBUFS];
 
 extern ptptr initproc;		/* The process table address of the first process. */
-extern int16 inint;		/* flag is set whenever interrupts are being serviced */
+extern char inint;		/* flag is set whenever interrupts are being serviced */
 
 extern int16 sec;		/* Tick counter for counting off one second */
 extern int16 runticks;		/* Number of ticks current process has been

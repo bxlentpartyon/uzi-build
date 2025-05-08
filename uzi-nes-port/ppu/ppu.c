@@ -1,3 +1,4 @@
+#include <extern.h>
 #include <interrupts.h>
 #include <machdep.h>
 #include <ppu.h>
@@ -22,7 +23,7 @@ void ppu_lock(void)
 	 * This lock will probably need to become a proper mutex later on, but this
 	 * works until something more complicated is actually needed.
 	 */
-	if (in_interrupt && ppu_locked)
+	if (inint && ppu_locked)
 		panic("ppu interrupt deadlock");
 
 	if (ppu_locked)

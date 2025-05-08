@@ -4,7 +4,7 @@
 	.import		_handle_irq, handle_vblank
 	.import		ppu_ctrl_val
 	.import		stack_setup
-	.export		_ei, _di, nmi, irq, _in_interrupt
+	.export		_ei, _di, nmi, irq, _inint
 	.export		_enable_vblank_nmi, _disable_vblank_nmi
 	.export		cur_stack_page
 
@@ -16,7 +16,7 @@
 
 .segment "DATA"
 zpsave:		.res zpsavespace
-_in_interrupt:	.byte 0
+_inint:	.byte 0
 irq_stack_start: .addr $8f00
 cur_stack_page:	.byte $00
 
@@ -49,7 +49,7 @@ cur_stack_page:	.byte $00
 
 ; enable interrupts
 .proc _ei
-	lda _in_interrupt
+	lda _inint
 	bne ei_out
 	cli
 ei_out:
@@ -137,7 +137,7 @@ zprestore_loop:
 ; If I've done everything right, we shouldn't be able to get overlapped interrupts
 ; any more.  However, just to be safe, I've added this code to drop us into an infinite
 ; loop if that ever happens.
-	lda _in_interrupt
+	lda _inint
 	beq storeoff
 forever:
 	jmp forever
@@ -145,12 +145,12 @@ forever:
 storeoff:
 	pha
 	lda #1
-	sta _in_interrupt
+	sta _inint
 .endmacro
 
 .macro end_interrupt
 	pla
-	sta _in_interrupt
+	sta _inint
 .endmacro
 
 ; The NMI routine, or at least the portion of it that manipulates the PPU,
