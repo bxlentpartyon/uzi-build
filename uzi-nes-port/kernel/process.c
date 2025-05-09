@@ -66,11 +66,6 @@ ptptr getproc(void)
 	}
 }
 
-void swapin(ptptr pp)
-{
-	return;
-}
-
 void swrite(void);
 
 /* Temp storage for dofork */
@@ -318,6 +313,44 @@ void swrite(void)
 	        PROGBASE);
 
 }
+
+/* No automatics can be used past tempstack(); */
+void swapin(ptptr pp)
+{
+    static blkno_t blk;
+    static ptptr newp;
+
+    di();
+    newp = pp;
+    blk = newp->p_swap;
+    ei();
+
+    tempstack();
+
+    swapread(SWAPDEV, blk, 512, ((char *)(&udata+1))-512 );
+
+    /* The user address space is read in two i/o operations,
+       one from 0x100 to the break, and then from the stack up. */
+    /* Notice that this might also include part or all of the user data,
+       but never anything above it. */
+
+    swapread(SWAPDEV,
+	        blk+1,
+	        (((char *)(&udata+1))-PROGBASE) & ~511,
+	        PROGBASE);
+
+    if (newp != udata.u_ptab)
+	panic("mangled swapin");
+    di();
+    newp->p_status = P_RUNNING;
+    runticks = 0;
+    ei();
+
+    /* Restore the registers */
+    swapin_finish(udata.u_sp);
+}
+
+
 
 /* This sees if the current process has any signals set, and deals with them */
 void chksigs(void)

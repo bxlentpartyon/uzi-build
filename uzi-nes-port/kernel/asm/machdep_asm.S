@@ -4,7 +4,7 @@
 	.import		pushax, popa
 	.export		_udata, _break_addr, _break_state
 	.export		_user_bank_setup, _tempstack, _doexec, _debug_break
-	.export		_fork_prep_begin, _fork_prep_end, _swapout_prep
+	.export		_fork_prep_begin, _fork_prep_end, _swapout_prep, _swapin_finish
 
 	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
@@ -126,4 +126,16 @@ temp_stack:
 .proc _fork_prep_end
 	jsr popa
 	jsr popa
+.endproc
+
+; Places the saved off stack pointer at sp, and loads the stored off return
+; value from the new stack into A/X.  The rts here will bring us back to
+; swapin, and the rts in swapin will drop us back to wherever the process was.
+.proc _swapin_finish
+	stx sp+1
+	sta sp
+	jsr popa
+	tax
+	jsr popa
+	rts
 .endproc
