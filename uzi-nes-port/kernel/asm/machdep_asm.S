@@ -4,7 +4,7 @@
 	.import		pushax, popa
 	.export		_udata, _break_addr, _break_state
 	.export		_user_bank_setup, _tempstack, _doexec, _debug_break
-	.export		_fork_prep_begin, _fork_prep_end
+	.export		_fork_prep_begin, _fork_prep_end, _swapout_prep
 
 	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
@@ -94,6 +94,18 @@ temp_stack:
 	sta _break_addr+1
 
 	brk
+.endproc
+
+; The swapout prep process is the same as for fork, but we use 1 for the
+; return value instead of the new process pid.
+;
+; These could maybe be smashed together into a layered .proc to avoid the jmp,
+; but I'm not sure if that will work as I expect, so it's implemented like
+; this for now.
+.proc _swapout_prep
+	ldx #$00
+	lda #$01
+	jmp _fork_prep_begin
 .endproc
 
 ; Stores new process pid (currently in A/X) at the top of the stack.  This

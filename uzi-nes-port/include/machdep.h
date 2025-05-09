@@ -18,6 +18,7 @@ void stop_clock(void);
 void __fastcall__ debug_break(int state);
 int __fastcall__ fork_prep_begin(int pid);
 void __fastcall__ fork_prep_end(void);
+void __fastcall__ swapout_prep(void);
 void calltrap(void);
 
 #define MAX_PROGRAM_SIZE	MMC5_PRG_MODE3_BANK_SIZE

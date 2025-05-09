@@ -284,20 +284,9 @@ int swapout(void)
 		udata.u_ptab->p_status = P_RUNNING;
 		return (runticks = 0);
 	}
-	;
+
 	/* Save the stack pointer and critical registers */
-/*
-#asm
-	LD      HL,01   ;this will return 1 if swapped.
-	PUSH    HL      ;will be return value
-	PUSH    BC
-	PUSH    IX
-	LD      HL,0
-	ADD     HL,SP   ;get sp into hl
-	LD      (stkptr?),HL
-#endasm
-*/
-	udata.u_sp = stkptr;
+	udata.u_sp = swapout_prep();
 
 	swrite();
 	/* Read the new process in, and return into its context. */
