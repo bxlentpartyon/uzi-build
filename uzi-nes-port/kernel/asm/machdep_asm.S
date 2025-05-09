@@ -96,6 +96,11 @@ temp_stack:
 	brk
 .endproc
 
+; Stores new process pid (currently in A/X) at the top of the stack.  This
+; will end up being appearing as the return value from fork() when the parent
+; process is swapped back in.
+;
+; Returns the current stack pointer in A/X
 .proc _fork_prep_begin
 	jsr pushax
 	ldy sp+1
