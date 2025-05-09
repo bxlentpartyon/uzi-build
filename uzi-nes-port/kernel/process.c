@@ -255,7 +255,6 @@ void wakeup(char *event)
 
 /* Temp storage for swapout() */
 char *stkptr;
-void swrite(void);
 
 /* Swapout swaps out the current process, finds another that is READY,
 possibly the same process, and swaps it in.
