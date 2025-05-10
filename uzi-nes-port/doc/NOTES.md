@@ -18,9 +18,14 @@ For user execution:
 	------------------------------------------------------------------------------------------
 	Bank 0	MMC5_PRG_RAM_PM		$6000-7FFF	RAM 09		User memory
 	Bank 1	MMC5_PRG_MODE3_P0	$8000-9FFF	RAM 10		User memory
-	Bank 2	MMC5_PRG_MODE3_P1	$A000-BFFF	RAM 11		User memory
-	Bank 3	MMC5_PRG_MODE3_P2	$C000-DFFF	RAM 08		Kernel RAM
+	Bank 2	MMC5_PRG_MODE3_P1	$A000-BFFF	RAM 08		Kernel RAM
+	Bank 3	MMC5_PRG_MODE3_P2	$C000-DFFF	ROM XX		Kernel floating code page
 	Bank 4	MMC5_PRG_ROM_PM		$E000-FFFF	ROM 15		Kernel permanent code page
+
+During the switch to userspace, `user_bank_setup` switches the first page
+(`MMC5_PRG_RAM_PM`) during `_execve`, and `doexec` switches the second
+bank to use as the stack/user RAM.  This means that process code is
+currently limited to 8K.
 
 ## New layout to get kernel actually working
 
