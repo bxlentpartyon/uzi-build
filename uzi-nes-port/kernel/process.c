@@ -435,7 +435,7 @@ int unix(int16 argn3, int16 argn2, int16 argn1, int16 argn,
 #endif
 
     /* Branch to correct routine */
-    //udata.u_retval = (*disp_tab[udata.u_callno])();
+    udata.u_retval = dispatch_call(udata.u_callno);
 
 #ifdef DEBUG
     kprintf("\t\t\t\t\t\tcall %d ret %x err %d\n",
