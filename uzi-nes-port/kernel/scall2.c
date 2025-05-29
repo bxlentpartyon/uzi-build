@@ -16,24 +16,24 @@ UZI (Unix Z80 Implementation) Kernel:  scall2.c
 #pragma code-name (push, "SCALL2_CODE")
 
 /* Getpid() */
-_getpid()
+int _getpid()
 {
 	return (udata.u_ptab->p_pid);
 }
 
 /* Getppid() */
-_getppid()
+int _getppid()
 {
 	return (udata.u_ptab->p_pptr->p_pid);
 }
 
 /* Getuid() */
-_getuid()
+int _getuid()
 {
 	return (udata.u_ptab->p_uid);
 }
 
-_getgid()
+int _getgid()
 {
 	return (udata.u_gid);
 }
@@ -419,7 +419,7 @@ int *statloc;
 #define statloc (int *)udata.u_argn
 */
 
-_wait(int *statloc)
+int _wait(int *statloc)
 {
     register ptptr p;
     register int retval;

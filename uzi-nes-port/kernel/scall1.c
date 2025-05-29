@@ -15,7 +15,7 @@
 #define flag (int16)udata.u_argn
 */
 
-_open(char *name, int16 flag)
+int _open(char *name, int16 flag)
 {
 	int16 uindex;
 	register int16 oftindex;
@@ -69,7 +69,7 @@ _open(char *name, int16 flag)
 	return (-1);
 }
 
-_close(int uindex)
+int _close(int uindex)
 {
 	return doclose(uindex);
 }
@@ -374,7 +374,7 @@ uint16 nbytes;
 void updoff(int16 d);
 inoptr rwsetup(int16 d, char *buf, unsigned nbytes, int16 rwflag);
 
-_read(int16 d, char *buf, unsigned nbytes)
+int _read(int16 d, char *buf, unsigned nbytes)
 {
 	register inoptr ino;
 
@@ -837,7 +837,7 @@ int _mknod(char *name, int16 mode, int16 dev)
 /****************************************
 sync()
 ***************************************/
-void _sync(void)
+int _sync(void)
 {
 	register j;
 	register inoptr ino;
@@ -864,6 +864,8 @@ void _sync(void)
 	}
 
 	bufsync();		/* Clear buffer pool */
+
+	return 0;
 }
 
 /****************************************
@@ -1006,7 +1008,7 @@ char *buf;
 
 void stcpy(inoptr ino, char *buf);
 
-_stat(char *path, char *buf)
+int _stat(char *path, char *buf)
 {
 
 	register inoptr ino;
