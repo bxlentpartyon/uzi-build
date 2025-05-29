@@ -16,7 +16,9 @@ int _execve(char *name, char *argv[], char *envp[]);
 void doexit(int16 val, int16 val2);
 #pragma wrapped-call(pop)
 
+#pragma wrapped-call(push, trampoline, DISPATCH_PAGE)
 int dispatch_call(char callno);
+#pragma wrapped-call(pop)
 
 /* stuff below is static to scall1.c and should be pulled out of the header */
 int min(int a, int b);

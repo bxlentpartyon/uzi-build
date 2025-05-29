@@ -7,6 +7,8 @@ UZI (Unix Z80 Implementation) Kernel:  dispatch.c
 #include <scall.h>
 #include <user_scall.h>
 
+#pragma code-name (push, "DISPATCH_CODE")
+
 #define HANDLE_SYSCALL0(num, name)			\
 	case num:					\
 		return name();				\
@@ -81,3 +83,5 @@ int dispatch_call(char callno)
 			break;
 	}
 }
+
+#pragma code-name (pop)
