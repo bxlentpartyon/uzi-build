@@ -8,7 +8,6 @@
 void readi(register inoptr ino);
 void writei(register inoptr ino);
 int doclose(int16 uindex);
-int _execve(char *name, char *argv[], char *envp[]);
 void _sync(void);
 #pragma wrapped-call(pop)
 
