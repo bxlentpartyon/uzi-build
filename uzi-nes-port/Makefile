@@ -1,4 +1,3 @@
-AR := ar65
 CA := ca65
 CC := cc65
 LD := ld65
