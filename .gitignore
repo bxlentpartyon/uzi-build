@@ -4,6 +4,7 @@
 *.o
 *.nes
 *.dbg
+*.d
 link.map
 cscope.out
 *~

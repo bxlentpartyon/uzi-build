@@ -1,3 +1,4 @@
+AR := ar65
 CA := ca65
 CC := cc65
 LD := ld65
@@ -6,52 +7,23 @@ PLATFORM := uzi
 
 TARGET := uzi.nes
 LINKER_SCRIPT := scripts/linker/uzi.cfg
+MAKEFILE_BUILD := $(PWD)/scripts/build/Makefile.build
 
-GENERATED_HEADERS := include/generated/errno.h
-HEADER_DEPS := $(wildcard include/*.h) $(GENERATED_HEADERS)
-
-KERNEL_ASM_OBJS := asm/head.o asm/interrupts_asm.o asm/clock.o asm/trampoline.o asm/reset.o asm/machdep_asm.o
-KERNEL_OBJS := dispatch.o interrupts.o machdep.o process.o kdata.o scall1.o scall1b.o scall2.o time.o
-KERNEL_OBJ_DIR := kernel
-KERNEL_DEPS := $(patsubst %, $(KERNEL_OBJ_DIR)/%, $(KERNEL_OBJS) $(KERNEL_ASM_OBJS))
-
-PPU_ASM_OBJS := asm/ppu_asm.o asm/ppu_databuf_asm.o
-PPU_OBJS := ppu.o ppu_databuf.o
-PPU_OBJ_DIR := ppu
-PPU_DEPS := $(patsubst %, $(PPU_OBJ_DIR)/%, $(PPU_OBJS) $(PPU_ASM_OBJS))
-
-FS_OBJS := filesys.o
-FS_OBJ_DIR := fs
-FS_DEPS := $(patsubst %, $(FS_OBJ_DIR)/%, $(FS_OBJS))
-
-# The keyboard stuff is temporarily compiled out to make room in the CODE
-# segment.
-DRIVER_OBJS := devio.o devtty.o devppuwd.o devmisc.o #kb/kb_asm.o kb/kb.o
-DRIVER_OBJ_DIR := drivers
-DRIVER_DEPS := $(patsubst %, $(DRIVER_OBJ_DIR)/%, $(DRIVER_OBJS))
-
-LIB_OBJS := string.o
-LIB_OBJ_DIR := lib
-LIB_DEPS := $(patsubst %, $(LIB_OBJ_DIR)/%, $(LIB_OBJS))
-
-ALL_DEPS := $(KERNEL_DEPS) $(PPU_DEPS) $(FS_DEPS) $(DRIVER_DEPS) $(LIB_DEPS)
-ALL_EXTRA := $(patsubst %.o, %.s, $(ALL_DEPS))
+subdirs := drivers fs include kernel lib ppu
 
 FONT :=	font/newfont.chr
 
-.PRECIOUS: %.s %.o
-.SUFFIXES:
-
--include scripts/build/Makefile.build
-
 all: $(TARGET)
 
-$(TARGET): $(ALL_DEPS) $(LINKER_SCRIPT) $(FONT)
-	$(LD) -v -m link.map -vm -C $(LINKER_SCRIPT) -o $@ $(ALL_DEPS) uzi.lib
+export AR CA CC LD PLATFORM MAKEFILE_BUILD
 
-clean:
-	rm -f $(ALL_DEPS) $(ALL_EXTRA) uzi.nes link.map
+-include $(MAKEFILE_BUILD)
+-include deps.d
 
-include/generated/errno.h: include/generated/scripts/errno.py
-	python $<
+$(TARGET): $(O_DEPS)
+	$(LD) -v -m link.map -vm -C $(LINKER_SCRIPT) -o $@ $^ uzi.lib
 
+.PHONY: clean
+
+clean: subclean
+	rm -f uzi.nes link.map
