@@ -3,7 +3,7 @@
 
 %.s: %.c
 	@echo "Building .c to .s $<"
-	$(CC) --target $(PLATFORM) -DUZI -I$(CC65_DIR)/include/ -I$(PWD)/include/ -O $<
+	$(CC) --create-full-dep $<.d --target $(PLATFORM) -DUZI -I$(CC65_DIR)/include/ -I$(PWD)/include/ -O $<
 
 %.o: %.S
 	@echo "Building .S $<"
@@ -22,6 +22,9 @@ ifneq ($(MAKELEVEL), 0)
 CUR_SUBDIR := $(if $(CUR_SUBDIR), $(CUR_SUBDIR)/)$(shell basename $(CURDIR))
 export CUR_SUBDIR
 endif
+
+CDEPS := $(objs:.o=.c.d)
+-include $(CDEPS)
 
 deps.d: $(objs) | $(subdirs)
 	rm -f deps.d
