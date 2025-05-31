@@ -26,12 +26,12 @@ endif
 CDEPS := $(objs:.o=.c.d)
 -include $(CDEPS)
 
-deps.d: $(objs) | $(subdirs)
-	rm -f deps.d
-	for sub in $(subdirs); do								\
-		echo "-include $(if $(CUR_SUBDIR), $(CUR_SUBDIR)/)$$sub/deps.d" >> deps.d;	\
+$(LINKDEPS): $(objs) | $(subdirs)
+	rm -f $(LINKDEPS)
+	for sub in $(subdirs); do									\
+		echo "-include $(if $(CUR_SUBDIR), $(CUR_SUBDIR)/)$$sub/$(LINKDEPS)" >> $(LINKDEPS);	\
 	done
-	echo 'O_DEPS := $$(O_DEPS) $(patsubst %, $(CUR_SUBDIR)/%, $^)' >> deps.d
+	echo 'O_DEPS := $$(O_DEPS) $(patsubst %, $(CUR_SUBDIR)/%, $^)' >> $(LINKDEPS)
 
 .PHONY: $(subdirs) subclean
 
