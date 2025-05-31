@@ -15,7 +15,7 @@ FONT :=	font/newfont.chr
 
 all: $(TARGET)
 
-export AR CA CC LD PLATFORM MAKEFILE_BUILD LINKDEPS
+export CA CC LD PLATFORM MAKEFILE_BUILD LINKDEPS
 
 -include $(MAKEFILE_BUILD)
 -include $(LINKDEPS)
