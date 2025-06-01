@@ -23,8 +23,10 @@ CUR_SUBDIR := $(if $(CUR_SUBDIR), $(CUR_SUBDIR)/)$(shell basename $(CURDIR))
 export CUR_SUBDIR
 endif
 
+ifeq ($(filter clean subclean, $(MAKECMDGOALS)),)
 CDEPS := $(objs:.o=.c.d)
 -include $(CDEPS)
+endif
 
 $(LINKDEPS): $(objs) | $(subdirs)
 	rm -f $(LINKDEPS)
