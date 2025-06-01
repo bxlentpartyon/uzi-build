@@ -2,6 +2,9 @@ CA := ca65
 CC := cc65
 LD := ld65
 
+CC_INCLUDE := -I$(PWD)/include
+CA_INCLUDE := -I$(PWD)/include/asm
+
 PLATFORM := uzi
 
 TARGET := uzi.nes
@@ -15,7 +18,9 @@ FONT :=	font/newfont.chr
 
 all: $(TARGET)
 
-export CA CC LD PLATFORM MAKEFILE_BUILD LINKDEPS
+export CA CC LD
+export CC_INCLUDE CA_INCLUDE
+export PLATFORM MAKEFILE_BUILD LINKDEPS
 
 -include $(MAKEFILE_BUILD)
 -include $(LINKDEPS)
