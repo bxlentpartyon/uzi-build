@@ -2,6 +2,7 @@
 *.swo
 *.s
 *.o
+*.oS
 *.nes
 *.dbg
 *.d
