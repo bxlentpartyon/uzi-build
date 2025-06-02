@@ -17,8 +17,16 @@
 	.linecont
 
 .segment "DATA"
-; Reserve 2 additional bytes to store the jmpvec
-zpsave:		.res zpsavespace+2
+; Note that, unlike the cc65 interrupt handler, we save off the entire zpspace,
+; including the regbank.  This is to handle context switches from/to userspace,
+; where we can't be sure that we'll pass back through the same code on return
+; in order to restore any clobbered regbank stuff.  This will make any generated
+; C code that _does_ restore the regbank redundant, but that's an inefficieny
+; we'll have to live with.
+;
+; Reserve 2 additional bytes to store the jmpvec here as well, instead of on
+; the stack.
+zpsave:		.res zpspace+2
 _inint:	.byte 0
 irq_stack_start: .addr $8f00
 cur_stack_page:	.byte $00
