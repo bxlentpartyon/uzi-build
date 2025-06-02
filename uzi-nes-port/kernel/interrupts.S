@@ -10,7 +10,6 @@
 
 	.include	"mmc5.inc"
 	.include	"uzi_nes.inc"
-	.include	"zeropage.inc"
 
 	.include	"context_macros.S"
 
@@ -26,7 +25,7 @@
 ;
 ; Reserve 2 additional bytes to store the jmpvec here as well, instead of on
 ; the stack.
-zpsave:		.res zpspace+2
+zpsave:		.res uzi_zpsavespace
 _inint:	.byte 0
 irq_stack_start: .addr $8f00
 cur_stack_page:	.byte $00

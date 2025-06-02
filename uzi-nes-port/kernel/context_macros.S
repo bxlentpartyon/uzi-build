@@ -1,39 +1,38 @@
 .macro _zpsave	dest
-	; zpsave borrowed from libsrc/common/interrupt.s in cc65
-	ldx #.sizeof(::zpsave)-1
+	ldy #uzi_zpsavespace
 
 	; Store the jmpvec first
 	lda jmpvec+1
-	sta dest, x
-	dex
+	sta dest, y
+	dey
 	lda jmpvec+2
-	sta dest, x
-	dex
+	sta dest, y
+	dey
 
 	; Now loop over the rest
 zpsave_loop:
-	lda sp, x
-	sta dest, x
-	dex
+	lda sp, y
+	sta dest, y
+	dey
 	bpl zpsave_loop
 .endmacro
 
 .macro _zprestore	dest
-	ldx #.sizeof(::zpsave)-1
+	ldy #uzi_zpsavespace
 
 	; Restore the jmpvec first
-	lda dest, x
+	lda dest, y
 	sta jmpvec+2
-	dex
-	lda dest, x
+	dey
+	lda dest, y
 	sta jmpvec+1
-	dex
+	dey
 
 	; Now loop over the rest
 zprestore_loop:
-	lda dest, x
-	sta sp, x
-	dex
+	lda dest, y
+	sta sp, y
+	dey
 	bpl zprestore_loop
 .endmacro
 

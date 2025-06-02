@@ -1,6 +1,8 @@
 .ifndef __UZI_NES_INC__
 .define __UZI_NES_INC__
 
+.include	"zeropage.inc"
+
 ; PPU registers
 PPU_CTRL	= $2000
 PPU_MASK	= $2001
@@ -28,5 +30,8 @@ KERNEL_INITDATA_ROM	= $80
 KERNEL_FONTDATA_ROM	= $81
 KERNEL_INITCODE_ROM	= $8e
 KERNEL_COMMCODE_ROM	= $0f
+
+; Zero-page save/restore info
+uzi_zpsavespace		= zpspace+2
 
 .endif

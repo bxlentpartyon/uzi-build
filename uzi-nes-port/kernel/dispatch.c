@@ -32,9 +32,9 @@ UZI (Unix Z80 Implementation) Kernel:  dispatch.c
 			    (typeN) udata.u_argn);	\
 		break
 
-int dispatch_call(char callno)
+int __dispatch_call(void)
 {
-	switch (callno) {
+	switch (udata.u_callno) {
 		HANDLE_SYSCALL1(0, __exit, int16);
 		HANDLE_SYSCALL2(1, _open, char *, int16);
 		HANDLE_SYSCALL1(2, _close, int);

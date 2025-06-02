@@ -245,10 +245,13 @@ typedef struct oft {
 
 /* Process table entry */
 
+#define ZPSAVE_BYTES	28
+
 typedef struct p_tab {
 	char p_status;		/* Process status */
 	int16 p_pid;		/* Process ID */
 	int16 p_uid;
+	char zpsave[ZPSAVE_BYTES];
 	struct p_tab *p_pptr;	/* Process parent's table entry */
 	blkno_t p_swap;		/* Starting block of swap space */
 	uint16 p_alarm;		/* Seconds until alarm goes off */
