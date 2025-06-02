@@ -17,7 +17,8 @@
 	.linecont
 
 .segment "DATA"
-zpsave:		.res zpsavespace
+; Reserve 2 additional bytes to store the jmpvec
+zpsave:		.res zpsavespace+2
 _inint:	.byte 0
 irq_stack_start: .addr $8f00
 cur_stack_page:	.byte $00
