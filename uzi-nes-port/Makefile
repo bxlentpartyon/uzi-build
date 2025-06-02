@@ -7,6 +7,7 @@ CA_INCLUDE := -I$(PWD)/include/asm
 
 PLATFORM := uzi
 MAKEFILE_BUILD := $(PWD)/scripts/build/Makefile.build
+ASDEPS_SCRIPT := $(PWD)/scripts/build/asdeps.sh
 LINKDEPS := link.d
 
 FONT :=	font/newfont.chr
@@ -18,7 +19,7 @@ all: $(TARGET)
 # Setup for Makefile.build
 export CA CC LD
 export CC_INCLUDE CA_INCLUDE
-export PLATFORM MAKEFILE_BUILD LINKDEPS
+export PLATFORM MAKEFILE_BUILD ASDEPS_SCRIPT LINKDEPS
 
 subdirs := drivers fs include kernel lib ppu
 -include $(MAKEFILE_BUILD)
