@@ -17,7 +17,7 @@ font_load_ptr:
 	; we need room for the reset stub at the end of the page, and the font
 	; data doesn't take up nearly the full 8K, so include all but the last
 	; 256 bytes
-	fontdata: .incbin "../../font/newfont.chr", 0, $1f00
+	fontdata: .incbin "../font/newfont.chr", 0, $1f00
 
 .segment "DATA"
 _frame_wait_sleep:
