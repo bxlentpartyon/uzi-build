@@ -1,7 +1,8 @@
 #! /bin/bash
+set -x
 
 ASFILE="${1}"
-OFILE=$(echo "${ASFILE}" | sed 's#\.S#\.o#')
+OFILE=$(echo "${ASFILE}" | sed 's#\.S#\.oS#')
 DFILE=${ASFILE}.d
 
 SED_PATTERN='s#.*\"\(.*\)\".*#\1#'

@@ -1,1 +1,1 @@
-objs := ppu_asm.o ppu_databuf_asm.o
+objs := ppu_asm.oS ppu_databuf_asm.oS

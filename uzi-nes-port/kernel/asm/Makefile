@@ -1,1 +1,1 @@
-objs := head.o interrupts_asm.o clock.o trampoline.o reset.o machdep_asm.o
+objs := head.oS interrupts_asm.oS clock.oS trampoline.oS reset.oS machdep_asm.oS

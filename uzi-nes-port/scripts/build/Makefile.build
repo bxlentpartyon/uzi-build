@@ -5,7 +5,7 @@
 	@echo "Building .c to .s $<"
 	$(CC) $(CC_INCLUDE) --create-full-dep $<.d --target $(PLATFORM) -DUZI -O $<
 
-%.o: %.S
+%.oS: %.S
 	@echo "Building .S $<"
 	$(CA) $(CA_INCLUDE) -o $@ $<
 	$(ASDEPS_SCRIPT) $<
@@ -25,9 +25,9 @@ export CUR_SUBDIR
 endif
 
 ifeq ($(filter clean subclean, $(MAKECMDGOALS)),)
-CDEPS := $(objs:.o=.c.d)
+CDEPS := $(patsubst %.o,%.c.d,$(filter %.o,$(objs)))
 -include $(CDEPS)
-SDEPS := $(objs:.o=.S.d)
+SDEPS := $(patsubst %.oS,%.S.d,$(filter %.oS,$(objs)))
 -include $(SDEPS)
 endif
 
@@ -49,4 +49,4 @@ subclean:
 	for sd in $(subdirs); do				\
 		$(MAKE) -C $$sd -f $(MAKEFILE_BUILD) subclean;	\
 	done
-	rm -f *.d *.o *.s
+	rm -f *.d *.o *.oS *.s
