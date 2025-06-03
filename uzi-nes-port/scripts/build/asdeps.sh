@@ -1,6 +1,4 @@
 #! /bin/bash
-set -x
-
 ASFILE="${1}"
 OFILE=$(echo "${ASFILE}" | sed 's#\.S#\.oS#')
 DFILE=${ASFILE}.d
