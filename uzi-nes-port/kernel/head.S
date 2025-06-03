@@ -2,6 +2,7 @@
 	.import 	_start_kernel, _stop_clock
 	.import		ppu_ctrl_val
 	.import		cur_code_bank, cur_stack_page
+        .import         _unix
 	.export		reset
 	.export		stack_setup
 
@@ -25,6 +26,9 @@
 .segment "DATA"
 stack_setup:
 	.byte $00
+
+.segment "DISPATCH_TRAMP"
+dispatch_trampoline:  .res 16, $00
 
 .segment "INIT_CODE"
 
@@ -207,6 +211,14 @@ init_stack:
 
 	lda #01
 	sta stack_setup
+
+init_dispatch:
+        lda #$20
+        sta dispatch_trampoline
+        lda #<_unix
+        sta dispatch_trampoline+1
+        lda #>_unix
+        sta dispatch_trampoline+2
 
 	cli
 
