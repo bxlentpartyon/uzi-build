@@ -2,19 +2,15 @@ CA := ca65
 CC := cc65
 LD := ld65
 
-PLATFORM := uzi
+.PRECIOUS: %.o
+.SUFFIXES:
 
-TARGET := uzi.nes
+init: init.o
+	$(LD) -v -m link.map -vm -C init.cfg -o $@ $^
 
-LINKER_SCRIPT := init.cfg
+init.o: init.S init.cfg
+	@echo "Building .S $<"
+	$(CA) $(CA_INCLUDE) -o $@ $<
 
-init.s: init.c
-	@echo "Building init.c to init.s $<"
-	$(CC) --target $(PLATFORM) -I$(CC65_DIR)/include/ -O $<
-
-init.o: init.s
-	@echo "Building init.o $<"
-	$(CA) -o $@ $<
-
-init.rom:  $(LINKER_SCRIPT) $(FONT)
-	$(LD) -v -m link.map -C $(LINKER_SCRIPT) -o $@ $(ALL_DEPS) uzi.lib
+clean:
+	rm *.o *.map init
