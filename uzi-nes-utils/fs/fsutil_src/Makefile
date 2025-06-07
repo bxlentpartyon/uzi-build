@@ -1,5 +1,5 @@
 UZI_KERNEL_DIR := $(UZIBUILD_ROOT)/uzi-nes-port
-UZI_INTERNAL_CFLAGS := -nostdinc -isystem $(UZI_KERNEL_DIR)/include -DUZI
+UZI_INTERNAL_CFLAGS := -nostdinc -isystem $(UZI_KERNEL_DIR)/include -DUZI -DUZI_UTIL_BUILD
 
 FSUTIL_TARGETS := fsutil_filesys.o fsutil_chmod.o fsutil_get.o fsutil_kdata.o fsutil_ls.o fsutil_machdep.o fsutil_mkdir.o fsutil_process.o fsutil_time.o fsutil_type.o fsutil_wd.o fsutil_rm.o
 KERNEL_TARGETS := linux_devio.o linux_filesys.o linux_scall1.o

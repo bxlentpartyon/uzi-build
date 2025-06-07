@@ -22,8 +22,10 @@ again:
        return (found);
     c = in(0x73) & 0x7f;
 
+#ifndef UZI_UTIL_BUILD
     if (c==0x1a) /* ^Z */
         idump();        /* For debugging */
+#endif /* UZI_UTIL_BUILD */
 
     if (c == '\003')  /* ^C */
         sendsig(NULL, SIGINT);

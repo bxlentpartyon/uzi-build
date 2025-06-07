@@ -187,6 +187,7 @@ void bufdump(void)
             j->bf_dev,j->bf_blk,j->bf_dirty,j->bf_busy,j->bf_time);
 }
 
+#ifndef UZI_UTIL_BUILD
 void idump(void)
 {
     inoptr ip;
@@ -226,6 +227,7 @@ void idump(void)
         udata.u_insys,udata.u_ptab-ptab, udata.u_callno, udata.u_cwd-i_tab,
        udata.u_sp);
 }
+#endif /* UZI_UTIL_BUILD */
 
 /***************************************************
 Bdread() and bdwrite() are the block device interface routines.
@@ -271,6 +273,7 @@ int cdwrite(int dev)
 	return ((*dev_tab[dev].dev_write) (dev_tab[dev].minor, 1));
 }
 
+#ifndef UZI_UTIL_BUILD
 int swapread(int dev, blkno_t blkno, unsigned nbytes, char *buf)
 {
     swapbase = buf;
@@ -287,6 +290,7 @@ int swapwrite(int dev, blkno_t blkno, unsigned nbytes, char *buf)
     swapblk = blkno;
     return ((*dev_tab[dev].dev_write)(dev_tab[dev].minor, 2));
 }
+#endif /* UZI_UTIL_BUILD */
 
 /**************************************************
 The device driver read and write routines now have
