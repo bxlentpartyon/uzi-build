@@ -203,7 +203,7 @@ void init2(void)
 
 	_execve("/init", &arg[0], &arg[1]);
 
-	panic("no /init");
+	panic("no /init %d", udata.u_error);
 }
 
 /* psleep() puts a process to sleep on the given event.
