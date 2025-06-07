@@ -4,6 +4,10 @@
 #include <unix.h>
 #include <nes/mmc5.h>
 
+#ifndef __fastcall__
+#define __fastcall__
+#endif
+
 void kprintf(char *fmt, ...);
 void panic(char *fmt, ...);
 void sprintf(char *str, char *fmt, ...);
