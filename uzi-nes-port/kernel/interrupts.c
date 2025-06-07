@@ -98,6 +98,7 @@ int clk_int(void)
 	}
 
 #if 0
+	FIXME
 	UZI - NES WIP
 	    /* Check run time of current process */
 	    if (++runticks >= MAXTICKS && !udata.u_insys) {	/* Time to swap out */
