@@ -28,7 +28,7 @@ fsutil: $(FSUTIL_OBJS) $(HEADERS)
 	gcc -g -o $@ $(FSUTIL_OBJS)
 
 test: test.c
-	gcc $(CFLAGS) -o $@ $<
+	gcc $(CFLAGS) $(UTIL_CFLAGS) -o $@ $<
 
 clean:
 	rm -f mkfs fsck fsutil linux_fs.o
