@@ -26,6 +26,6 @@ char * __fastcall__ swapout_prep(void);
 void __fastcall__ swapin_finish(char *newsp);
 void calltrap(void);
 
-#define MAX_PROGRAM_SIZE	MMC5_PRG_MODE3_BANK_SIZE
+#define MAX_PROGRAM_SIZE	(MMC5_PRG_MODE3_BANK_SIZE * 2)
 
 #endif				/* __MACHDEP_H__ */
