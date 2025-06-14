@@ -159,7 +159,6 @@ void init2(void)
 	initproc = ptab_alloc();
 	udata.u_ptab = initproc;
 	newproc(initproc);
-	dump_proc(initproc);
 	initproc->p_status = P_RUNNING;
 
 	/* User's file table */
@@ -196,10 +195,6 @@ void init2(void)
 
 	i_ref(udata.u_cwd = root);
 	rdtime(&udata.u_time);
-
-	kprintf("root inode %x\n", root);
-
-	dump_proc(initproc);
 
 	_execve("/init", &arg[0], &arg[1]);
 
