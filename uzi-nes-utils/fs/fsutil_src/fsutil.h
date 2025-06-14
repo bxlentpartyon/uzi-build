@@ -7,5 +7,6 @@ int get_main(int argc, char **argv);
 int type_main(int argc, char **argv);
 int chmod_main(int argc, char **argv);
 int rm_main(int argc, char **argv);
+int mknod_main(int argc, char **argv);
 
 #endif /* __FSUTIL_H__ */
