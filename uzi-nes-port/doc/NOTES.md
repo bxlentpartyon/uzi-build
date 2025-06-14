@@ -6,8 +6,8 @@ That current bank layout is:
 
 	Bank	Bank Def		Addres Range	Internal page	Usage
 	------------------------------------------------------------------------------------------
-	Bank 0	MMC5_PRG_RAM_PM		$6000-7FFF	RAM 07		Kernel stacks
-	Bank 1  MMC5_PRG_MODE3_P0	$8000-9FFF	RAM 00		Init data (unused after)
+	Bank 0	MMC5_PRG_RAM_PM		$6000-7FFF	RAM 07		Unused
+	Bank 1  MMC5_PRG_MODE3_P0	$8000-9FFF	RAM 00		Init data, kernel stacks
 	Bank 2	MMC5_PRG_MODE3_P1	$A000-BFFF	RAM 08		Kernel RAM
 	Bank 3	MMC5_PRG_MODE3_P2	$C000-DFFF	ROM XX		Kernel floating code page
 	Bank 4	MMC5_PRG_ROM_PM		$E000-FFFF	ROM 15		Kernel permanent code page
