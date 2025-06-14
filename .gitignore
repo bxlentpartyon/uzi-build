@@ -11,4 +11,5 @@ cscope.out
 *~
 
 uzi-nes-port/include/generated/*.h
+uzi-nes-port/prg/init/init
 uzi-nes-utils/fs/images/*
