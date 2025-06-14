@@ -6,7 +6,7 @@ LD := ld65
 .SUFFIXES:
 
 init: init.o
-	$(LD) -v -m link.map -vm -C init.cfg -o $@ $^
+	$(LD) -v -m link.map -vm -C init.cfg -o $@ $^ uzi.lib
 
 init.o: init.S init.cfg
 	@echo "Building .S $<"
