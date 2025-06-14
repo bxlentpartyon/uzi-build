@@ -905,7 +905,7 @@ int fmount(register int dev, register inoptr ino)
 void magic(inoptr ino)
 {
 	if (ino->c_magic != CMAGIC)
-		panic("Corrupt inode");
+		panic("Corrupt inode magic: %x", ino->c_magic);
 }
 
 #pragma code-name (pop)
