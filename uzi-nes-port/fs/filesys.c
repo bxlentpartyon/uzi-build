@@ -893,6 +893,8 @@ int fmount(register int dev, register inoptr ino)
 	bcopy(buf, (char *)fp, sizeof(struct filesys));
 	brelse(buf);
 
+	kprintf("mt %x isize %x fsize %x\n", fp->s_mounted, fp->s_isize, fp->s_fsize);
+
 	/* See if there really is a filesystem on the device */
 	if (fp->s_mounted != SMOUNTED || fp->s_isize >= fp->s_fsize)
 		return (-1);

@@ -3,7 +3,7 @@
 
 %.s: %.c
 	@echo "Building .c to .s $<"
-	$(CC) $(CC_INCLUDE) --create-full-dep $<.d --target $(PLATFORM) -DUZI -O $<
+	$(CC) $(CC_INCLUDE) -DDEBUG --create-full-dep $<.d --target $(PLATFORM) -DUZI -O $<
 
 %.oS: %.S
 	@echo "Building .S $<"

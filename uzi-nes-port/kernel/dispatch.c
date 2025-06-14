@@ -34,6 +34,7 @@ UZI (Unix Z80 Implementation) Kernel:  dispatch.c
 
 int __dispatch_call(void)
 {
+	kprintf("***dispatch call\n");
 	switch (udata.u_callno) {
 		HANDLE_SYSCALL1(0, __exit, int16);
 		HANDLE_SYSCALL2(1, _open, char *, int16);
