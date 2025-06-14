@@ -10,3 +10,6 @@
 [submodule "nestile"]
 	path = nestile
 	url = https://github.com/bxlentpartyon/nestile.git
+[submodule "UZI180"]
+	path = UZI180
+	url = https://github.com/hperaza/UZI180.git
