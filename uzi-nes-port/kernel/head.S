@@ -213,12 +213,17 @@ init_stack:
 	sta stack_setup
 
 init_dispatch:
+	; Write the following instructions to the trampoline:
+	;   jsr _unix
+	;   rts
         lda #$20
         sta dispatch_trampoline
         lda #<_unix
         sta dispatch_trampoline+1
         lda #>_unix
         sta dispatch_trampoline+2
+	lda #$60
+	sta dispatch_trampoline+3
 
 	cli
 
