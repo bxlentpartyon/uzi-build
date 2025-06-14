@@ -38,6 +38,8 @@ inoptr n_open(char *name, inoptr * parent)
 	register inoptr ninode;
 	register inoptr temp;
 
+	kprintf("n_open: %s\n", name);
+
 	if (*name == '/')
 		wd = root;
 	else
@@ -904,8 +906,11 @@ int fmount(register int dev, register inoptr ino)
 
 void magic(inoptr ino)
 {
-	if (ino->c_magic != CMAGIC)
+	kprintf("magic %d\n", ino->c_magic);
+	if (ino->c_magic != CMAGIC) {
+		//idump();
 		panic("Corrupt inode magic: %x", ino->c_magic);
+	}
 }
 
 #pragma code-name (pop)

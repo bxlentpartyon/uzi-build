@@ -195,12 +195,12 @@ void idump(void)
     extern struct cinode i_tab[];
 
     kprintf(
-        "\tMAGIC\tDEV\tNUM\tMODE\tNLINK\t(DEV)\tREFS\tDIRTY err %d root %d\n",
+        "MAGIC DEV NUM MODE NLINK (DEV) REFS DIRTY err %d root %d\n",
             udata.u_error, root - i_tab);
 
     for (ip=i_tab; ip < i_tab+ITABSIZE; ++ip)
     {
-        kprintf("%d\t%d\t%d\t%u\t0%o\t%d\t%d\t%d\t%d\n",
+        kprintf("%d %d %d %u 0%o %d %d %d %d\n",
                ip-i_tab, ip->c_magic, ip->c_dev, ip->c_num,
                ip->c_node.i_mode, ip->c_node.i_nlink,
 	       ip->c_node.i_addr[0], ip->c_refs,ip->c_dirty);
@@ -210,6 +210,7 @@ void idump(void)
 ******/
     }
 
+/*
     kprintf("\n\tSTAT\tWAIT\tPID\tPPTR\tALARM\tPENDING\tIGNORED\n");
     for (pp=ptab; pp < ptab+PTABSIZE; ++pp)
     {
@@ -226,6 +227,7 @@ void idump(void)
     kprintf("\ninsys %d ptab %d call %d cwd %d sp 0x%x\n",
         udata.u_insys,udata.u_ptab-ptab, udata.u_callno, udata.u_cwd-i_tab,
        udata.u_sp);
+*/
 }
 #endif /* UZI_UTIL_BUILD */
 

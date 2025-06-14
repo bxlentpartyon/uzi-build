@@ -22,6 +22,8 @@ int _open(char *name, int16 flag)
 	register inoptr ino;
 	register int16 perm;
 
+	kprintf("_open %s\n", name);
+
 	if (flag < 0 || flag > 2) {
 		udata.u_error = EINVAL;
 		return (-1);

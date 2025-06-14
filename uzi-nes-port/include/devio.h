@@ -23,6 +23,8 @@ int swapwrite(int dev, blkno_t blkno, unsigned nbytes, char *buf);
 
 int d_open(int dev);
 void d_close(int dev);
+
+void idump(void);
 #pragma wrapped-call(pop)
 
 int ok(void);

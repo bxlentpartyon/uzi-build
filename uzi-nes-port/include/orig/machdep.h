@@ -1,4 +1,3 @@
-void idump(void);
 void doexec(void *new_stack);
 
 /* Not actually implemented yet */
