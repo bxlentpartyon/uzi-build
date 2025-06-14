@@ -426,14 +426,14 @@ int unix(int16 argn3, int16 argn2, int16 argn1, int16 argn,
     ei();
 
 #ifdef DEBUG
-    kprintf ("\t\t\t\t\tcall %d (%x, %x, %x)\n",callno,argn2,argn1,argn);
+    kprintf ("***call %d (%x, %x, %x)\n",callno,argn2,argn1,argn);
 #endif
 
     /* Branch to correct routine */
     udata.u_retval = dispatch_call(udata.u_ptab->zpsave);
 
 #ifdef DEBUG
-    kprintf("\t\t\t\t\t\tcall %d ret %x err %d\n",
+    kprintf("***call %d ret %x err %d\n",
 	udata.u_callno,udata.u_retval, udata.u_error);
 #endif
 
