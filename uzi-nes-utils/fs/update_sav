@@ -1,0 +1,2 @@
+cat images/test.sav images/uzi.img > images/uzi.sav
+cp images/uzi.sav ~/.fceux/sav
