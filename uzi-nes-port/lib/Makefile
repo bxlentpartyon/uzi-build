@@ -1,1 +1,1 @@
-objs := string.o
+objs := string.o string.oS

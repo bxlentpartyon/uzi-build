@@ -1,15 +1,6 @@
 #include <ppu.h>
 #include <lib/string.h>
 
-/* Super slow bzero */
-void bzero(char *p, unsigned int s)
-{
-	unsigned int i;
-
-	for (i = 0; i < s; i++)
-		p[i] = '\0';
-}
-
 /* Super slow bcopy */
 void bcopy(char *src, char *dest, unsigned int n)
 {
